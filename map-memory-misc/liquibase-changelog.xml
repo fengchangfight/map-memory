@@ -1,0 +1,94 @@
+<?xml version="1.1" encoding="UTF-8" standalone="no"?>
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog" xmlns:ext="http://www.liquibase.org/xml/ns/dbchangelog-ext" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog-ext http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-ext.xsd http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.5.xsd">
+
+
+    <changeSet author="fengchang" id="add-table-mp-user">
+        <createTable tableName="mp_user">
+            <column autoIncrement="true" name="id" type="BIGINT">
+                <constraints primaryKey="true"  primaryKeyName="mp_userPK" nullable="false"/>
+            </column>
+            <column name="username" type="varchar(300)"/>
+            <column name="password" type="varchar(300)"/>
+            <column name="phone" type="varchar(50)"/>
+            <column name="nickname" type="varchar(50)"/>
+            <column name="email" type="varchar(50)"/>
+            <column name="reg_date" type="datetime"/>
+        </createTable>
+
+    </changeSet>
+
+
+<changeSet author="fengchang" id="addUniqueConstraint-user-name">
+    <addUniqueConstraint
+            columnNames="username"
+            constraintName="uniq_username"
+            deferrable="true"
+            disabled="true"
+            initiallyDeferred="true"
+            tableName="mp_user"/>
+</changeSet>
+<changeSet author="fengchang" id="addUniqueConstraint-user-phone">
+    <addUniqueConstraint
+            columnNames="phone"
+            constraintName="mp_user_uniq_phone"
+            deferrable="true"
+            disabled="true"
+            initiallyDeferred="true"
+            tableName="mp_user"/>
+</changeSet>
+<changeSet author="fengchang" id="addUniqueConstraint-user-email">
+    <addUniqueConstraint
+            columnNames="email"
+            constraintName="mp_user_uniq_email"
+            deferrable="true"
+            disabled="true"
+            initiallyDeferred="true"
+            tableName="mp_user"/>
+</changeSet>
+
+<changeSet author="fengchang" id="add-table-mp-memory">
+        <createTable tableName="mp_memory">
+            <column autoIncrement="true" name="id" type="BIGINT">
+                <constraints primaryKey="true"  primaryKeyName="mp_memoryPK" nullable="false"/>
+            </column>
+            <column name="title" type="varchar(300)"/>
+            <column name="content" type="text"/>
+            <column name="longitude" type="double"/>
+            <column name="latitude" type="double"/>
+            <column name="icon" type="varchar(100)"/>
+            <column name="user_id" type="BIGINT(20)">
+              <constraints nullable="true" foreignKeyName="fk_memory2user_uid" references="mp_user(id)"/>
+            </column>
+            <column name="created_at" type="datetime"/>
+        </createTable>
+
+    </changeSet>
+
+    <changeSet author="fengchang" id="add-table-mp-favorite-location">
+            <createTable tableName="mp_favorite_location">
+                <column autoIncrement="true" name="id" type="BIGINT">
+                    <constraints primaryKey="true"  primaryKeyName="mp_favoritelocationPK" nullable="false"/>
+                </column>
+                <column name="name" type="varchar(300)"/>
+                <column name="longitude" type="double"/>
+                <column name="latitude" type="double"/>
+                <column name="user_id" type="BIGINT(20)">
+                  <constraints nullable="true" foreignKeyName="fk_faviloc2user_uid" references="mp_user(id)"/>
+                </column>
+            </createTable>
+        </changeSet>
+
+        <changeSet author="fengchang" id="addUniqueConstraint-for-favi-loc-name-userid">
+        <addUniqueConstraint
+                             columnNames="name, user_id"
+                             constraintName="uniqui_favi_loc_name_uid"
+                             tableName="mp_favorite_location"/>
+    </changeSet>
+
+    <changeSet author="fengchang" id="addColumn-lastaccessdate4-favoritelcation">
+           <addColumn
+                   tableName="mp_favorite_location">
+               <column name="last_used" type="timestamp"/>
+           </addColumn>
+    </changeSet>
+</databaseChangeLog>

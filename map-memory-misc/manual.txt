@@ -1,0 +1,13 @@
+the way to run liquibase:
+liquibase --driver=com.mysql.jdbc.Driver \
+		 				--classpath=.:mysql-connector-java-8.0.11.jar \
+		 		 --changeLogFile=./liquibase-changelog.xml \
+		 		 --url="jdbc:mysql://localhost:3306/map_memory" \
+		 		 --username=??? \
+		 		 --password=??? \
+		 		 update
+
+the way to update backend on prod server:
+   server-update-backend.sh
+the way to update frontend on prod server:
+   server-update-frontend.sh
