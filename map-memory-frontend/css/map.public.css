@@ -1,0 +1,17 @@
+#edit-mem-point{
+  position: absolute;
+  top: 5px;
+  left: 10px;
+  background:url('~/static/imgs/editbutton.png') no-repeat;
+  background-size: 100% 100%;
+  width:20px;
+  height:20px;
+  border:none;
+}
+
+
+a[href="https://froala.com/wysiwyg-editor"], a[href="https://www.froala.com/wysiwyg-editor?k=u"] {
+  display: none !important;
+  position: absolute;
+  top: -99999999px;
+}

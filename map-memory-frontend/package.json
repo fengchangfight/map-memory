@@ -1,0 +1,45 @@
+{
+  "name": "map-memory",
+  "version": "1.0.0",
+  "description": "Nuxt.js project",
+  "author": "fengchang <fengchang_fight@163.com>",
+  "private": true,
+  "config": {
+    "nuxt": {
+      "host": "0.0.0.0",
+      "port": "8043"
+    }
+  },
+  "scripts": {
+    "dev": "nuxt",
+    "build": "npm run lint && nuxt build && npm start",
+    "start": "nuxt start",
+    "generate": "nuxt generate",
+    "lint": "eslint --ext .js,.vue --ignore-path .gitignore .",
+    "precommit": "npm run lint"
+  },
+  "dependencies": {
+    "axios": "^0.18.0",
+    "bootstrap": "^4.1.1",
+    "bootstrap-vue": "^2.0.0-rc.9",
+    "element-ui": "^2.4.4",
+    "jquery": "^3.3.1",
+    "lodash": "^4.17.10",
+    "nuxt": "^1.4.0",
+    "sweetalert": "^2.1.0",
+    "v-lazy-img": "^0.1.0",
+    "vue-axios": "^2.1.2",
+    "vue-baidu-map": "^0.21.10",
+    "vue-cute-timeline": "^1.2.5",
+    "vue-froala-wysiwyg": "^2.8.4",
+    "vue-verify-plugin": "^2.0.3",
+    "vue-wysiwyg": "^1.7.2"
+  },
+  "devDependencies": {
+    "babel-eslint": "^8.2.1",
+    "eslint": "^4.15.0",
+    "eslint-friendly-formatter": "^3.0.0",
+    "eslint-loader": "^1.7.1",
+    "eslint-plugin-vue": "^4.0.0"
+  }
+}
