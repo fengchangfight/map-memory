@@ -68,7 +68,7 @@ func GetPersonMemory(ctx *gin.Context) {
 	// // fmt.Println(result)
 	pageObj := model.PaginationVO{
 		TotalCount:  count,
-		PageSize:    len(result),
+		PageSize:    config.ITEMS_PER_PAGE,
 		CurrentPage: page,
 		Data:        result,
 	}

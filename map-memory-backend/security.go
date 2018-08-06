@@ -335,7 +335,7 @@ func RegisterByEmail(ctx *gin.Context) {
 	</tr>
 	<tr height="20">
 	  <td style="padding-left:55px;padding-right:55px;font-family:'微软雅黑','黑体',arial;font-size:12px;">
-		如果您并未申请地图记忆服务账户，可能是其他用户误输入了您的邮箱地址。请忽略此邮件，或者<a href="mailto:elitewant@163.com">联系我们</a>。
+		如果您并未申请地图记忆服务账户，可能是其他用户误输入了您的邮箱地址。请忽略此邮件，或者<a href="mailto:ditujiyi@163.com">联系我们</a>。
 	  </td>
 	</tr>
 	<tr height="20">
