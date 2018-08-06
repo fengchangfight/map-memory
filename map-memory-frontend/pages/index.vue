@@ -6,7 +6,7 @@
       </div>
 
       <div class="button-middle-holder">
-        <a v-on:click="goPage('/working')" class="home-btn">
+        <a v-on:click="goPage('/login')" class="home-btn">
           <span>进入</span>
         </a>
         <a v-on:click="goPage('/demo')" class="home-btn">

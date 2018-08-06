@@ -175,6 +175,12 @@ export default {
   },
   mixins: [base],
   computed: {
+    fallbackLongitude(){
+      return this.physicLongitude!=''?this.physicLongitude:116.404;
+    },
+    fallbackLatitude(){
+      return this.physicLatitude!=''?this.physicLatitude:39.915;
+    },
     optionNoAutoSave(){
 return {
           imageUpload: false,
@@ -253,7 +259,9 @@ return {
       selected_id: '',
       fav_loc_list:[],
       selected_favname:'',
-      base_service_url:''
+      base_service_url:'',
+      physicLongitude:'',
+      physicLatitude:''
     }
   },
   methods: {
@@ -264,6 +272,11 @@ return {
           {headers:{'Content-Type':'application/x-www-form-urlencoded'}}).then(response=>{
             if(response.data.ok==true){
               this.autosaveflag = true;
+              this.$notify({
+                          title: '自动保存',
+                          type: 'success',
+                          message: '已自动保存'
+                        });
               var count = 2;
               var storeThis = this;
               var refreshIntervalId = setInterval(function() {
@@ -271,6 +284,7 @@ return {
               if(count==0){
                 clearInterval(refreshIntervalId);
                 storeThis.autosaveflag = false;
+                
               }
              }, 1000);
             }
@@ -527,10 +541,8 @@ return {
           })
         }
       }).catch(e=>{
-        this.$notify.error({
-          title: '错误',
-          message: '未知错误'
-        })
+        console.log("无法载入收藏地点列表");
+        
       })
     },
     loadMemPoints(){
@@ -549,10 +561,8 @@ return {
           })
         }
       }).catch(e=>{
-        this.$notify.error({
-          title: '错误',
-          message: '未知错误'
-        })
+        console.log('载入地图记忆点点失败')
+        this.goPage('/login')
       })
     },
     setIcon(){
@@ -662,13 +672,44 @@ return {
       this.keyword = ''
       this.location = ''
     },
+    checkCurrentLoc(){
+      var storeThis = this;
+      $.ajax(
+      {
+        url:'http://api.map.baidu.com/location/ip',
+        data:{
+          coor:'bd09ll',
+          ak:'Er8iGG4UMfSd3Ckuc6w8C56peI4ge1Ih'
+        },
+        type:'get',
+        dataType:'jsonp',
+        async:true,
+        success:function(data){
+          console.log(data.content);
+          var locInfo = data.content
+          if(locInfo!=null && locInfo.point!=null){
+            storeThis.physicLongitude = locInfo.point.x;
+            storeThis.physicLatitude = locInfo.point.y;
+          }
+          storeThis.center.lng = storeThis.state.longitude==null?storeThis.fallbackLongitude:storeThis.state.longitude;
+          storeThis.center.lat = storeThis.state.latitude==null?storeThis.fallbackLatitude:storeThis.state.latitude;
+          storeThis.loadMemPoints();
+        },
+        error:function(data){
+          console.log('error getting my location');
+        }
+      }
+      );
+    },
     mapready ({BMap, map}) {
       //console.log(BMap, map)
-      this.center.lng = this.state.longitude==null?116.404:this.state.longitude;
-      this.center.lat = this.state.latitude==null?39.915:this.state.latitude;
+      this.checkCurrentLoc();
+
+      //this.center.lng = this.state.longitude==null?this.fallbackLongitude:this.state.longitude;
+      //this.center.lat = this.state.latitude==null?this.fallbackLatitude:this.state.latitude;
       this.zoom = 19
 
-      this.loadMemPoints();
+      //this.loadMemPoints();
     }
   },
   mounted(){

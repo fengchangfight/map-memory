@@ -20,6 +20,9 @@ export default{
             this.$router.push('/login')
           })
     },
+    goPage (val) {
+      this.$router.push(val)
+  },
   },
   data () {
     return {

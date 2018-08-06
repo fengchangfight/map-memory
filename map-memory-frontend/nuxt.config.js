@@ -11,6 +11,9 @@ module.exports = {
       { hid: 'Keywords', name: 'Keywords', content: '地图记忆-用空间留住时间' },
       { hid: 'Description', name: 'Description', content: '基于地图的笔记本,用地理空间关联的方式提高记忆或笔记效率'}
     ],
+    script: [
+      { src: 'https://cdnjs.cloudflare.com/ajax/libs/jquery/3.1.1/jquery.min.js' }
+    ],
     link: [
       { rel: 'icon', type: 'image/x-icon', href: '/favicon.ico' },
       {

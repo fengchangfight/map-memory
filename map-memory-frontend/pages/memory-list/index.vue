@@ -167,6 +167,11 @@ export default {
           {headers:{'Content-Type':'application/x-www-form-urlencoded'}}).then(response=>{
             if(response.data.ok==true){
               this.autosaveflag = true;
+              this.$notify({
+                          title: '自动保存',
+                          type: 'success',
+                          message: '已自动保存'
+                        });
               var count = 2;
               var storeThis = this;
               var refreshIntervalId = setInterval(function() {
@@ -301,11 +306,10 @@ export default {
           this.list_loading=false;
 
         }).catch(e=>{
-          this.$notify.error({
-            title: '错误',
-            message: '未知错误'
-          });
+          
+          console.log('获取列表视图错误')
           this.list_loading=false;
+          this.goPage('/login')
         })
       }
     },
