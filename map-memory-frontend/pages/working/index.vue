@@ -439,6 +439,7 @@ return {
     },
     showMemDetailWin(id){
       this.memoryDetailBoxVisible = true;
+      this.detailMode='view';
       this.loadMemoryDetailById(id);
     },
     editMemPoint(id){
@@ -693,7 +694,7 @@ return {
           }
           storeThis.center.lng = storeThis.state.longitude==null?storeThis.fallbackLongitude:storeThis.state.longitude;
           storeThis.center.lat = storeThis.state.latitude==null?storeThis.fallbackLatitude:storeThis.state.latitude;
-          storeThis.loadMemPoints();
+          //storeThis.loadMemPoints();
         },
         error:function(data){
           console.log('error getting my location');

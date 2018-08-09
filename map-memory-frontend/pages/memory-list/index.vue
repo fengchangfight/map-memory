@@ -49,6 +49,11 @@
       <div style="display:flex;margin-top:5px;" @keyup.enter="filterMemory">
            <el-input placeholder="按标题查找"  v-model="title_query"></el-input><el-button @click="filterMemory" type="primary">过滤</el-button>
       </div>
+      <div id="pagi-container">
+          <el-pagination style="margin: 0 auto" class="pagination" layout="prev, pager, next" :total="totalCount" :page-size="pageSize"
+             v-on:current-change="changePage">
+         </el-pagination>
+       </div>
       <el-table
           :border=true
           :data="memorylistdata"
@@ -101,6 +106,7 @@
              v-on:current-change="changePage">
          </el-pagination>
        </div>
+        
     </div>
     <div class="bottom">
       <app-footer></app-footer>
