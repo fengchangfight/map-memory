@@ -75,8 +75,8 @@
 
 
         <div style="display:flex;position:relative;">
-            <button v-if="detailMode=='view'" @click="deleteMemPoint(memDetail.id)" title="删除" id="delete-mem-point"></button>
-            <button v-if="detailMode=='view'" @click="editMemPoint(memDetail.id)" title="编辑" id="edit-mem-point"></button>
+            <button v-if="detailMode=='view' && readonlydetail==false" @click="deleteMemPoint(memDetail.id)" title="删除" id="delete-mem-point"></button>
+            <button v-if="detailMode=='view' && readonlydetail==false" @click="editMemPoint(memDetail.id)" title="编辑" id="edit-mem-point"></button>
             <h3 v-if="detailMode=='view'" style="margin: 0 auto;padding:0px 30px 0px 40px;"><span style="float: left"><img width="40" height="40" :src="'imgs/'+memDetail.icon"/></span>&nbsp;&nbsp;{{memDetail.title}}</h3>
             <div v-if="detailMode=='edit'" style="display:flex;width:100%;">
               <el-select v-model="memDetail.icon" filterable placeholder="记忆图标" @change="setIcon()">
@@ -94,8 +94,8 @@
 
         </div>
         <div style="display:block;margin-top: 10px;">
-          <div style="margin-left: auto; font-size:70%;color:gray">
-            <label style="color:#003300;">{{memDetail.nickname}}</label>&nbsp;发布于：{{memDetail.created_at}} &nbsp;<label v-if="autosaveflag">(已自动保存)</label>
+          <div  v-if="readonlydetail==false" style="margin-left: auto; font-size:70%;color:gray">
+            <label  style="color:#003300;">{{memDetail.nickname}}</label>&nbsp;发布于：{{memDetail.created_at}} &nbsp;<label v-if="autosaveflag">(已自动保存)</label>
           </div>
 
         </div>
@@ -146,6 +146,10 @@
 
             <bm-marker @mouseover="infoWindowOpen(item.id)" @mouseout="infoWindowClose(item.id)" v-bind:key="item.id" :title="limitStringLength(item.title)" @dragend="moveMemoryPos($event, item.id)" v-for="item in my_mem_data" @click="showMemDetailWin(item.id)" :position="{lng: item.longitude, lat: item.latitude}" :dragging="true" animation="BMAP_ANIMATION_DROP" :icon="{url: 'imgs/'+item.icon, size: {width: 40, height: 40}}"  >
               <bm-info-window :show="showInfoWin[item.id]" >{{item.title}}</bm-info-window>
+            </bm-marker>
+
+            <bm-marker v-if="is_newbie" @mouseover="infoWindowOpen(tutorialItem.id)" @mouseout="infoWindowClose(tutorialItem.id)" @click="showMemDetailWin(tutorialItem.id)" :position="{lng: center.lng, lat: center.lat}" :dragging="false" animation="BMAP_ANIMATION_BOUNCE" :icon="{url: 'imgs/'+tutorialItem.icon, size: {width: 60, height: 60}}"  >
+              <bm-info-window :show="showInfoWin[tutorialItem.id]" >{{tutorialItem.title}}</bm-info-window>
             </bm-marker>
 
             <bm-marker v-bind:key="item.id" :title="limitStringLength(item.name)" v-for="item in fav_loc_list" @click="showFavlocDetail(item.id, item.name)" :position="{lng: item.longitude, lat: item.latitude}" :dragging="false"  :icon="{url: 'imgs/redstar.png', size: {width: 40, height: 40}}"  >
@@ -205,6 +209,11 @@ return {
   },
   data () {
     return {
+      tutorialItem : {
+        id:"tutorial",
+        title: '点我看说明哦(づ￣ 3￣)づ',
+        icon: 'tutorial.png'
+      },
       autosaveflag: false,
       state,
       isLoggedIn: false,
@@ -245,6 +254,7 @@ return {
         north_east_x: 0.0,
         north_east_y: 0.0
       },
+      is_newbie: false,
       selected_longitude: 0.0,
       selected_latitude: 0.0,
       addMemoryVisible: false,
@@ -256,6 +266,7 @@ return {
       showInfoWin:{},
       memDetail:{},
       detailMode:'view',
+      readonlydetail: false,
       selected_id: '',
       fav_loc_list:[],
       selected_favname:'',
@@ -265,6 +276,21 @@ return {
     }
   },
   methods: {
+    isFirstDayUser(){
+      AXIOS.get('/api/v1/first-day-user').then(response=>{
+        if(response.data==true){
+          // first day registered user, give instructions
+          this.is_newbie = true;
+          console.log(true)
+        }else{
+          // old user, do nothing
+          this.is_newbie = false;
+          console.log(false)
+        }
+      }).catch(e=>{
+        console.log(e)
+      })
+    },
     autosave:_.debounce(function () {
           var data = {'id': this.memDetail.id, 'content':this.memDetail.content};
           AXIOS.put('/api/v1/memory-content'
@@ -439,8 +465,48 @@ return {
     },
     showMemDetailWin(id){
       this.memoryDetailBoxVisible = true;
-      this.detailMode='view';
-      this.loadMemoryDetailById(id);
+
+      if(id=='tutorial'){
+        this.readonlydetail = true;
+        this.memDetail.title = "操作说明";
+        this.memDetail.content = `<p>
+    在地图上任意位置右键弹出菜单
+</p>
+<p>
+</p>
+<img src="http://www.fengchang.cc/imageprocessing/fit?width=790&amp;height=600&amp;type=jpeg&amp;file=menusd23t.png">
+<p>
+    菜单选项
+</p>
+<ol class=" list-paddingleft-2" style="list-style-type: decimal;">
+    <li>
+        <p>
+            可查看该位置<strong>经纬度</strong><br/>
+        </p>
+    </li>
+    <li>
+        <p>
+            可在该位置<strong>创建笔记本</strong>
+        </p>
+    </li>
+    <li>
+        <p>
+            可收藏该位置为<strong>常用位置</strong>
+        </p>
+    </li>
+</ol>
+<p>
+    <strong>拖拽图标</strong>可以调整笔记本位置
+</p>
+<p>
+    按<strong>Escape键</strong>可<strong>退出</strong>记忆详情页面
+</p>`;
+        this.memDetail.icon = "tutorial.png"
+      }else{
+        this.readonlydetail=false;
+        this.detailMode='view';
+        this.loadMemoryDetailById(id);
+      }
     },
     editMemPoint(id){
       // make title and content edit mode
@@ -716,6 +782,7 @@ return {
   mounted(){
     this.checklogin();
     this.getBaseServiceUrl();
+    this.isFirstDayUser();
     this.loadAllFavloc();
   }
 }

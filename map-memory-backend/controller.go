@@ -9,6 +9,7 @@ import (
 	"map-memory-backend/model"
 	"net/http"
 	"strconv"
+	"time"
 
 	"github.com/gin-contrib/sessions"
 	"github.com/gin-gonic/gin"
@@ -240,6 +241,27 @@ func GetPersonMemoryInBound(ctx *gin.Context) {
 	// fmt.Println(result)
 
 	ctx.JSON(http.StatusOK, gin.H{"ok": true, "message": "成功获取范围内个人的记忆点", "data": result})
+}
+
+func IsFirstDayRegUser(ctx *gin.Context) {
+	session := sessions.Default(ctx)
+	username := session.Get("user")
+
+	var user entity.User
+	config.RDB_CONN.First(&user, "username = ?", username)
+
+	regDate := user.RegDate
+	currentDate := time.Now()
+
+	diff := currentDate.Sub(regDate)
+
+	fmt.Println(diff.Hours())
+	if diff.Hours() > 30 {
+		ctx.String(http.StatusOK, "false")
+	} else {
+		ctx.String(http.StatusOK, "true")
+	}
+
 }
 
 func GetBaseUrl(ctx *gin.Context) {
