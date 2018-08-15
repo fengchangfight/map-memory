@@ -59,11 +59,12 @@ func GetPersonMemory(ctx *gin.Context) {
 	var count int
 
 	if len(title_query) > 0 {
-		config.RDB_CONN.Table("mp_memory").Offset((page-1)*config.ITEMS_PER_PAGE).Limit(config.ITEMS_PER_PAGE).Order("created_at desc").Select("id, title, content, longitude, latitude, icon, created_at").Where("user_id = ? and title like ? ", current_uid, "%"+title_query+"%").Scan(&result)
-		config.RDB_CONN.Model(&entity.Memory{}).Where("user_id = ? and title like ? ", current_uid, "%"+title_query+"%").Count(&count)
+		config.RDB_CONN.Table("mp_memory").Offset((page-1)*config.ITEMS_PER_PAGE).Limit(config.ITEMS_PER_PAGE).Order("created_at desc").Select("id, title, longitude, latitude, icon, created_at").Where("user_id = ? and title like ? ", current_uid, "%"+title_query+"%").Scan(&result)
+		config.RDB_CONN.Table("mp_memory").Where("user_id = ? and title like ? ", current_uid, "%"+title_query+"%").Count(&count)
 	} else {
-		config.RDB_CONN.Model(&entity.Memory{}).Where("user_id = ?", current_uid).Count(&count)
-		config.RDB_CONN.Table("mp_memory").Offset((page-1)*config.ITEMS_PER_PAGE).Limit(config.ITEMS_PER_PAGE).Order("created_at desc").Select("id, title, content, longitude, latitude, icon, created_at").Where("user_id = ? ", current_uid).Scan(&result)
+		config.RDB_CONN.Table("mp_memory").Where("user_id = ?", current_uid).Count(&count)
+		//config.RDB_CONN.Model(&entity.Memory{}).Where("user_id = ?", current_uid).Count(&count)
+		config.RDB_CONN.Table("mp_memory").Offset((page-1)*config.ITEMS_PER_PAGE).Limit(config.ITEMS_PER_PAGE).Order("created_at desc").Select("id, title, longitude, latitude, icon, created_at").Where("user_id = ? ", current_uid).Scan(&result)
 	}
 
 	// // fmt.Println(result)
@@ -256,7 +257,7 @@ func IsFirstDayRegUser(ctx *gin.Context) {
 	diff := currentDate.Sub(regDate)
 
 	fmt.Println(diff.Hours())
-	if diff.Hours() > 30 {
+	if diff.Hours() > 3 {
 		ctx.String(http.StatusOK, "false")
 	} else {
 		ctx.String(http.StatusOK, "true")

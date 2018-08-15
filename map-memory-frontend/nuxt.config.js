@@ -27,7 +27,7 @@ module.exports = {
   ],
   plugins: ['~/plugins/froala.js','~/plugins/v-lazy-img',{ src: "~/plugins/vue-verify", ssr: false },'~/plugins/element-ui',{ src: "~/plugins/vue-baidu-map.js", ssr: false },{ src: "~/plugins/wysiwyg.js", ssr: false }],
   css: [
-      '~/node_modules/vue-wysiwyg/dist/vueWysiwyg.css',
+      'vue-wysiwyg/dist/vueWysiwyg.css',
       '~/node_modules/froala-editor/css/froala_editor.pkgd.min.css',
       '~/node_modules/froala-editor/css/froala_style.min.css'
   ],

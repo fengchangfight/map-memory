@@ -48,13 +48,7 @@
         </el-form-item>
         <el-form-item label="记忆详情">
 
-        <!-- <div class="quill-editor"
-         :content="form.memory_content"
-         @change="onAddMemoryEditorChange($event)"
-         v-quill:myQuillEditor="editorOption">
-        </div> -->
         <wysiwyg v-model="form.memory_content" />
-        <!-- <froala :config="optionNoAutoSave" v-model="form.memory_content"></froala> -->
 
         </el-form-item>
       </el-form>

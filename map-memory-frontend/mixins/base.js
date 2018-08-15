@@ -210,6 +210,24 @@ export default{
         },{
           id:'shell.png',
           name:'贝壳'
+        },{
+          id:'cash.png',
+          name:'钱'
+        },{
+          id:'question.png',
+          name:'问题'
+        },{
+          id:'knowledge.png',
+          name:'知识'
+        },{
+          id:'python.png',
+          name:'Python'
+        },{
+          id:'php.png',
+          name:'PHP'
+        },{
+          id:'elephant.png',
+          name:'大象'
         }
       ],
     }

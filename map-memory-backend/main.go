@@ -88,7 +88,7 @@ func main() {
 	// store.Options(sessions.Options{
 	// 	MaxAge: 8000,
 	// })
-	router.Use(sessions.Sessions("mysession", store))
+	router.Use(sessions.Sessions("mmsession", store))
 
 	orig := "http://localhost:8043"
 
