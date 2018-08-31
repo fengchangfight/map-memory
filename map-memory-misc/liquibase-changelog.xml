@@ -91,4 +91,25 @@
                <column name="last_used" type="timestamp"/>
            </addColumn>
     </changeSet>
+
+    <changeSet author="fengchang" id="modifyDataType-text2mediumtext">
+    <modifyDataType
+            columnName="content"
+            newDataType="mediumtext"
+            tableName="mp_memory"/>
+    </changeSet>
+
+    <changeSet author="fengchang" id="addColumn-user-readcode">
+           <addColumn
+                   tableName="mp_user">
+               <column name="read_code" type="varchar(50)"/>
+           </addColumn>
+    </changeSet>
+
+    <changeSet author="fengchang" id="addColumn-memory-locked">
+           <addColumn
+                   tableName="mp_memory">
+               <column name="locked" type="tinyint"/>
+           </addColumn>
+    </changeSet>
 </databaseChangeLog>
