@@ -103,6 +103,7 @@ func ConfirmEmail(ctx *gin.Context) {
 		Email:    email,
 		Nickname: email,
 		Phone:    nil,
+		ReadCode: "123",
 	}
 
 	rs := config.RDB_CONN.Create(&user)
@@ -239,6 +240,7 @@ func CreateMemoryPoint(ctx *gin.Context) {
 		Icon:      icon,
 		UserID:    current_uid,
 		CreatedAt: current_time,
+		Locked:    false,
 	}
 
 	createResult := config.RDB_CONN.Create(&memory_record)

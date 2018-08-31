@@ -1,6 +1,31 @@
 <template>
   <div class="memory-list-page">
     <el-dialog
+      title="输入阅读密码"
+      :visible.sync="inputReadCodeVisible"
+      width="30%"
+      :fullscreen="false"
+      >
+      <el-form autocomplete="off">
+        <el-input placeholder="阅读密码(初始为123)" autocomplete="off" v-model="read_code" type="password"></el-input>
+        <input type="password" style="visibility:hidden" />
+        <el-button @click="submitReadCode">提交</el-button>
+      </el-form>
+    </el-dialog>
+    <el-dialog
+      title="解锁"
+      :visible.sync="unlockReadCodeVisible"
+      width="30%"
+      :fullscreen="false"
+      >
+      <el-form autocomplete="off">
+        <el-input placeholder="阅读密码(初始为123)" autocomplete="off" v-model="read_code" type="password"></el-input>
+        <input type="password" style="visibility:hidden" />
+        <el-button @click="unlockDoStuff">提交</el-button>
+      </el-form>
+    </el-dialog>
+
+    <el-dialog
       title="记忆详情"
       :visible.sync="memoryDetailBoxVisible"
       width="100%"
@@ -47,7 +72,7 @@
 
     <div v-loading="list_loading"  class="center-content">
       <div style="display:flex;margin-top:5px;" @keyup.enter="filterMemory">
-           <el-input placeholder="按标题查找"  v-model="title_query"></el-input><el-button @click="filterMemory" type="primary">过滤</el-button>
+           <el-input placeholder="按标题或内容查找"  v-model="query"></el-input><el-button @click="filterMemory" type="primary">过滤</el-button>
       </div>
       <div id="pagi-container">
           <el-pagination style="margin: 0 auto" class="pagination" layout="prev, pager, next" :total="totalCount" :page-size="pageSize"
@@ -71,31 +96,33 @@
           <el-table-column
             label="标题"
             prop="title"
-            width="170">
+            width="150">
           </el-table-column>
           <el-table-column
             label="经度"
             prop="longitude"
-            width="100">
+            width="90">
           </el-table-column>
           <el-table-column
             label="纬度"
             prop="latitude"
-            width="100">
+            width="90">
           </el-table-column>
           <el-table-column
             label="创建时间"
             prop="createdAt"
-            width="180">
+            width="140">
           </el-table-column>
           <el-table-column
             label="操作"
-            width="220">
+            width="270">
             <template slot-scope="scope">
               <div style="display:flex;">
                 <el-button size="small" type="success" @click="go2Map(scope.row.longitude, scope.row.latitude)">前往</el-button>
-                <el-button size="small" type="primary" @click="openMemPoint(scope.row.id)">打开</el-button>
+                <el-button size="small" type="primary" @click="openMemPoint(scope.row.id, scope.row.locked)">打开</el-button>
                 <el-button size="small" type="danger" @click="deleteMemPoint(scope.row.id)">删除</el-button>
+                <el-button size="small" v-if="scope.row.locked==false" type="warning" @click="lockMemPoint(scope.row.id)">锁</el-button>
+                <el-button size="small" v-if="scope.row.locked==true" type="warning" @click="unlockMemPoint(scope.row.id)">解锁</el-button>
               </div>
             </template>
           </el-table-column>
@@ -124,6 +151,7 @@ import state from '~/common/state'
 import base from '~/mixins/base'
 import _ from 'lodash'
 import Qs from 'qs'
+import swal from 'sweetalert'
 
 export default {
     name: 'MemoryList',
@@ -150,6 +178,10 @@ export default {
     },
     data() {
       return {
+        unlockReadCodeVisible: false,
+        current_id:'',
+        read_code:'',
+        inputReadCodeVisible: false,
         base_service_url:'',
         title_query:'',
         state,
@@ -166,6 +198,76 @@ export default {
       }
     },
     methods: {
+      unlockDoStuff(){
+         if(this.read_code==null || this.read_code.length<1){
+            swal ( "提示" ,  "不能提交空的阅读密码哦(づ￣ 3￣)づ" ,  "info" );
+            return;
+          }
+          
+          AXIOS.put('/api/v1/memory-lock/'+this.current_id,{
+            locked: false,
+            read_code: this.read_code
+          }).then(response=>{
+          if(response.data.ok==true){
+            this.$notify({
+                          title: '成功',
+                          type: 'success',
+                          message: response.data.message
+                        });
+            this.getMemoryListData();
+          }else{
+            this.$notify.error({
+                          title: '错误',
+                          message: response.data.message
+                        });
+          }
+          }).catch(e=>{
+          this.$notify.error({
+                          title: '错误',
+                          message: '未知错误'
+                        });
+        })
+          this.unlockReadCodeVisible=false;
+      },
+      submitReadCode(){
+          if(this.read_code==null || this.read_code.length<1){
+            swal ( "提示" ,  "不能提交空的阅读密码哦(づ￣ 3￣)づ" ,  "info" );
+            return;
+          }
+          this.inputReadCodeVisible=false;
+          this.memDetail={};
+          this.memoryDetailBoxVisible = true;
+          this.loadMemoryDetailById(this.current_id, this.read_code);
+      },
+      unlockMemPoint(id){
+        this.current_id = id;
+        this.read_code="";
+        this.unlockReadCodeVisible=true;
+      },
+      lockMemPoint(id){
+        AXIOS.put('/api/v1/memory-lock/'+id,{
+          locked: true
+        }).then(response=>{
+          if(response.data.ok==true){
+            this.$notify({
+                          title: '成功',
+                          type: 'success',
+                          message: response.data.message
+                        });
+            this.getMemoryListData();
+          }else{
+            this.$notify.error({
+                          title: '错误',
+                          message: response.data.message
+                        });
+          }
+        }).catch(e=>{
+          this.$notify.error({
+                          title: '错误',
+                          message: '未知错误'
+                        });
+        })
+      },
       autosave:_.debounce(function () {
           var data = {'id': this.memDetail.id, 'content':this.memDetail.content};
           AXIOS.put('/api/v1/memory-content'
@@ -225,14 +327,20 @@ export default {
       },
       cancelEdit(){
         this.detailMode = 'view';
-        this.loadMemoryDetailById(this.memDetail.id);
+        this.loadMemoryDetailById(this.memDetail.id, this.read_code);
       },
       editMemPoint(id){
         // make title and content edit mode
         this.detailMode = 'edit';
       },
-      loadMemoryDetailById(id){
-        AXIOS.get('/api/v1/memory/'+id).then(response=>{
+      loadMemoryDetailById(id, read_code){
+        var params = {};
+        if(read_code!=null && read_code.length>0){
+          params.read_code = read_code;
+        }
+        AXIOS.get('/api/v1/memory/'+id,{
+          params: params
+        }).then(response=>{
           if(response.data.ok==true){
             this.memDetail = response.data.data;
           }else{
@@ -240,6 +348,7 @@ export default {
               title: '错误',
               message: response.data.message
             })
+            this.memoryDetailBoxVisible=false;
           }
         }).catch(e=>{
           this.$notify.error({
@@ -257,9 +366,16 @@ export default {
         this.state.latitude = latitude;
         this.$router.push('/working');
       },
-      openMemPoint(id){
-        this.memoryDetailBoxVisible = true;
-        this.loadMemoryDetailById(id);
+      openMemPoint(id, locked){
+        if(locked==true){
+          this.read_code="";
+          this.inputReadCodeVisible = true;
+          this.current_id = id;
+        }else{
+           this.memoryDetailBoxVisible = true;
+           this.loadMemoryDetailById(id);
+        }
+        
       },
       deleteMemPoint(id){
         this.$confirm('确认删除该记忆点？')
@@ -293,7 +409,7 @@ export default {
       getMemoryListData(){
         var params = {};
         params.page = this.currentPage;
-        params.title_query = this.title_query;
+        params.query = this.query;
         this.list_loading=true;
         AXIOS.get('/api/v1/memory-my',{
             params: params

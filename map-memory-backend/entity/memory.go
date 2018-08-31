@@ -12,6 +12,7 @@ type Memory struct {
 	User      User `gorm:"ForeignKey:UserID;AssociationForeignKey:ID"`
 	UserID    int64
 	CreatedAt time.Time
+	Locked    bool
 }
 
 func (Memory) TableName() string {

@@ -66,7 +66,7 @@ func AuthRequired() gin.HandlerFunc {
 		user := session.Get("user")
 		if user == nil {
 			// You'd normally redirect to login page
-			c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid session token"})
+			c.AbortWithStatus(http.StatusUnauthorized)
 		} else {
 			// Continue down the chain to handler etc
 			c.Next()

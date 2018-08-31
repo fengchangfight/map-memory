@@ -23,6 +23,7 @@ func initializeRoutes() {
 	router.DELETE("/api/v1/favorite-location/:id", AuthRequired(), DeleteFavoriteLocationById)
 
 	router.PUT("/api/v1/memory/:id", AuthRequired(), AuthIsOwnerOfMemoryById(), UpdateMemoryById)
+	router.PUT("/api/v1/memory-lock/:id", AuthRequired(), AuthIsOwnerOfMemoryById(), UpdateMemoryLockById)
 	router.PUT("/api/v1/memory-pos/:id", AuthRequired(), UpdateMemoryPosById)
 	router.PUT("/api/v1/favorite-location/used/:id", AuthRequired(), UpdateFavilocUsedTime)
 	router.PUT("/api/v1/memory-content", AuthRequired(), IownMemoryFromPost, UpdateMemoryContent)
@@ -33,6 +34,7 @@ func initializeRoutes() {
 	router.POST("/api/v1/favorite-location", AuthRequired(), Add2FavoriteLocation)
 	router.POST("/api/v1/person-memory-inbound", AuthRequired(), GetPersonMemoryInBound)
 	router.POST("/api/v1/user/password", AuthRequired(), UpdatePassword)
+	router.POST("/api/v1/user/readcode", AuthRequired(), UpdateReadCode)
 	router.POST("/api/v1/user/user-info", AuthRequired(), UpdateUserInfo)
 	router.POST("/register/email", AuthNotRequired(), RegisterByEmail)
 	router.POST("/register/confirm", AuthNotRequired(), ConfirmEmail)

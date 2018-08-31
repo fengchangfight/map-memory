@@ -36,6 +36,9 @@ export default{
         {
           id:'book2.png',
           name:'大金书'
+        },{
+          id:'darkbook.png',
+          name:'暗黑本'
         },
         {
           id:'book3.png',

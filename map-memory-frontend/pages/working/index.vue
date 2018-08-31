@@ -1,6 +1,19 @@
 <template>
   <div style="width:100%;position:relative;height:100%;">
     <el-dialog
+      title="输入阅读密码"
+      :visible.sync="inputReadCodeVisible"
+      width="30%"
+      :fullscreen="false"
+      >
+      <el-form autocomplete="off">
+        <el-input placeholder="阅读密码(初始为123)" autocomplete="off" v-model="read_code" type="password"></el-input>
+        <input type="password" style="visibility:hidden" />
+        <el-button @click="submitReadCode">提交</el-button>
+      </el-form>
+    </el-dialog>
+
+    <el-dialog
       title="删除常用位置"
       :visible.sync="deleteFavLocVisible"
       width="200px">
@@ -138,7 +151,7 @@
             </bm-context-menu>
 
 
-            <bm-marker @mouseover="infoWindowOpen(item.id)" @mouseout="infoWindowClose(item.id)" v-bind:key="item.id" :title="limitStringLength(item.title)" @dragend="moveMemoryPos($event, item.id)" v-for="item in my_mem_data" @click="showMemDetailWin(item.id)" :position="{lng: item.longitude, lat: item.latitude}" :dragging="true" animation="BMAP_ANIMATION_DROP" :icon="{url: 'imgs/'+item.icon, size: {width: 40, height: 40}}"  >
+            <bm-marker @mouseover="infoWindowOpen(item.id)" @mouseout="infoWindowClose(item.id)" v-bind:key="item.id" :title="limitStringLength(item.title)" @dragend="moveMemoryPos($event, item.id)" v-for="item in my_mem_data" @click="showMemDetailWin(item.id, item.locked)" :position="{lng: item.longitude, lat: item.latitude}" :dragging="true" animation="BMAP_ANIMATION_DROP" :icon="{url: 'imgs/'+item.icon, size: {width: 40, height: 40}}"  >
               <bm-info-window :show="showInfoWin[item.id]" >{{item.title}}</bm-info-window>
             </bm-marker>
 
@@ -203,6 +216,9 @@ return {
   },
   data () {
     return {
+      inputReadCodeVisible: false,
+      current_id:'',
+      read_code:'',
       tutorialItem : {
         id:"tutorial",
         title: '点我看说明哦(づ￣ 3￣)づ',
@@ -270,6 +286,16 @@ return {
     }
   },
   methods: {
+    submitReadCode(){
+      if(this.read_code==null || this.read_code.length<1){
+            swal ( "提示" ,  "不能提交空的阅读密码哦(づ￣ 3￣)づ" ,  "info" );
+            return;
+          }
+          this.inputReadCodeVisible=false;
+          this.memDetail={};
+          this.memoryDetailBoxVisible = true;
+          this.loadMemoryDetailById(this.current_id, this.read_code);
+    },
     isFirstDayUser(){
       AXIOS.get('/api/v1/first-day-user').then(response=>{
         if(response.data==true){
@@ -438,10 +464,16 @@ return {
     },
     cancelEdit(){
       this.detailMode = 'view';
-      this.loadMemoryDetailById(this.memDetail.id);
+      //this.loadMemoryDetailById(this.memDetail.id);
     },
-    loadMemoryDetailById(id){
-      AXIOS.get('/api/v1/memory/'+id).then(response=>{
+    loadMemoryDetailById(id, read_code){
+      var params = {};
+        if(read_code!=null && read_code.length>0){
+          params.read_code = read_code;
+      }
+      AXIOS.get('/api/v1/memory/'+id,{
+        params: params
+      }).then(response=>{
         if(response.data.ok==true){
           this.memDetail = response.data.data;
         }else{
@@ -449,6 +481,7 @@ return {
             title: '错误',
             message: response.data.message
           })
+          this.memoryDetailBoxVisible=false;
         }
       }).catch(e=>{
         this.$notify.error({
@@ -457,13 +490,18 @@ return {
         })
       })
     },
-    showMemDetailWin(id){
-      this.memoryDetailBoxVisible = true;
+    showMemDetailWin(id, locked){
+      if(locked==true){
+          this.read_code="";
+          this.inputReadCodeVisible = true;
+          this.current_id = id;
+      }else{
+        this.memoryDetailBoxVisible = true;
 
-      if(id=='tutorial'){
-        this.readonlydetail = true;
-        this.memDetail.title = "操作说明";
-        this.memDetail.content = `<p>
+        if(id=='tutorial'){
+          this.readonlydetail = true;
+          this.memDetail.title = "操作说明";
+          this.memDetail.content = `<p>
     在地图上任意位置右键弹出菜单
 </p>
 <p>
@@ -497,10 +535,14 @@ return {
 </p>`;
         this.memDetail.icon = "tutorial.png"
       }else{
-        this.readonlydetail=false;
-        this.detailMode='view';
-        this.loadMemoryDetailById(id);
+          this.readonlydetail=false;
+          this.detailMode='view';
+          this.loadMemoryDetailById(id);
+        
       }
+      }
+
+      
     },
     editMemPoint(id){
       // make title and content edit mode
@@ -737,7 +779,7 @@ return {
       var storeThis = this;
       $.ajax(
       {
-        url:'http://api.map.baidu.com/location/ip',
+        url:'https://api.map.baidu.com/location/ip',
         data:{
           coor:'bd09ll',
           ak:'Er8iGG4UMfSd3Ckuc6w8C56peI4ge1Ih'

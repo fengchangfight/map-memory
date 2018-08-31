@@ -10,4 +10,5 @@ type MemoryDetailVO struct {
 	Username  string  `json:"username"`
 	Nickname  string  `json:"nickname"`
 	CreatedAt string  `json:"created_at"`
+	Locked    bool
 }

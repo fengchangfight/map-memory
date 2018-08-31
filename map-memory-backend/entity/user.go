@@ -10,6 +10,7 @@ type User struct {
 	Nickname string
 	Email    string
 	RegDate  time.Time
+	ReadCode string
 }
 
 func (User) TableName() string {

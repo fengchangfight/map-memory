@@ -9,4 +9,5 @@ type MemoryVO struct {
 	Latitude  float64   `json:"latitude"`
 	Icon      string    `json:"icon"`
 	CreatedAt time.Time `json:"createdAt"`
+	Locked    bool      `json:"locked"`
 }

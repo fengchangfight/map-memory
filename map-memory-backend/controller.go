@@ -29,13 +29,13 @@ func GetPersonMemory(ctx *gin.Context) {
 
 	pageStr := params["page"]
 
-	title_queryArr := params["title_query"]
+	queryArr := params["query"]
 
-	var title_query string
-	if title_queryArr != nil && len(title_queryArr) > 0 {
-		title_query = title_queryArr[0]
+	var query string
+	if queryArr != nil && len(queryArr) > 0 {
+		query = queryArr[0]
 	} else {
-		title_query = ""
+		query = ""
 	}
 
 	var page int
@@ -58,13 +58,13 @@ func GetPersonMemory(ctx *gin.Context) {
 	var result []model.MemoryVO
 	var count int
 
-	if len(title_query) > 0 {
-		config.RDB_CONN.Table("mp_memory").Offset((page-1)*config.ITEMS_PER_PAGE).Limit(config.ITEMS_PER_PAGE).Order("created_at desc").Select("id, title, longitude, latitude, icon, created_at").Where("user_id = ? and title like ? ", current_uid, "%"+title_query+"%").Scan(&result)
-		config.RDB_CONN.Table("mp_memory").Where("user_id = ? and title like ? ", current_uid, "%"+title_query+"%").Count(&count)
+	if len(query) > 0 {
+		config.RDB_CONN.Table("mp_memory").Offset((page-1)*config.ITEMS_PER_PAGE).Limit(config.ITEMS_PER_PAGE).Order("created_at desc").Select("id, title, longitude, latitude, icon, created_at, locked").Where("user_id = ? and (title like ? or content like ?) ", current_uid, "%"+query+"%", "%"+query+"%").Scan(&result)
+		config.RDB_CONN.Table("mp_memory").Where("user_id = ? and (title like ? or content like ?) ", current_uid, "%"+query+"%", "%"+query+"%").Count(&count)
 	} else {
 		config.RDB_CONN.Table("mp_memory").Where("user_id = ?", current_uid).Count(&count)
 		//config.RDB_CONN.Model(&entity.Memory{}).Where("user_id = ?", current_uid).Count(&count)
-		config.RDB_CONN.Table("mp_memory").Offset((page-1)*config.ITEMS_PER_PAGE).Limit(config.ITEMS_PER_PAGE).Order("created_at desc").Select("id, title, longitude, latitude, icon, created_at").Where("user_id = ? ", current_uid).Scan(&result)
+		config.RDB_CONN.Table("mp_memory").Offset((page-1)*config.ITEMS_PER_PAGE).Limit(config.ITEMS_PER_PAGE).Order("created_at desc").Select("id, title, longitude, latitude, icon, created_at, locked").Where("user_id = ? ", current_uid).Scan(&result)
 	}
 
 	// // fmt.Println(result)
@@ -102,6 +102,44 @@ func UpdateMemoryContent(ctx *gin.Context) {
 
 	ctx.JSON(http.StatusOK, gin.H{"ok": true, "message": "成功更新记忆点", "data": memory.ID})
 }
+func UpdateMemoryLockById(ctx *gin.Context) {
+	mid := ctx.Param("id")
+
+	x, _ := ioutil.ReadAll(ctx.Request.Body)
+	var mapResult map[string]interface{}
+	if err := json.Unmarshal([]byte(x), &mapResult); err != nil {
+		fmt.Println(err)
+	}
+
+	locked := mapResult["locked"].(bool)
+	read_code := mapResult["read_code"]
+
+	if locked == false {
+		// this is to unlock, need to check the read_code
+		session := sessions.Default(ctx)
+		username := session.Get("user").(string)
+		var user entity.User
+		config.RDB_CONN.First(&user, "username = ?", username)
+		if read_code == nil || user.ReadCode != read_code {
+			ctx.JSON(http.StatusOK, gin.H{"ok": false, "message": "阅读密码不正确", "data": read_code})
+			return
+		}
+	}
+	// update memory id, with title and content
+
+	var memory entity.Memory
+	i, err := strconv.ParseInt(mid, 10, 64)
+	if err != nil {
+		ctx.JSON(http.StatusOK, gin.H{"ok": false, "message": "不合法的ID", "data": err})
+	}
+	memory.ID = i
+
+	///lockedInt := map[bool]int{true: 1, false: 0}[locked]
+	config.RDB_CONN.Model(&memory).UpdateColumns(map[string]interface{}{"locked": locked})
+
+	ctx.JSON(http.StatusOK, gin.H{"ok": true, "message": "成功更新记忆锁", "data": memory.ID})
+
+}
 
 func UpdateMemoryById(ctx *gin.Context) {
 	mid := ctx.Param("id")
@@ -133,27 +171,34 @@ func UpdateMemoryById(ctx *gin.Context) {
 func QueryMemoryById(ctx *gin.Context) {
 	mid := ctx.Param("id")
 
-	//var memory entity.Memory
-
-	//config.RDB_CONN.First(&memory, "id = ?", mid)
-
 	var result model.MemoryDetailVO
-	config.RDB_CONN.Table("mp_memory").Select("mp_memory.id, title, content, longitude, latitude, icon, mp_user.username, mp_user.nickname, created_at").Joins("inner join mp_user on mp_user.id = mp_memory.user_id").Where("mp_memory.id = ?", mid).Scan(&result)
+	config.RDB_CONN.Table("mp_memory").Select("mp_memory.id, title, content, longitude, latitude, icon, mp_user.username, mp_user.nickname, created_at, locked").Joins("inner join mp_user on mp_user.id = mp_memory.user_id").Where("mp_memory.id = ?", mid).Scan(&result)
 
-	// result := model.MemoryDetailVO{
-	// 	ID:        memory.ID,
-	// 	Title:     memory.Title,
-	// 	Content:   memory.Content,
-	// 	Longitude: memory.Longitude,
-	// 	Latitude:  memory.Latitude,
-	// 	Icon:      memory.Icon,
-	// 	Username:  memory.User.Username,
-	// 	CreatedAt: memory.CreatedAt.String(),
-	// }
+	if result.Locked == true {
+		// check if read code is provided
+		params := ctx.Request.URL.Query()
+		read_code_arr := params["read_code"]
 
-	ctx.JSON(http.StatusOK, gin.H{"ok": true, "message": "成功获取记忆详情", "data": result})
+		if read_code_arr == nil || len(read_code_arr) < 1 {
+			ctx.JSON(http.StatusOK, gin.H{"ok": false, "message": "未提供阅读密码", "data": false})
+		} else {
+			read_code := read_code_arr[0]
+			session := sessions.Default(ctx)
+			username := session.Get("user").(string)
+			var user entity.User
+			config.RDB_CONN.First(&user, "username = ?", username)
+			if user.ReadCode == read_code {
+				ctx.JSON(http.StatusOK, gin.H{"ok": true, "message": "成功获取记忆详情", "data": result})
+			} else {
+				ctx.JSON(http.StatusOK, gin.H{"ok": false, "message": "阅读密码不匹配", "data": false})
+			}
+		}
+	} else {
+		ctx.JSON(http.StatusOK, gin.H{"ok": true, "message": "成功获取记忆详情", "data": result})
+	}
 
 }
+
 func UpdateUserInfo(ctx *gin.Context) {
 	x, _ := ioutil.ReadAll(ctx.Request.Body)
 	var mapResult map[string]interface{}
@@ -186,6 +231,31 @@ func UpdateUserInfo(ctx *gin.Context) {
 	config.RDB_CONN.Model(&user).Updates(mp2Update)
 
 	ctx.JSON(http.StatusOK, gin.H{"ok": true, "message": "成功更新用户信息", "data": user.ID})
+}
+func UpdateReadCode(ctx *gin.Context) {
+	x, _ := ioutil.ReadAll(ctx.Request.Body)
+	var mapResult map[string]interface{}
+	if err := json.Unmarshal([]byte(x), &mapResult); err != nil {
+		fmt.Println(err)
+	}
+
+	oldReadCode := mapResult["old_read_code"].(string)
+	newReadCode := mapResult["new_read_code"].(string)
+
+	// check if old password match
+	session := sessions.Default(ctx)
+	username := session.Get("user").(string)
+
+	var user entity.User
+	config.RDB_CONN.First(&user, "username = ?", username)
+	if oldReadCode != user.ReadCode {
+		ctx.JSON(http.StatusOK, gin.H{"ok": false, "message": "原阅读密码不正确", "data": false})
+		return
+	} else {
+		config.RDB_CONN.Model(&user).UpdateColumns(entity.User{ReadCode: newReadCode})
+		ctx.JSON(http.StatusOK, gin.H{"ok": true, "message": "成功更新阅读密码", "data": user.ID})
+	}
+
 }
 
 func UpdatePassword(ctx *gin.Context) {
@@ -237,7 +307,7 @@ func GetPersonMemoryInBound(ctx *gin.Context) {
 	// select memory by uid and within bound
 
 	var result []model.MemoryVO
-	config.RDB_CONN.Table("mp_memory").Select("id, title, content, longitude, latitude, icon").Where("user_id = ? and longitude > ? and longitude < ? and latitude > ? and latitude < ?", current_uid, south_west_x, north_east_x, south_west_y, north_east_y).Scan(&result)
+	config.RDB_CONN.Table("mp_memory").Select("id, title, content, longitude, latitude, icon, locked").Where("user_id = ? and longitude > ? and longitude < ? and latitude > ? and latitude < ?", current_uid, south_west_x, north_east_x, south_west_y, north_east_y).Scan(&result)
 
 	// fmt.Println(result)
 

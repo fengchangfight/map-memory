@@ -85,9 +85,9 @@ func main() {
 	router = gin.Default()
 
 	store := cookie.NewStore([]byte("secret"))
-	// store.Options(sessions.Options{
-	// 	MaxAge: 8000,
-	// })
+	store.Options(sessions.Options{
+		MaxAge: 8000,
+	})
 	router.Use(sessions.Sessions("mmsession", store))
 
 	orig := "http://localhost:8043"

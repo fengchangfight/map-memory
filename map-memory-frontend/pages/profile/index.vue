@@ -17,6 +17,8 @@
                 <label v-if="phoneError" class="phone-invalid" >*{{phoneErrorMessage}}*</label>
                 </el-form-item>
 
+                
+
                 <el-form-item label="邮箱">
                 <el-input v-model="email"  v-verify="email" @change="emailValidate"></el-input>
                 <label v-if="emailError" class="email-invalid" >*{{emailErrorMessage}}*</label>
@@ -52,6 +54,24 @@
               </el-form>
             </div>
           </b-tab>
+          <b-tab title="阅读密码">
+            <div class="basic-form-holder">
+              <el-form  size="mini" ref="pass-form" label-width="88px">
+                <el-form-item label="原阅读密码">
+                  <el-input v-model="old_read_code" type="password"></el-input>
+                </el-form-item>
+                <el-form-item label="新阅读密码">
+                  <el-input type="password" @change="newReadCodeValid" v-verify="new_read_code" v-model="new_read_code"></el-input>
+                  <label v-if="newreadcodeError" class="read-code-invalid" >*{{newreadcodeErrorMessage}}*</label>
+                </el-form-item>
+                <el-form-item label="新重复阅读密码">
+                  <el-input v-model="re_new_read_code" type="password" @change="checkSameReadCode"></el-input>
+                  <label v-if="renewreadcodeError" class="password-invalid" >*两次输入密码不一致*</label>
+                </el-form-item>
+                <el-button type="primary" style="margin-left: 40px" size="mini" @click="updateReadCode">更新</el-button>
+            </el-form>
+            </div>
+          </b-tab>
 
         </b-tabs>
      </div>
@@ -85,6 +105,10 @@ export default {
       new_password: {
          minLength:6,
          message: "密码不得小于6位"
+      },
+      new_read_code: {
+         minLength:3,
+         message: "阅读密码不得小于3位"
       }
     },
     data() {
@@ -96,9 +120,14 @@ export default {
         showProfileUpload: false,
         old_password: '',
         new_password: '',
+        old_read_code: '',
+        new_read_code:'',
+        re_new_read_code:'',
         re_new_password: '',
         newpasswordError: false,
         renewpasswordError: false,
+        newreadcodeError: false,
+        renewreadcodeError: false,
         newpasswordErrorMessage: '',
         phoneError: false,
         emailError: false,
@@ -134,6 +163,13 @@ export default {
       toggleShow(){
         this.showProfileUpload = !this.showProfileUpload;
       },
+      checkSameReadCode(){
+        if(this.re_new_read_code!=this.new_read_code){
+          this.renewreadcodeError = true;
+        }else{
+          this.renewreadcodeError = false;
+        }
+      },
       checkSame(){
         if(this.re_new_password!=this.new_password){
           this.renewpasswordError = true;
@@ -141,6 +177,44 @@ export default {
           this.renewpasswordError = false;
         }
       },
+      updateReadCode(){
+        var valid = this.newReadCodeValid();
+        if(!valid){
+          return;
+        }
+        if(this.re_new_read_code!=this.new_read_code){
+          this.renewreadcodeError = true;
+          return;
+        }
+        // do the real stuff to update password
+        this.updating = true;
+        AXIOS.post('/api/v1/user/readcode',{
+          old_read_code: this.old_read_code,
+          new_read_code: this.new_read_code
+        }).then(response => {
+          if(response.data.ok==true){
+            this.$notify({
+              title: '成功',
+              type: 'success',
+              message: response.data.message
+            });
+          }else{
+            this.$notify.error({
+              title: '更新失败',
+              message: response.data.message
+            });
+          }
+          this.updating=false;
+
+        }).catch(e => {
+          this.$notify.error({
+            title: '失败',
+            message: '未知错误'
+          });
+          this.updating=false;
+        })
+      },
+     
       updatePassword() {
         var valid = this.newpasswordValidate();
         if(!valid){
@@ -177,6 +251,17 @@ export default {
           });
           this.updating=false;
         })
+      },
+      newReadCodeValid(){
+        var valid = this.$verify.check();
+        if(this.$verify.$errors.new_read_code.length>0){
+          this.newreadcodeError = true;
+          this.newreadcodeErrorMessage = this.$verify.$errors.new_read_code[0];
+        }else{
+          this.newreadcodeError = false;
+          this.newreadcodeErrorMessage = '';
+        }
+        return !this.newreadcodeError;
       },
       newpasswordValidate(){
         var valid = this.$verify.check();
@@ -314,7 +399,7 @@ export default {
   height: 300px;
 }
 
-.phone-invalid, .email-invalid, .nickname-invalid, .password-invalid{
+.phone-invalid, .email-invalid, .nickname-invalid, .password-invalid, .read-code-invalid{
   color: red;
   font: 12px/18px STHeiti,'Microsoft YaHei',arial,\5b8b\4f53;
 }
