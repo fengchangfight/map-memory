@@ -86,7 +86,7 @@ func main() {
 
 	store := cookie.NewStore([]byte("secret"))
 	store.Options(sessions.Options{
-		MaxAge: 8000,
+		MaxAge: 32000,
 	})
 	router.Use(sessions.Sessions("mmsession", store))
 

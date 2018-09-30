@@ -231,6 +231,9 @@ export default{
         },{
           id:'elephant.png',
           name:'大象'
+        },{
+          id:'weekend.png',
+          name:'周末'
         }
       ],
     }

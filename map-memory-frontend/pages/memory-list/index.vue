@@ -6,11 +6,13 @@
       width="30%"
       :fullscreen="false"
       >
-      <el-form autocomplete="off">
+      <div @keyup.enter="submitReadCode">
+        <el-form autocomplete="off" >
         <el-input placeholder="阅读密码(初始为123)" autocomplete="off" v-model="read_code" type="password"></el-input>
         <input type="password" style="visibility:hidden" />
         <el-button @click="submitReadCode">提交</el-button>
       </el-form>
+      </div>
     </el-dialog>
     <el-dialog
       title="解锁"
@@ -184,6 +186,7 @@ export default {
         inputReadCodeVisible: false,
         base_service_url:'',
         title_query:'',
+        query:'',
         state,
         memoryDetailBoxVisible: false,
         detailMode:'view',
@@ -295,6 +298,7 @@ export default {
           })
       }, 2500),
       filterMemory(){
+        this.currentPage = 1;
         this.getMemoryListData();
       },
       saveEdit(){
