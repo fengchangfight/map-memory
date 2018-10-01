@@ -25,7 +25,22 @@ func IownMemoryFromPost(ctx *gin.Context) {
 		ctx.AbortWithStatus(http.StatusUnauthorized)
 	}
 }
+func AuthIsOwnerOfMemoryByIdOrIsPublic() gin.HandlerFunc {
+	return func(c *gin.Context) {
+		session := sessions.Default(c)
+		uid := session.Get("uid").(int64)
 
+		mid := c.Param("id")
+		var mem entity.Memory
+		config.RDB_CONN.Table("mp_memory").Where("id = ?", mid).Find(&mem)
+
+		if mem.IsPublic || (mem.ID != 0 && mem.UserID == uid) {
+			c.Next()
+		} else {
+			c.AbortWithStatus(http.StatusUnauthorized)
+		}
+	}
+}
 func AuthIsOwnerOfMemoryById() gin.HandlerFunc {
 	return func(c *gin.Context) {
 		session := sessions.Default(c)
@@ -46,6 +61,20 @@ func AuthIsOwnerOfMemoryById() gin.HandlerFunc {
 		// get memory by id
 	}
 }
+func IsPublicMemory() gin.HandlerFunc {
+	return func(c *gin.Context) {
+		mid := c.Param("id")
+		var mem entity.Memory
+		config.RDB_CONN.Table("mp_memory").Where("id = ?", mid).Find(&mem)
+
+		if mem.IsPublic {
+			c.Next()
+		} else {
+			c.AbortWithStatus(http.StatusUnauthorized)
+		}
+	}
+}
+
 func AuthNotRequired() gin.HandlerFunc {
 	return func(c *gin.Context) {
 		session := sessions.Default(c)

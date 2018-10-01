@@ -12,7 +12,7 @@ func initializeRoutes() {
 	// Handle the index route
 
 	router.GET("/api/v1/user/whoami", AuthRequired(), whoami)
-	router.GET("/api/v1/memory/:id", AuthRequired(), AuthIsOwnerOfMemoryById(), QueryMemoryById)
+	router.GET("/api/v1/memory/:id", AuthRequired(), AuthIsOwnerOfMemoryByIdOrIsPublic(), QueryMemoryById)
 	router.GET("/api/v1/favorite-location", AuthRequired(), GetMyFavLoc)
 	router.GET("/api/v1/memory-my", AuthRequired(), GetPersonMemory)
 	router.GET("/api/v1/user/user-info", AuthRequired(), GetUserInfo)

@@ -112,4 +112,11 @@
                <column name="locked" type="tinyint"/>
            </addColumn>
     </changeSet>
+    <!-- 添加表字段 记录记忆状态 -->
+    <changeSet author="fanchenggang" id="addColumn-memory-is-public">
+         <addColumn
+                 tableName="mp_memory">
+             <column name="is_public" type="tinyint"/>
+         </addColumn>
+    </changeSet>
 </databaseChangeLog>
