@@ -89,8 +89,6 @@
       :fullscreen="true"
       >
       <div style="display:flex;flex-direction:column">
-
-
         <div style="display:flex;position:relative;">
             <button v-if="detailMode=='view' && memDetail.i_am_owner && readonlydetail==false" @click="deleteMemPoint(memDetail.id)" title="删除" id="delete-mem-point"></button>
             <button v-if="detailMode=='view' && memDetail.i_am_owner && readonlydetail==false" @click="editMemPoint(memDetail.id)" title="编辑" id="edit-mem-point"></button>
@@ -935,8 +933,6 @@ return {
       max-height: 400px;
       overflow-y: auto;
 }
-.small-notes{
-  font-size: 50%;
-}
+
 
 </style>
