@@ -226,6 +226,12 @@ func CreateMemoryPoint(ctx *gin.Context) {
 	content := mapResult["content"].(string)
 	icon := mapResult["icon"].(string)
 
+	//记忆的状态 是公开的还是私密的 0私密1 公开
+	openness, err := strconv.Atoi(mapResult["openness"].(string))
+	if err != nil {
+		ctx.JSON(http.StatusOK, gin.H{"ok": false, "message": "不合法的状态", "data": err})
+	}
+
 	// create 2 parameters: current timestamp, and login user
 	current_time := time.Now()
 	session := sessions.Default(ctx)
@@ -241,6 +247,7 @@ func CreateMemoryPoint(ctx *gin.Context) {
 		UserID:    current_uid,
 		CreatedAt: current_time,
 		Locked:    false,
+		Openness:  openness,
 	}
 
 	createResult := config.RDB_CONN.Create(&memory_record)

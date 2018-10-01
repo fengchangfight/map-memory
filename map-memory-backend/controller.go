@@ -301,14 +301,31 @@ func GetPersonMemoryInBound(ctx *gin.Context) {
 	north_east_x := mapResult["north_east_x"].(float64)
 	north_east_y := mapResult["north_east_y"].(float64)
 
+	//0 仅查看自己的 1 查看所有人的
+	view_all, err := strconv.Atoi(mapResult["view_all"].(string))
+	if err != nil {
+		view_all = 0
+	}
+
 	// get current uid
 	session := sessions.Default(ctx)
 	current_uid := session.Get("uid").(int64)
 	// select memory by uid and within bound
 
 	var result []model.MemoryVO
-	config.RDB_CONN.Table("mp_memory").Select("id, title, content, longitude, latitude, icon, locked").Where("user_id = ? and longitude > ? and longitude < ? and latitude > ? and latitude < ?", current_uid, south_west_x, north_east_x, south_west_y, north_east_y).Scan(&result)
 
+	DB := config.RDB_CONN
+
+	DB = DB.Table("mp_memory").
+		Select("id, title, content, longitude, latitude, icon, locked").
+		Where("longitude > ? and longitude < ? and latitude > ? and latitude < ?", south_west_x, north_east_x, south_west_y, north_east_y)
+	if view_all == 0 {
+		DB = DB.Where("user_id = ?", current_uid)
+	} else {
+		DB = DB.Where("openness = ?", 1)
+	}
+	DB.LogMode(true)
+	DB.Scan(&result)
 	// fmt.Println(result)
 
 	ctx.JSON(http.StatusOK, gin.H{"ok": true, "message": "成功获取范围内个人的记忆点", "data": result})

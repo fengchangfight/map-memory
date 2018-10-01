@@ -13,6 +13,7 @@ type Memory struct {
 	UserID    int64
 	CreatedAt time.Time
 	Locked    bool
+	Openness  int //是否公开 0否 1是
 }
 
 func (Memory) TableName() string {
