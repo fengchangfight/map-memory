@@ -453,6 +453,8 @@ return {
             title: '错误',
             message: response.data.message
           })
+          this.my_mem_data = []
+          this.loadMemPoints();
         }
 
       }).catch(e=>{
@@ -460,6 +462,8 @@ return {
           title: '错误',
           message: '未知错误'
         })
+        this.my_mem_data = []
+        this.loadMemPoints();
       })
 
 
