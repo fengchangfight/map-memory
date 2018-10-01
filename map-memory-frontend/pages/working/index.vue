@@ -63,9 +63,14 @@
           <el-input v-model="form.title" maxlength="300"></el-input>
         </el-form-item>
         <el-form-item label="记忆详情">
-
         <wysiwyg v-model="form.memory_content" />
-
+        </el-form-item>
+        <el-form-item>
+          <el-switch
+            v-model="form.openness"
+            active-text="公开"
+            inactive-text="私密">
+          </el-switch>
         </el-form-item>
       </el-form>
 
@@ -126,6 +131,11 @@
 
         <div class="search-box">
           <div style="display: flex;margin: 0 auto;">
+
+            <div class="search-input-container-row">
+              查看所有人:
+              <el-switch v-model="view_all" @change="changeView"></el-switch>
+            </div>
             <div class="search-input-container-row"><el-input v-model="keyword" placeholder="地名关键词"></el-input></div>
             <div class="search-input-container-row"><el-button @click="clear()" type="primary">清空搜索</el-button></div>
             <div class="search-input-container-row">
@@ -253,7 +263,8 @@ return {
 
       form:{
         title:'',
-        memory_content:''
+        memory_content:'',
+        openness:false,
       },
       load_scope:{
         south_west_x: 0.0,
@@ -285,7 +296,8 @@ return {
       selected_favname:'',
       base_service_url:'',
       physicLongitude:'',
-      physicLatitude:''
+      physicLatitude:'',
+      view_all:false,//查看所有的
     }
   },
   methods: {
@@ -656,7 +668,8 @@ return {
         "south_west_x": this.load_scope.south_west_x,
         "south_west_y": this.load_scope.south_west_y,
         "north_east_x": this.load_scope.north_east_x,
-        "north_east_y": this.load_scope.north_east_y
+        "north_east_y": this.load_scope.north_east_y,
+        "view_all":this.view_all?'1':'0'
       }).then(response=>{
         if(response.data.ok==true){
           this.my_mem_data = response.data.data
@@ -690,7 +703,8 @@ return {
         "latitude": this.selected_latitude,
         "title": this.form.title,
         "content": this.form.memory_content,
-        "icon": this.selected_icon
+        "icon": this.selected_icon,
+        "openness":this.form.openness?'1':'0',
       }).then(response =>{
         if(response.data.ok==true){
           this.$notify({
@@ -816,6 +830,9 @@ return {
       this.zoom = 19
 
       //this.loadMemPoints();
+    },
+    changeView (){
+      this.loadMemPoints();
     }
   },
   mounted(){
