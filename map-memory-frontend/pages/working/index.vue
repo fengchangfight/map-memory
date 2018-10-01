@@ -460,7 +460,7 @@ return {
       }).catch(e=>{
         this.$notify.error({
           title: '错误',
-          message: '未知错误'
+          message: e.response.statusText
         })
         this.my_mem_data = []
         this.loadMemPoints();
