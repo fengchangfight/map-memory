@@ -933,6 +933,4 @@ return {
       max-height: 400px;
       overflow-y: auto;
 }
-
-
 </style>

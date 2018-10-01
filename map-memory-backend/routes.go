@@ -24,7 +24,7 @@ func initializeRoutes() {
 
 	router.PUT("/api/v1/memory/:id", AuthRequired(), AuthIsOwnerOfMemoryById(), UpdateMemoryById)
 	router.PUT("/api/v1/memory-lock/:id", AuthRequired(), AuthIsOwnerOfMemoryById(), UpdateMemoryLockById)
-	router.PUT("/api/v1/memory-pos/:id", AuthRequired(), UpdateMemoryPosById)
+	router.PUT("/api/v1/memory-pos/:id", AuthRequired(), AuthIsOwnerOfMemoryById(), UpdateMemoryPosById)
 	router.PUT("/api/v1/favorite-location/used/:id", AuthRequired(), UpdateFavilocUsedTime)
 	router.PUT("/api/v1/memory-content", AuthRequired(), IownMemoryFromPost, UpdateMemoryContent)
 
