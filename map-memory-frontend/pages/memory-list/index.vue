@@ -36,7 +36,7 @@
       <div style="display:flex;flex-direction:column;">
         <div style="display:flex;position:relative;">
             <button v-if="detailMode=='view'" @click="editMemPoint(memDetail.id)" title="编辑" id="edit-mem-point"></button>
-            <h3 v-if="detailMode=='view'" style="margin: 0 auto;padding:0px 30px 0px 40px;"><span style="float: left"><img width="40" height="40" :src="'imgs/'+memDetail.icon"/></span>&nbsp;&nbsp;{{memDetail.title}}</h3>
+            <h3 v-if="detailMode=='view'" style="margin: 0 auto;padding:0px 30px 0px 40px;"><span style="float: left"><img width="40" height="40" :src="'imgs/'+memDetail.icon"/></span>&nbsp;&nbsp;{{memDetail.title}}<span class="small-notes" v-if="!memDetail.is_public">(私密)</span><span class="small-notes" v-if="memDetail.is_public">(公开)</span></h3>
             <div v-if="detailMode=='edit'" style="display:flex;width:100%;">
               <el-select v-model="memDetail.icon" filterable placeholder="记忆图标" @change="setIcon()">
                                  <el-option
@@ -60,6 +60,12 @@
         <div v-if="detailMode=='edit'">
 
           <wysiwyg @change="autosave" v-model="memDetail.content" />
+          <el-switch
+            v-model="memDetail.is_public"
+            active-text="公开"
+            @change="changeAccessibility"
+            inactive-text="私密">
+          </el-switch>
           <!-- <froala v-model="memDetail.content" :config="option"></froala> -->
           <div class="button-container">
               <el-button style="float: right; margin-right:10px;" type="primary" size="small" @click="saveEdit">保存</el-button>
@@ -135,7 +141,7 @@
              v-on:current-change="changePage">
          </el-pagination>
        </div>
-        
+
     </div>
     <div class="bottom">
       <app-footer></app-footer>
@@ -201,12 +207,19 @@ export default {
       }
     },
     methods: {
+      changeAccessibility(val){
+          if(val==true){
+            this.memDetail.is_public==true;
+          }else{
+            this.memDetail.is_public==false;
+          }
+      },
       unlockDoStuff(){
          if(this.read_code==null || this.read_code.length<1){
             swal ( "提示" ,  "不能提交空的阅读密码哦(づ￣ 3￣)づ" ,  "info" );
             return;
           }
-          
+
           AXIOS.put('/api/v1/memory-lock/'+this.current_id,{
             locked: false,
             read_code: this.read_code
@@ -274,7 +287,7 @@ export default {
       autosave:_.debounce(function () {
           var data = {'id': this.memDetail.id, 'content':this.memDetail.content};
           AXIOS.put('/api/v1/memory-content'
-          ,Qs.stringify(data), 
+          ,Qs.stringify(data),
           {headers:{'Content-Type':'application/x-www-form-urlencoded'}}).then(response=>{
             if(response.data.ok==true){
               this.autosaveflag = true;
@@ -306,7 +319,8 @@ export default {
         AXIOS.put('/api/v1/memory/'+this.memDetail.id,{
           title: this.memDetail.title,
           content: this.memDetail.content,
-          icon: this.memDetail.icon
+          icon: this.memDetail.icon,
+          is_public: this.memDetail.is_public
         }).then(response=>{
           if(response.data.ok==true){
             this.$notify({
@@ -379,7 +393,7 @@ export default {
            this.memoryDetailBoxVisible = true;
            this.loadMemoryDetailById(id);
         }
-        
+
       },
       deleteMemPoint(id){
         this.$confirm('确认删除该记忆点？')
@@ -432,7 +446,7 @@ export default {
           this.list_loading=false;
 
         }).catch(e=>{
-          
+
           console.log('获取列表视图错误')
           this.list_loading=false;
           this.goPage('/login')

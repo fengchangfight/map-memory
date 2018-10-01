@@ -13,6 +13,7 @@ import (
 
 	"github.com/gin-contrib/sessions"
 	"github.com/gin-gonic/gin"
+	"github.com/go-sql-driver/mysql"
 )
 
 func GetUserInfo(ctx *gin.Context) {
@@ -59,12 +60,12 @@ func GetPersonMemory(ctx *gin.Context) {
 	var count int
 
 	if len(query) > 0 {
-		config.RDB_CONN.Table("mp_memory").Offset((page-1)*config.ITEMS_PER_PAGE).Limit(config.ITEMS_PER_PAGE).Order("created_at desc").Select("id, title, longitude, latitude, icon, created_at, locked").Where("user_id = ? and (title like ? or content like ?) ", current_uid, "%"+query+"%", "%"+query+"%").Scan(&result)
+		config.RDB_CONN.Table("mp_memory").Offset((page-1)*config.ITEMS_PER_PAGE).Limit(config.ITEMS_PER_PAGE).Order("created_at desc").Select("id, title, longitude, latitude, icon, created_at, locked, is_public").Where("user_id = ? and (title like ? or content like ?) ", current_uid, "%"+query+"%", "%"+query+"%").Scan(&result)
 		config.RDB_CONN.Table("mp_memory").Where("user_id = ? and (title like ? or content like ?) ", current_uid, "%"+query+"%", "%"+query+"%").Count(&count)
 	} else {
 		config.RDB_CONN.Table("mp_memory").Where("user_id = ?", current_uid).Count(&count)
 		//config.RDB_CONN.Model(&entity.Memory{}).Where("user_id = ?", current_uid).Count(&count)
-		config.RDB_CONN.Table("mp_memory").Offset((page-1)*config.ITEMS_PER_PAGE).Limit(config.ITEMS_PER_PAGE).Order("created_at desc").Select("id, title, longitude, latitude, icon, created_at, locked").Where("user_id = ? ", current_uid).Scan(&result)
+		config.RDB_CONN.Table("mp_memory").Offset((page-1)*config.ITEMS_PER_PAGE).Limit(config.ITEMS_PER_PAGE).Order("created_at desc").Select("id, title, longitude, latitude, icon, created_at, locked, is_public").Where("user_id = ? ", current_uid).Scan(&result)
 	}
 
 	// // fmt.Println(result)
@@ -141,6 +142,51 @@ func UpdateMemoryLockById(ctx *gin.Context) {
 
 }
 
+func CreateMemoryPoint(ctx *gin.Context) {
+	x, _ := ioutil.ReadAll(ctx.Request.Body)
+	var mapResult map[string]interface{}
+	if err := json.Unmarshal([]byte(x), &mapResult); err != nil {
+		fmt.Println(err)
+	}
+	// get 5 parameters: longitude, latitude, title, content, icon
+	longitude := mapResult["longitude"].(float64)
+	latitude := mapResult["latitude"].(float64)
+	title := mapResult["title"].(string)
+	content := mapResult["content"].(string)
+	icon := mapResult["icon"].(string)
+
+	//记忆的状态 是公开的还是私密的 0私密1 公开
+	is_public := mapResult["is_public"].(bool)
+
+	// create 2 parameters: current timestamp, and login user
+	current_time := time.Now()
+	session := sessions.Default(ctx)
+	current_uid := session.Get("uid").(int64)
+
+	// use the 7 parameter all together to create a new record or memory point
+	memory_record := entity.Memory{
+		Title:     title,
+		Content:   content,
+		Longitude: longitude,
+		Latitude:  latitude,
+		Icon:      icon,
+		UserID:    current_uid,
+		CreatedAt: current_time,
+		Locked:    false,
+		IsPublic:  is_public,
+	}
+
+	createResult := config.RDB_CONN.Create(&memory_record)
+
+	if createResult.Error != nil {
+		// error
+		ctx.JSON(http.StatusOK, gin.H{"ok": false, "message": createResult.Error.(*mysql.MySQLError).Message, "data": memory_record.ID})
+	} else {
+		ctx.JSON(http.StatusOK, gin.H{"ok": true, "message": "成功创建记忆点", "data": memory_record.ID})
+	}
+
+}
+
 func UpdateMemoryById(ctx *gin.Context) {
 	mid := ctx.Param("id")
 
@@ -153,6 +199,7 @@ func UpdateMemoryById(ctx *gin.Context) {
 	title := mapResult["title"].(string)
 	content := mapResult["content"].(string)
 	icon := mapResult["icon"].(string)
+	is_public := mapResult["is_public"].(bool)
 
 	// update memory id, with title and content
 
@@ -162,7 +209,8 @@ func UpdateMemoryById(ctx *gin.Context) {
 		ctx.JSON(http.StatusOK, gin.H{"ok": false, "message": "不合法的ID", "data": err})
 	}
 	memory.ID = i
-	config.RDB_CONN.Model(&memory).UpdateColumns(entity.Memory{Title: title, Content: content, Icon: icon})
+
+	config.RDB_CONN.Model(&memory).UpdateColumns(map[string]interface{}{"title": title, "content": content, "icon": icon, "is_public": is_public})
 
 	ctx.JSON(http.StatusOK, gin.H{"ok": true, "message": "成功更新记忆点", "data": memory.ID})
 
@@ -172,8 +220,12 @@ func QueryMemoryById(ctx *gin.Context) {
 	mid := ctx.Param("id")
 
 	var result model.MemoryDetailVO
-	config.RDB_CONN.Table("mp_memory").Select("mp_memory.id, title, content, longitude, latitude, icon, mp_user.username, mp_user.nickname, created_at, locked").Joins("inner join mp_user on mp_user.id = mp_memory.user_id").Where("mp_memory.id = ?", mid).Scan(&result)
+	config.RDB_CONN.Table("mp_memory").Select("mp_memory.id, title, content, longitude, latitude, icon, mp_user.username, mp_user.nickname, created_at, locked, is_public").Joins("inner join mp_user on mp_user.id = mp_memory.user_id").Where("mp_memory.id = ?", mid).Scan(&result)
 
+	session := sessions.Default(ctx)
+	username := session.Get("user").(string)
+	iamowner := (result.Username == username)
+	result.IamOwner = iamowner
 	if result.Locked == true {
 		// check if read code is provided
 		params := ctx.Request.URL.Query()
@@ -183,8 +235,7 @@ func QueryMemoryById(ctx *gin.Context) {
 			ctx.JSON(http.StatusOK, gin.H{"ok": false, "message": "未提供阅读密码", "data": false})
 		} else {
 			read_code := read_code_arr[0]
-			session := sessions.Default(ctx)
-			username := session.Get("user").(string)
+
 			var user entity.User
 			config.RDB_CONN.First(&user, "username = ?", username)
 			if user.ReadCode == read_code {
@@ -314,18 +365,19 @@ func GetPersonMemoryInBound(ctx *gin.Context) {
 
 	var result []model.MemoryVO
 
+	//config.RDB_CONN.Table("mp_memory").Select("id, title, content, longitude, latitude, icon, locked").Where("user_id = ? and longitude > ? and longitude < ? and latitude > ? and latitude < ?", current_uid, south_west_x, north_east_x, south_west_y, north_east_y).Scan(&result)
 	DB := config.RDB_CONN
-
 	DB = DB.Table("mp_memory").
 		Select("id, title, content, longitude, latitude, icon, locked").
 		Where("longitude > ? and longitude < ? and latitude > ? and latitude < ?", south_west_x, north_east_x, south_west_y, north_east_y)
 	if view_all == 0 {
 		DB = DB.Where("user_id = ?", current_uid)
 	} else {
-		DB = DB.Where("openness = ?", 1)
+		DB = DB.Where("is_public = ? or user_id = ?", 1, current_uid)
 	}
 	DB.LogMode(true)
 	DB.Scan(&result)
+
 	// fmt.Println(result)
 
 	ctx.JSON(http.StatusOK, gin.H{"ok": true, "message": "成功获取范围内个人的记忆点", "data": result})

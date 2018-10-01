@@ -11,4 +11,6 @@ type MemoryDetailVO struct {
 	Nickname  string  `json:"nickname"`
 	CreatedAt string  `json:"created_at"`
 	Locked    bool
+	IsPublic  bool `json:"is_public"`
+	IamOwner  bool `json:"i_am_owner"`
 }

@@ -13,7 +13,7 @@
         <el-button @click="submitReadCode">提交</el-button>
       </el-form>
       </div>
-      
+
     </el-dialog>
 
     <el-dialog
@@ -72,6 +72,13 @@
             inactive-text="私密">
           </el-switch>
         </el-form-item>
+        <el-form-item>
+          <el-switch
+            v-model="form.is_public"
+            active-text="公开"
+            inactive-text="私密">
+          </el-switch>
+        </el-form-item>
       </el-form>
 
       <span slot="footer" class="dialog-footer">
@@ -87,12 +94,10 @@
       :fullscreen="true"
       >
       <div style="display:flex;flex-direction:column">
-
-
         <div style="display:flex;position:relative;">
-            <button v-if="detailMode=='view' && readonlydetail==false" @click="deleteMemPoint(memDetail.id)" title="删除" id="delete-mem-point"></button>
-            <button v-if="detailMode=='view' && readonlydetail==false" @click="editMemPoint(memDetail.id)" title="编辑" id="edit-mem-point"></button>
-            <h3 v-if="detailMode=='view'" style="margin: 0 auto;padding:0px 30px 0px 40px;"><span style="float: left"><img width="40" height="40" :src="'imgs/'+memDetail.icon"/></span>&nbsp;&nbsp;{{memDetail.title}}</h3>
+            <button v-if="detailMode=='view' && memDetail.i_am_owner && readonlydetail==false" @click="deleteMemPoint(memDetail.id)" title="删除" id="delete-mem-point"></button>
+            <button v-if="detailMode=='view' && memDetail.i_am_owner && readonlydetail==false" @click="editMemPoint(memDetail.id)" title="编辑" id="edit-mem-point"></button>
+            <h3 v-if="detailMode=='view'" style="margin: 0 auto;padding:0px 30px 0px 40px;"><span style="float: left"><img width="40" height="40" :src="'imgs/'+memDetail.icon"/></span>&nbsp;&nbsp;{{memDetail.title}}<span class="small-notes" v-if="!memDetail.is_public">(私密)</span><span class="small-notes" v-if="memDetail.is_public">(公开)</span></h3>
             <div v-if="detailMode=='edit'" style="display:flex;width:100%;">
               <el-select v-model="memDetail.icon" filterable placeholder="记忆图标" @change="setIcon()">
                                  <el-option
@@ -117,6 +122,14 @@
         <div v-if="detailMode=='edit'">
 
           <wysiwyg @change="autosave" v-model="memDetail.content" />
+
+            <el-switch
+              v-model="memDetail.is_public"
+              active-text="公开"
+              @change="changeAccessibility"
+              inactive-text="私密">
+            </el-switch>
+
           <!-- <froala :config="option" v-model="memDetail.content"></froala> -->
           <div class="button-container">
               <el-button style="float: right; margin-right:10px;" type="primary" size="small" @click="saveEdit">保存</el-button>
@@ -132,10 +145,13 @@
         <div class="search-box">
           <div style="display: flex;margin: 0 auto;">
 
-            <div class="search-input-container-row">
-              查看所有人:
-              <el-switch v-model="view_all" @change="changeView"></el-switch>
+            <div class="search-input-container-row-switch">
+              <el-switch v-model="view_all"
+              active-text="显示公共笔记"
+              inactive-text="仅自己的"
+              @change="changeView"></el-switch>
             </div>
+
             <div class="search-input-container-row"><el-input v-model="keyword" placeholder="地名关键词"></el-input></div>
             <div class="search-input-container-row"><el-button @click="clear()" type="primary">清空搜索</el-button></div>
             <div class="search-input-container-row">
@@ -264,7 +280,7 @@ return {
       form:{
         title:'',
         memory_content:'',
-        openness:false,
+        is_public:false,
       },
       load_scope:{
         south_west_x: 0.0,
@@ -297,10 +313,17 @@ return {
       base_service_url:'',
       physicLongitude:'',
       physicLatitude:'',
-      view_all:false,//查看所有的
+      view_all:false////查看所有的
     }
   },
   methods: {
+    changeAccessibility(val){
+        if(val==true){
+          this.memDetail.is_public==true;
+        }else{
+          this.memDetail.is_public==false;
+        }
+      },
     submitReadCode(){
       if(this.read_code==null || this.read_code.length<1){
             swal ( "提示" ,  "不能提交空的阅读密码哦(づ￣ 3￣)づ" ,  "info" );
@@ -329,7 +352,7 @@ return {
     autosave:_.debounce(function () {
           var data = {'id': this.memDetail.id, 'content':this.memDetail.content};
           AXIOS.put('/api/v1/memory-content'
-          ,Qs.stringify(data), 
+          ,Qs.stringify(data),
           {headers:{'Content-Type':'application/x-www-form-urlencoded'}}).then(response=>{
             if(response.data.ok==true){
               this.autosaveflag = true;
@@ -345,7 +368,7 @@ return {
               if(count==0){
                 clearInterval(refreshIntervalId);
                 storeThis.autosaveflag = false;
-                
+
               }
              }, 1000);
             }
@@ -436,24 +459,28 @@ return {
             title: '错误',
             message: response.data.message
           })
+          this.my_mem_data = []
+          this.loadMemPoints();
         }
 
       }).catch(e=>{
         this.$notify.error({
           title: '错误',
-          message: '未知错误'
+          message: e.response.statusText
         })
+        this.my_mem_data = []
+        this.loadMemPoints();
       })
 
 
     },
     saveEdit(){
       // update with: id, title, content, that's it
-
       AXIOS.put('/api/v1/memory/'+this.memDetail.id,{
         title: this.memDetail.title,
         content: this.memDetail.content,
-        icon: this.memDetail.icon
+        icon: this.memDetail.icon,
+        is_public: this.memDetail.is_public
       }).then(response=>{
         if(response.data.ok==true){
           this.$notify({
@@ -490,6 +517,8 @@ return {
         params: params
       }).then(response=>{
         if(response.data.ok==true){
+          console.log("========")
+          console.log(response.data.data);
           this.memDetail = response.data.data;
         }else{
           this.$notify.error({
@@ -553,11 +582,11 @@ return {
           this.readonlydetail=false;
           this.detailMode='view';
           this.loadMemoryDetailById(id);
-        
+
       }
       }
 
-      
+
     },
     editMemPoint(id){
       // make title and content edit mode
@@ -660,7 +689,7 @@ return {
         }
       }).catch(e=>{
         console.log("无法载入收藏地点列表");
-        
+
       })
     },
     loadMemPoints(){
@@ -704,7 +733,7 @@ return {
         "title": this.form.title,
         "content": this.form.memory_content,
         "icon": this.selected_icon,
-        "openness":this.form.openness?'1':'0',
+        "is_public":this.form.is_public,
       }).then(response =>{
         if(response.data.ok==true){
           this.$notify({
@@ -821,6 +850,9 @@ return {
       }
       );
     },
+    changeView (){
+      this.loadMemPoints();
+    },
     mapready ({BMap, map}) {
       //console.log(BMap, map)
       this.checkCurrentLoc();
@@ -887,6 +919,11 @@ return {
 }
 .search-input-container-row{
   width: 200px;
+  margin-left:5px;
+}
+.search-input-container-row-switch{
+  margin-top:5px;
+  width: 200px;
 }
 #delete-mem-point{
   position: absolute;
@@ -909,5 +946,4 @@ return {
       max-height: 400px;
       overflow-y: auto;
 }
-
 </style>

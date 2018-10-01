@@ -213,6 +213,7 @@ func Add2FavoriteLocation(ctx *gin.Context) {
 
 }
 
+
 func CreateMemoryPoint(ctx *gin.Context) {
 	x, _ := ioutil.ReadAll(ctx.Request.Body)
 	var mapResult map[string]interface{}
@@ -260,6 +261,7 @@ func CreateMemoryPoint(ctx *gin.Context) {
 	}
 
 }
+
 
 func RegisterByEmail(ctx *gin.Context) {
 	env := getEnv()

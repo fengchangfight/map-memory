@@ -10,4 +10,5 @@ type MemoryVO struct {
 	Icon      string    `json:"icon"`
 	CreatedAt time.Time `json:"createdAt"`
 	Locked    bool      `json:"locked"`
+	IsPublic  bool      `json:"is_public"`
 }
