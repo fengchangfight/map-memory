@@ -70,7 +70,7 @@ func initRdbConnection() *gorm.DB {
 		rdb_password = config.RDB_PASSWORD
 		rdb_name = config.RDB_NAME_DEV
 	}
-	db, err := gorm.Open("mysql", rdb_user+":"+rdb_password+"@/"+rdb_name+"?charset=utf8&parseTime=True&loc=Local")
+	db, err := gorm.Open("mysql", rdb_user+":"+rdb_password+"@tcp(114.115.158.200:3306)/"+rdb_name+"?charset=utf8&parseTime=True&loc=Local")
 	if err != nil {
 		panic("Could not connect to db")
 	}

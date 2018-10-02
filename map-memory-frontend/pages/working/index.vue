@@ -63,9 +63,14 @@
           <el-input v-model="form.title" maxlength="300"></el-input>
         </el-form-item>
         <el-form-item label="记忆详情">
-
         <wysiwyg v-model="form.memory_content" />
-
+        </el-form-item>
+        <el-form-item>
+          <el-switch
+            v-model="form.openness"
+            active-text="公开"
+            inactive-text="私密">
+          </el-switch>
         </el-form-item>
         <el-form-item>
           <el-switch
@@ -139,6 +144,7 @@
 
         <div class="search-box">
           <div style="display: flex;margin: 0 auto;">
+
             <div class="search-input-container-row-switch">
               <el-switch v-model="view_all"
               active-text="显示公共笔记"
@@ -307,7 +313,7 @@ return {
       base_service_url:'',
       physicLongitude:'',
       physicLatitude:'',
-      view_all:false
+      view_all:false////查看所有的
     }
   },
   methods: {
@@ -856,6 +862,9 @@ return {
       this.zoom = 19
 
       //this.loadMemPoints();
+    },
+    changeView (){
+      this.loadMemPoints();
     }
   },
   mounted(){

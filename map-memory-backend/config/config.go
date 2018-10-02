@@ -14,9 +14,9 @@ const (
 	// dev
 	DB_HOST              = "127.0.0.1"
 	RDB_USER             = "root"
-	RDB_PASSWORD         = "Passw0rd"
-	REDIS_SERVER_DEV     = "127.0.0.1"
-	REDIS_AUTH_DEV       = "???"
+	RDB_PASSWORD         = "fcg1994"
+	REDIS_SERVER_DEV     = "114.115.158.200"
+	REDIS_AUTH_DEV       = ""
 	BASE_URL_DEV         = "http://localhost:8043"
 	RDB_NAME_DEV         = "map_memory"
 	BASE_SERVICE_URL_DEV = "http://localhost:8042"

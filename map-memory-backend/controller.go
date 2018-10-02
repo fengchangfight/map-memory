@@ -364,6 +364,7 @@ func GetPersonMemoryInBound(ctx *gin.Context) {
 	// select memory by uid and within bound
 
 	var result []model.MemoryVO
+
 	//config.RDB_CONN.Table("mp_memory").Select("id, title, content, longitude, latitude, icon, locked").Where("user_id = ? and longitude > ? and longitude < ? and latitude > ? and latitude < ?", current_uid, south_west_x, north_east_x, south_west_y, north_east_y).Scan(&result)
 	DB := config.RDB_CONN
 	DB = DB.Table("mp_memory").

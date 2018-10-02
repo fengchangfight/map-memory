@@ -213,6 +213,56 @@ func Add2FavoriteLocation(ctx *gin.Context) {
 
 }
 
+
+// func CreateMemoryPoint(ctx *gin.Context) {
+// 	x, _ := ioutil.ReadAll(ctx.Request.Body)
+// 	var mapResult map[string]interface{}
+// 	if err := json.Unmarshal([]byte(x), &mapResult); err != nil {
+// 		fmt.Println(err)
+// 	}
+// 	// get 5 parameters: longitude, latitude, title, content, icon
+// 	longitude := mapResult["longitude"].(float64)
+// 	latitude := mapResult["latitude"].(float64)
+// 	title := mapResult["title"].(string)
+// 	content := mapResult["content"].(string)
+// 	icon := mapResult["icon"].(string)
+
+// 	//记忆的状态 是公开的还是私密的 0私密1 公开
+// 	openness, err := strconv.Atoi(mapResult["openness"].(string))
+// 	if err != nil {
+// 		ctx.JSON(http.StatusOK, gin.H{"ok": false, "message": "不合法的状态", "data": err})
+// 	}
+
+// 	// create 2 parameters: current timestamp, and login user
+// 	current_time := time.Now()
+// 	session := sessions.Default(ctx)
+// 	current_uid := session.Get("uid").(int64)
+
+// 	// use the 7 parameter all together to create a new record or memory point
+// 	memory_record := entity.Memory{
+// 		Title:     title,
+// 		Content:   content,
+// 		Longitude: longitude,
+// 		Latitude:  latitude,
+// 		Icon:      icon,
+// 		UserID:    current_uid,
+// 		CreatedAt: current_time,
+// 		Locked:    false,
+// 		Openness:  openness,
+// 	}
+
+// 	createResult := config.RDB_CONN.Create(&memory_record)
+
+// 	if createResult.Error != nil {
+// 		// error
+// 		ctx.JSON(http.StatusOK, gin.H{"ok": false, "message": createResult.Error.(*mysql.MySQLError).Message, "data": memory_record.ID})
+// 	} else {
+// 		ctx.JSON(http.StatusOK, gin.H{"ok": true, "message": "成功创建记忆点", "data": memory_record.ID})
+// 	}
+
+// }
+
+
 func RegisterByEmail(ctx *gin.Context) {
 	env := getEnv()
 	var baseUrl string
