@@ -139,15 +139,14 @@
 
         <div class="search-box">
           <div style="display: flex;margin: 0 auto;">
-            <div class="search-input-container-row-switch">
-              <el-switch v-model="view_all"
-              active-text="显示公共笔记"
-              inactive-text="仅自己的"
-              @change="changeView"></el-switch>
+
+
+            <div class="search-input-container-row-keyword">
+              <el-input v-model="keyword" placeholder="地名关键词">
+               <template slot="append"><el-button @click="clear()">清空搜索</el-button></template>
+              </el-input>
             </div>
 
-            <div class="search-input-container-row"><el-input v-model="keyword" placeholder="地名关键词"></el-input></div>
-            <div class="search-input-container-row"><el-button @click="clear()" type="primary">清空搜索</el-button></div>
             <div class="search-input-container-row">
               <el-select v-model="selected_center" filterable placeholder="常用位置" @change="changeCenter">
                  <el-option
@@ -157,6 +156,17 @@
                    :value="item.id">
                  </el-option>
                </el-select>
+            </div>
+            <div class="search-input-container-row-ll">
+              <el-input v-model="locstring" placeholder="(经,纬),例:116.328427,39.990929">
+                 <template slot="append"><el-button @click="gotoloc">定位</el-button></template>
+              </el-input>
+            </div>
+            <div class="search-input-container-row-switch">
+              <el-switch v-model="view_all"
+              active-text="显示公共笔记"
+              inactive-text="仅自己的"
+              @change="changeView"></el-switch>
             </div>
           </div>
         </div>
@@ -239,6 +249,7 @@ return {
   },
   data () {
     return {
+      locstring: '',
       inputReadCodeVisible: false,
       current_id:'',
       read_code:'',
@@ -311,6 +322,43 @@ return {
     }
   },
   methods: {
+    gotoloc(){
+      if(this.locstring==null || this.locstring.length<1){
+        swal ( "提示" ,  "(经度,纬度)组合不能为空哦(づ￣ 3￣)づ" ,  "info" );
+        return;
+      }
+      var arr = this.locstring.split(',',2)
+      var arrchinese = this.locstring.split('，',2)
+
+      if(arr.length<2 && arrchinese.length==2){
+        arr=arrchinese;
+      }
+
+      if(arr.length<2){
+        swal ( "提示" ,  "输入需要按照:\"经度,纬度\"的格式哦(づ￣ 3￣)づ" ,  "info" );
+        return;
+      }
+      var latitude = arr[1]
+      var longitude = arr[0]
+      if(isNaN(latitude) || isNaN(longitude)){
+         swal ( "提示" ,  "输入的经纬度都必须是数字哦(づ￣ 3￣)づ" ,  "info" );
+         return;
+      }
+
+      if(!(longitude<136 && longitude>72)){
+        swal ( "提示" ,  "经度范围不在中华人民共和国，不予查询哦(づ￣ 3￣)づ" ,  "info" );
+        return;
+      }
+      if(!(latitude<=54 && latitude>=3)){
+        swal ( "提示" ,  "纬度范围不在中华人民共和国，不予查询哦(づ￣ 3￣)づ" ,  "info" );
+        return;
+      }
+
+      this.center.lng = longitude;
+      this.center.lat = latitude;
+      this.zoom = 19;
+
+    },
     changeAccessibility(val){
         if(val==true){
           this.memDetail.is_public==true;
@@ -758,6 +806,7 @@ return {
           .catch(_ => {});
     },
     logAndLat(e){
+      console.log(e)
       swal ( "信息" ,  "经度:"+e.point.lng+",纬度:"+e.point.lat ,  "info" );
     },
     add2Faviloc(){
@@ -908,12 +957,21 @@ return {
   top: 50px;
   z-index: 0;
 }
-.search-input-container-row{
-  width: 200px;
+.search-input-container-row-keyword{
+  width: 250px;
   margin-left:5px;
+}
+.search-input-container-row{
+  width: 150px;
+  margin-left:5px;
+}
+.search-input-container-row-ll{
+  width: 320px;
+  margin-left:25px;
 }
 .search-input-container-row-switch{
   margin-top:5px;
+  margin-left: 100px;
   width: 200px;
 }
 #delete-mem-point{

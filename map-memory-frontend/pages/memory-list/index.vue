@@ -385,6 +385,7 @@ export default {
         this.$router.push('/working');
       },
       openMemPoint(id, locked){
+        this.detailMode='view';
         if(locked==true){
           this.read_code="";
           this.inputReadCodeVisible = true;
