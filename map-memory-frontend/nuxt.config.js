@@ -25,7 +25,7 @@ module.exports = {
   modules: [
     'bootstrap-vue/nuxt'
   ],
-  plugins: ['~/plugins/froala.js','~/plugins/v-lazy-img',{ src: "~/plugins/vue-verify", ssr: false },'~/plugins/element-ui',{ src: "~/plugins/vue-baidu-map.js", ssr: false },{ src: "~/plugins/wysiwyg.js", ssr: false }],
+  plugins: ['~/plugins/froala.js','~/plugins/v-lazy-img',{ src: "~/plugins/vue-verify", ssr: false },'~/plugins/element-ui',{ src: "~/plugins/vue-baidu-map.js", ssr: false },{ src: "~/plugins/wysiwyg.js", ssr: false },{ src: "~/plugins/vue-clipboard.js", ssr: false }],
   css: [
       'vue-wysiwyg/dist/vueWysiwyg.css',
       '~/node_modules/froala-editor/css/froala_editor.pkgd.min.css',

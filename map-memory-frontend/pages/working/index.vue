@@ -91,6 +91,7 @@
       <div style="display:flex;flex-direction:column">
         <div style="display:flex;position:relative;">
             <button v-if="detailMode=='view' && memDetail.i_am_owner && readonlydetail==false" @click="deleteMemPoint(memDetail.id)" title="删除" id="delete-mem-point"></button>
+            <button v-clipboard:copy="memDetail.longitude+','+memDetail.latitude" v-clipboard:success="onCopy" v-clipboard:error="onCopyError" title="复制经纬度" id="copy-lng-lat"></button>
             <button v-if="detailMode=='view' && memDetail.i_am_owner && readonlydetail==false" @click="editMemPoint(memDetail.id)" title="编辑" id="edit-mem-point"></button>
             <h3 v-if="detailMode=='view'" style="margin: 0 auto;padding:0px 30px 0px 40px;"><span style="float: left"><img width="40" height="40" :src="'imgs/'+memDetail.icon"/></span>&nbsp;&nbsp;{{memDetail.title}}<span class="small-notes" v-if="!memDetail.is_public">(私密)</span><span class="small-notes" v-if="memDetail.is_public">(公开)</span></h3>
             <div v-if="detailMode=='edit'" style="display:flex;width:100%;">
@@ -178,7 +179,7 @@
             <bm-city-list style="z-index:10;" anchor="BMAP_ANCHOR_TOP_LEFT"></bm-city-list>
             <bm-map-type :map-types="['BMAP_NORMAL_MAP', 'BMAP_PERSPECTIVE_MAP', 'BMAP_SATELLITE_MAP', 'BMAP_HYBRID_MAP']" anchor="BMAP_ANCHOR_BOTTOM_RIGHT"></bm-map-type>
             <bm-context-menu>
-                  <bm-context-menu-item :callback="logAndLat" text="此处经纬度"></bm-context-menu-item>
+                  <bm-context-menu-item :callback="logAndLat" text="拷贝此经纬度"></bm-context-menu-item>
                   <bm-context-menu-item :callback="addMemory" text="在此添加记忆"></bm-context-menu-item>
                   <bm-context-menu-item :callback="popAdd2FavoriteLocation" text="设为常用位置"></bm-context-menu-item>
             </bm-context-menu>
@@ -322,6 +323,13 @@ return {
     }
   },
   methods: {
+    onCopyError(){
+      swal ( "提示" ,  "拷贝失败" ,  "info" );
+    },
+    onCopy(){
+      var st=this.memDetail.longitude+","+this.memDetail.latitude
+      swal ( "提示" ,  "已复制经度,纬度"+st+"到剪贴板" ,  "info" );
+    },
     gotoloc(){
       if(this.locstring==null || this.locstring.length<1){
         swal ( "提示" ,  "(经度,纬度)组合不能为空哦(づ￣ 3￣)づ" ,  "info" );
@@ -559,9 +567,8 @@ return {
         params: params
       }).then(response=>{
         if(response.data.ok==true){
-          console.log("========")
-          console.log(response.data.data);
           this.memDetail = response.data.data;
+          console.log(this.memDetail)
         }else{
           this.$notify.error({
             title: '错误',
@@ -806,8 +813,10 @@ return {
           .catch(_ => {});
     },
     logAndLat(e){
-      console.log(e)
-      swal ( "信息" ,  "经度:"+e.point.lng+",纬度:"+e.point.lat ,  "info" );
+      let container = this.$refs.container
+      var val=e.point.lng+","+e.point.lat
+      this.$copyText(val, container)
+      swal ( "信息" ,  "已复制经纬度:"+val +"到剪贴板",  "info" );
     },
     add2Faviloc(){
       if(!Boolean(this.fav_loc_name)){
@@ -974,6 +983,7 @@ return {
   margin-left: 100px;
   width: 200px;
 }
+
 #delete-mem-point{
   position: absolute;
   top: 5px;
@@ -985,10 +995,7 @@ return {
   border:none;
 }
 
-#delete-mem-point:hover,#edit-mem-point:hover{
-  opacity: 0.6;
-  cursor: pointer;
-}
+
 
 .quill-editor {
       min-height: 200px;

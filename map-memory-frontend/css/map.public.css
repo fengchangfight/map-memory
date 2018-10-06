@@ -19,3 +19,20 @@ a[href="https://froala.com/wysiwyg-editor"], a[href="https://www.froala.com/wysi
 .small-notes{
   font-size: 50%;
 }
+
+
+#copy-lng-lat{
+  position: absolute;
+  top: 5px;
+  right: 50px;
+  background:url('~/static/imgs/copyloc.png') no-repeat;
+  background-size: 100% 100%;
+  width:20px;
+  height:20px;
+  border:none;
+}
+
+#delete-mem-point:hover,#edit-mem-point:hover,#copy-lng-lat:hover{
+  opacity: 0.6;
+  cursor: pointer;
+}
