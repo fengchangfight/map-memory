@@ -73,7 +73,7 @@
               <el-button style="float: right; margin-right:10px;" size="small" @click="cancelEdit">取消</el-button>
             </div>
         </div>
-        <div v-if="detailMode=='view'" v-html="memDetail.content" style="background-color:#f6f8fa;min-height:300px;overflow:scroll;overflow-x: scroll;font-size:17px;" >
+        <div v-if="detailMode=='view'" v-loading="loading_content" v-html="memDetail.content" style="background-color:#f6f8fa;min-height:300px;overflow:scroll;overflow-x: scroll;font-size:17px;" >
         </div>
       </div>
 
@@ -81,7 +81,17 @@
 
     <div v-loading="list_loading"  class="center-content">
       <div style="display:flex;margin-top:5px;" @keyup.enter="filterMemory">
-           <el-input placeholder="按标题或内容查找"  v-model="query"></el-input><el-button @click="filterMemory" type="primary">过滤</el-button>
+           <el-input placeholder="按标题或内容查找"  v-model="query"></el-input>
+           <el-button @click="filterMemory" type="primary">过滤</el-button>
+           <el-select v-model="sort_by" placeholder="排序方式" @change="changeSortBy()">
+                              <el-option
+                                v-for="item in available_sorts"
+                                :key="item.id"
+                                :label="item.name"
+                                :value="item.id">
+                                <span style="float: right; color: #8492a6; font-size: 13px">{{ item.name }}</span>
+                              </el-option>
+            </el-select>
       </div>
       <div id="pagi-container">
           <el-pagination style="margin: 0 auto" class="pagination" layout="prev, pager, next" :total="totalCount" :page-size="pageSize"
@@ -119,7 +129,7 @@
           </el-table-column>
           <el-table-column
             label="创建时间"
-            prop="createdAt"
+            prop="created_at"
             width="140">
           </el-table-column>
           <el-table-column
@@ -187,6 +197,12 @@ export default {
     },
     data() {
       return {
+        sort_by: 'last_update',
+        available_sorts:[
+          {id:'last_update', name:"按最后访问时间排序"},
+          {id:'created_at',name:"按创建时间排序"}
+        ],
+        loading_content: false,
         unlockReadCodeVisible: false,
         current_id:'',
         read_code:'',
@@ -208,6 +224,9 @@ export default {
       }
     },
     methods: {
+      changeSortBy(){
+        this.getMemoryListData();
+      },
       onCopyError(){
         swal ( "提示" ,  "拷贝失败" ,  "info" );
       },
@@ -360,6 +379,7 @@ export default {
         this.detailMode = 'edit';
       },
       loadMemoryDetailById(id, read_code){
+        this.loading_content=true;
         var params = {};
         if(read_code!=null && read_code.length>0){
           params.read_code = read_code;
@@ -369,6 +389,7 @@ export default {
         }).then(response=>{
           if(response.data.ok==true){
             this.memDetail = response.data.data;
+            this.loading_content=false;
           }else{
             this.$notify.error({
               title: '错误',
@@ -437,6 +458,7 @@ export default {
         var params = {};
         params.page = this.currentPage;
         params.query = this.query;
+        params.sort_by = this.sort_by;
         this.list_loading=true;
         AXIOS.get('/api/v1/memory-my',{
             params: params

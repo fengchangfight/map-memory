@@ -88,8 +88,8 @@
       width="100%"
       :fullscreen="true"
       >
-      <div style="display:flex;flex-direction:column">
-        <div style="display:flex;position:relative;">
+      <div  style="display:flex;flex-direction:column">
+        <div  style="display:flex;position:relative;">
             <button v-if="detailMode=='view' && memDetail.i_am_owner && readonlydetail==false" @click="deleteMemPoint(memDetail.id)" title="删除" id="delete-mem-point"></button>
             <button v-clipboard:copy="memDetail.longitude+','+memDetail.latitude" v-clipboard:success="onCopy" v-clipboard:error="onCopyError" title="复制经纬度" id="copy-lng-lat"></button>
             <button v-if="detailMode=='view' && memDetail.i_am_owner && readonlydetail==false" @click="editMemPoint(memDetail.id)" title="编辑" id="edit-mem-point"></button>
@@ -107,18 +107,14 @@
                                </el-select>
               <el-input  v-model="memDetail.title" style="margin: 0 auto;padding:0px 1px 0px 1px;"></el-input>
             </div>
-
         </div>
         <div style="display:block;margin-top: 10px;">
           <div  v-if="readonlydetail==false" style="margin-left: auto; font-size:70%;color:gray">
             <label  style="color:#003300;">{{memDetail.nickname}}</label>&nbsp;发布于：{{memDetail.created_at}} &nbsp;<label v-if="autosaveflag">(已自动保存)</label>
           </div>
-
         </div>
         <div v-if="detailMode=='edit'">
-
           <wysiwyg @change="autosave" v-model="memDetail.content" />
-
             <el-switch
               v-model="memDetail.is_public"
               active-text="公开"
@@ -132,7 +128,7 @@
               <el-button style="float: right; margin-right:10px;" size="small" @click="cancelEdit">取消</el-button>
             </div>
         </div>
-        <div v-if="detailMode=='view'" v-html="memDetail.content" style="background-color:#f6f8fa;min-height:300px;overflow:scroll;overflow-x: scroll;font-size:17px;" >
+        <div v-loading="loading_content" v-if="detailMode=='view'" v-html="memDetail.content" style="background-color:#f6f8fa;min-height:300px;overflow:scroll;overflow-x: scroll;font-size:17px;" >
         </div>
       </div>
 
@@ -250,6 +246,7 @@ return {
   },
   data () {
     return {
+      loading_content: false,
       locstring: '',
       inputReadCodeVisible: false,
       current_id:'',
@@ -559,6 +556,7 @@ return {
       //this.loadMemoryDetailById(this.memDetail.id);
     },
     loadMemoryDetailById(id, read_code){
+      this.loading_content=true;
       var params = {};
         if(read_code!=null && read_code.length>0){
           params.read_code = read_code;
@@ -568,7 +566,7 @@ return {
       }).then(response=>{
         if(response.data.ok==true){
           this.memDetail = response.data.data;
-          console.log(this.memDetail)
+          this.loading_content=false;
         }else{
           this.$notify.error({
             title: '错误',

@@ -32,11 +32,20 @@ func GetPersonMemory(ctx *gin.Context) {
 
 	queryArr := params["query"]
 
+	sortByArr := params["sort_by"]
+
 	var query string
 	if queryArr != nil && len(queryArr) > 0 {
 		query = queryArr[0]
 	} else {
 		query = ""
+	}
+
+	var sort_by string
+	if sortByArr != nil && len(sortByArr) > 0 {
+		sort_by = sortByArr[0]
+	} else {
+		sort_by = "created_at"
 	}
 
 	var page int
@@ -60,12 +69,11 @@ func GetPersonMemory(ctx *gin.Context) {
 	var count int
 
 	if len(query) > 0 {
-		config.RDB_CONN.Table("mp_memory").Offset((page-1)*config.ITEMS_PER_PAGE).Limit(config.ITEMS_PER_PAGE).Order("created_at desc").Select("id, title, longitude, latitude, icon, created_at, locked, is_public").Where("user_id = ? and (title like ? or content like ?) ", current_uid, "%"+query+"%", "%"+query+"%").Scan(&result)
+		config.RDB_CONN.Table("mp_memory").Offset((page-1)*config.ITEMS_PER_PAGE).Limit(config.ITEMS_PER_PAGE).Order(sort_by+" desc").Select("id, title, longitude, latitude, icon, created_at, last_update, locked, is_public").Where("user_id = ? and (title like ? or content like ?) ", current_uid, "%"+query+"%", "%"+query+"%").Scan(&result)
 		config.RDB_CONN.Table("mp_memory").Where("user_id = ? and (title like ? or content like ?) ", current_uid, "%"+query+"%", "%"+query+"%").Count(&count)
 	} else {
+		config.RDB_CONN.Table("mp_memory").Offset((page-1)*config.ITEMS_PER_PAGE).Limit(config.ITEMS_PER_PAGE).Order(sort_by+" desc").Select("id, title, longitude, latitude, icon, created_at, last_update, locked, is_public").Where("user_id = ? ", current_uid).Scan(&result)
 		config.RDB_CONN.Table("mp_memory").Where("user_id = ?", current_uid).Count(&count)
-		//config.RDB_CONN.Model(&entity.Memory{}).Where("user_id = ?", current_uid).Count(&count)
-		config.RDB_CONN.Table("mp_memory").Offset((page-1)*config.ITEMS_PER_PAGE).Limit(config.ITEMS_PER_PAGE).Order("created_at desc").Select("id, title, longitude, latitude, icon, created_at, locked, is_public").Where("user_id = ? ", current_uid).Scan(&result)
 	}
 
 	// // fmt.Println(result)
@@ -99,7 +107,9 @@ func UpdateMemoryContent(ctx *gin.Context) {
 		ctx.JSON(http.StatusOK, gin.H{"ok": false, "message": "不合法的ID", "data": err})
 	}
 	memory.ID = idint
-	config.RDB_CONN.Model(&memory).UpdateColumns(entity.Memory{Content: content})
+
+	current_time := time.Now()
+	config.RDB_CONN.Model(&memory).UpdateColumns(entity.Memory{Content: content, LastUpdate: current_time})
 
 	ctx.JSON(http.StatusOK, gin.H{"ok": true, "message": "成功更新记忆点", "data": memory.ID})
 }
@@ -165,15 +175,16 @@ func CreateMemoryPoint(ctx *gin.Context) {
 
 	// use the 7 parameter all together to create a new record or memory point
 	memory_record := entity.Memory{
-		Title:     title,
-		Content:   content,
-		Longitude: longitude,
-		Latitude:  latitude,
-		Icon:      icon,
-		UserID:    current_uid,
-		CreatedAt: current_time,
-		Locked:    false,
-		IsPublic:  is_public,
+		Title:      title,
+		Content:    content,
+		Longitude:  longitude,
+		Latitude:   latitude,
+		Icon:       icon,
+		UserID:     current_uid,
+		CreatedAt:  current_time,
+		LastUpdate: current_time,
+		Locked:     false,
+		IsPublic:   is_public,
 	}
 
 	createResult := config.RDB_CONN.Create(&memory_record)
@@ -210,7 +221,8 @@ func UpdateMemoryById(ctx *gin.Context) {
 	}
 	memory.ID = i
 
-	config.RDB_CONN.Model(&memory).UpdateColumns(map[string]interface{}{"title": title, "content": content, "icon": icon, "is_public": is_public})
+	current_time := time.Now()
+	config.RDB_CONN.Model(&memory).UpdateColumns(map[string]interface{}{"title": title, "content": content, "icon": icon, "is_public": is_public, "last_update": current_time})
 
 	ctx.JSON(http.StatusOK, gin.H{"ok": true, "message": "成功更新记忆点", "data": memory.ID})
 
@@ -220,7 +232,7 @@ func QueryMemoryById(ctx *gin.Context) {
 	mid := ctx.Param("id")
 
 	var result model.MemoryDetailVO
-	config.RDB_CONN.Table("mp_memory").Select("mp_memory.id, title, content, longitude, latitude, icon, mp_user.username, mp_user.nickname, created_at, locked, is_public").Joins("inner join mp_user on mp_user.id = mp_memory.user_id").Where("mp_memory.id = ?", mid).Scan(&result)
+	config.RDB_CONN.Table("mp_memory").Select("mp_memory.id, title, content, longitude, latitude, icon, mp_user.username, mp_user.nickname, created_at, last_update, locked, is_public").Joins("inner join mp_user on mp_user.id = mp_memory.user_id").Where("mp_memory.id = ?", mid).Scan(&result)
 
 	session := sessions.Default(ctx)
 	username := session.Get("user").(string)
