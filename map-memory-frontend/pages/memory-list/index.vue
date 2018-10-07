@@ -199,7 +199,7 @@ export default {
       return {
         sort_by: 'last_update',
         available_sorts:[
-          {id:'last_update', name:"按最后访问时间排序"},
+          {id:'last_update', name:"按最后更新时间排序"},
           {id:'created_at',name:"按创建时间排序"}
         ],
         loading_content: false,
