@@ -128,9 +128,11 @@
             width="90">
           </el-table-column>
           <el-table-column
-            label="创建时间"
-            prop="created_at"
+            label="创建/最后更新时间"
             width="140">
+            <template slot-scope="scope">
+              {{scope.row.created_at}}/{{scope.row.last_update}}
+            </template>
           </el-table-column>
           <el-table-column
             label="操作"
