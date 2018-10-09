@@ -240,6 +240,12 @@ export default{
         },{
           id:'centos.png',
           name:'Centos'
+        },{
+          id:'mysql.png',
+          name:'Mysql'
+        },{
+          id:'docker.png',
+          name:'Docker'
         }
       ],
     }
