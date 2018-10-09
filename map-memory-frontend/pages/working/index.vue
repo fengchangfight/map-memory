@@ -811,6 +811,8 @@ return {
           .catch(_ => {});
     },
     logAndLat(e){
+      console.log(e)
+      console.log(e.map.cs)
       let container = this.$refs.container
       var val=e.point.lng+","+e.point.lat
       this.$copyText(val, container)

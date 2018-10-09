@@ -7,13 +7,13 @@ export default{
                 // JSON responses are automatically parsed.
                 this.base_service_url = response.data;
               }).catch(e => {
-                
+
               })
     },
     checklogin () {
       AXIOS.get('/api/v1/user/whoami').then(response => {
             // JSON responses are automatically parsed.
-            
+
             this.isLoggedIn = true;
           }).catch(e => {
             this.isLoggedIn = false;
@@ -234,6 +234,12 @@ export default{
         },{
           id:'weekend.png',
           name:'周末'
+        },{
+          id:'ubuntu.png',
+          name:'Ubuntu'
+        },{
+          id:'centos.png',
+          name:'Centos'
         }
       ],
     }
