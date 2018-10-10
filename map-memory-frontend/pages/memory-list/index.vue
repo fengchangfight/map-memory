@@ -494,6 +494,7 @@ export default {
     },
     mounted () {
       this.checklogin();
+      this.getBaseUrl();
       this.getBaseServiceUrl();
       this.getMemoryListData();
     }
