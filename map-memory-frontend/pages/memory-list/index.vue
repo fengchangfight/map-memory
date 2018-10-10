@@ -36,7 +36,7 @@
       <div style="display:flex;flex-direction:column;">
         <div style="display:flex;position:relative;">
             <button v-if="detailMode=='view'" @click="editMemPoint(memDetail.id)" title="编辑" id="edit-mem-point"></button>
-            <button v-clipboard:copy="memDetail.longitude+','+memDetail.latitude" v-clipboard:success="onCopy" v-clipboard:error="onCopyError" title="复制经纬度" id="copy-lng-lat"></button>
+            <button v-clipboard:copy="mem_url" v-clipboard:success="onCopy" v-clipboard:error="onCopyError" title="分享本记忆" id="copy-lng-lat"></button>
             <h3 v-if="detailMode=='view'" style="margin: 0 auto;padding:0px 30px 0px 40px;"><span style="float: left"><img width="40" height="40" :src="'imgs/'+memDetail.icon"/></span>&nbsp;&nbsp;{{memDetail.title}}<span class="small-notes" v-if="!memDetail.is_public">(私密)</span><span class="small-notes" v-if="memDetail.is_public">(公开)</span></h3>
             <div v-if="detailMode=='edit'" style="display:flex;width:100%;">
               <el-select v-model="memDetail.icon" filterable placeholder="记忆图标" @change="setIcon()">
@@ -181,7 +181,10 @@ export default {
     },
     mixins: [base],
     computed: {
-    option() {
+      mem_url(){
+        return this.base_url+'/working'+"?longitude="+this.memDetail.longitude+"&latitude="+this.memDetail.latitude+"&showpublic=true";
+      },
+      option() {
         return {
           imageUpload: false,
           heightMin:350,
@@ -233,8 +236,8 @@ export default {
         swal ( "提示" ,  "拷贝失败" ,  "info" );
       },
       onCopy(){
-        var st=this.memDetail.longitude+","+this.memDetail.latitude
-        swal ( "提示" ,  "已复制经度,纬度"+st+"到剪贴板" ,  "info" );
+
+        swal ( "提示" ,  "已复制经度,纬度"+this.mem_url+"到剪贴板" ,  "info" );
       },
       changeAccessibility(val){
           if(val==true){
