@@ -91,7 +91,7 @@
       <div  style="display:flex;flex-direction:column">
         <div  style="display:flex;position:relative;">
             <button v-if="detailMode=='view' && memDetail.i_am_owner && readonlydetail==false" @click="deleteMemPoint(memDetail.id)" title="删除" id="delete-mem-point"></button>
-            <button v-clipboard:copy="mem_url" v-clipboard:success="onCopy" v-clipboard:error="onCopyError" title="复制经纬度" id="copy-lng-lat"></button>
+            <button v-if="memDetail.is_public" v-clipboard:copy="mem_url" v-clipboard:success="onCopy" v-clipboard:error="onCopyError" title="分享本记忆" id="copy-lng-lat"></button>
             <button v-if="detailMode=='view' && memDetail.i_am_owner && readonlydetail==false" @click="editMemPoint(memDetail.id)" title="编辑" id="edit-mem-point"></button>
             <h3 v-if="detailMode=='view'" style="margin: 0 auto;padding:0px 30px 0px 40px;"><span style="float: left"><img width="40" height="40" :src="'imgs/'+memDetail.icon"/></span>&nbsp;&nbsp;{{memDetail.title}}<span class="small-notes" v-if="!memDetail.is_public">(私密)</span><span class="small-notes" v-if="memDetail.is_public">(公开)</span></h3>
             <div v-if="detailMode=='edit'" style="display:flex;width:100%;">
