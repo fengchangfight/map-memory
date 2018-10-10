@@ -91,7 +91,7 @@
       <div  style="display:flex;flex-direction:column">
         <div  style="display:flex;position:relative;">
             <button v-if="detailMode=='view' && memDetail.i_am_owner && readonlydetail==false" @click="deleteMemPoint(memDetail.id)" title="删除" id="delete-mem-point"></button>
-            <button v-clipboard:copy="memDetail.longitude+','+memDetail.latitude" v-clipboard:success="onCopy" v-clipboard:error="onCopyError" title="复制经纬度" id="copy-lng-lat"></button>
+            <button v-clipboard:copy="mem_url" v-clipboard:success="onCopy" v-clipboard:error="onCopyError" title="复制经纬度" id="copy-lng-lat"></button>
             <button v-if="detailMode=='view' && memDetail.i_am_owner && readonlydetail==false" @click="editMemPoint(memDetail.id)" title="编辑" id="edit-mem-point"></button>
             <h3 v-if="detailMode=='view'" style="margin: 0 auto;padding:0px 30px 0px 40px;"><span style="float: left"><img width="40" height="40" :src="'imgs/'+memDetail.icon"/></span>&nbsp;&nbsp;{{memDetail.title}}<span class="small-notes" v-if="!memDetail.is_public">(私密)</span><span class="small-notes" v-if="memDetail.is_public">(公开)</span></h3>
             <div v-if="detailMode=='edit'" style="display:flex;width:100%;">
@@ -216,6 +216,9 @@ export default {
   },
   mixins: [base],
   computed: {
+    mem_url(){
+      return this.base_url+'/working'+"?longitude="+this.memDetail.longitude+"&latitude="+this.memDetail.latitude+"&showpublic=true";
+    },
     fallbackLongitude(){
       return this.physicLongitude!=''?this.physicLongitude:116.404;
     },
@@ -327,8 +330,9 @@ return {
       swal ( "提示" ,  "拷贝失败" ,  "info" );
     },
     onCopy(){
-      var st=this.memDetail.longitude+","+this.memDetail.latitude
-      swal ( "提示" ,  "已复制经度,纬度"+st+"到剪贴板" ,  "info" );
+      //var url = this.base_service_url+'/'+"?longitude="+this.memDetail.longitude+"&latitude="+this.memDetail.latitude+"&showpublic=true"
+      //var st=this.memDetail.longitude+","+this.memDetail.latitude
+      swal ( "提示" ,  "已复制本记忆地址:"+this.mem_url+"到剪贴板" ,  "info" );
     },
     gotoloc(){
       if(this.locstring==null || this.locstring.length<1){
@@ -950,6 +954,7 @@ return {
     }
 
     this.checklogin();
+    this.getBaseUrl();
     this.getBaseServiceUrl();
     this.isFirstDayUser();
     this.loadAllFavloc();

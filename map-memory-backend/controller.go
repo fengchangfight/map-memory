@@ -415,7 +415,7 @@ func IsFirstDayRegUser(ctx *gin.Context) {
 
 }
 
-func GetBaseUrl(ctx *gin.Context) {
+func GetBaseServiceUrl(ctx *gin.Context) {
 	env := getEnv()
 	var baseServiceUrl string
 
@@ -427,4 +427,19 @@ func GetBaseUrl(ctx *gin.Context) {
 		baseServiceUrl = config.BASE_SERVICE_URL_DEV
 	}
 	ctx.String(http.StatusOK, baseServiceUrl)
+}
+
+func GetBaseUrl(ctx *gin.Context) {
+	env := getEnv()
+	var baseUrl string
+
+	if env == "prod" {
+		baseUrl = config.BASE_URL_PROD
+	} else if env == "qa" {
+		baseUrl = config.BASE_URL_QA
+	} else {
+		baseUrl = config.BASE_URL_DEV
+	}
+
+	ctx.String(http.StatusOK, baseUrl)
 }

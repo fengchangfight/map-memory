@@ -10,6 +10,14 @@ export default{
 
               })
     },
+    getBaseUrl () {
+      AXIOS.get('/api/v1/base-url/url').then(response => {
+                // JSON responses are automatically parsed.
+                this.base_url = response.data;
+              }).catch(e => {
+
+              })
+    },
     checklogin () {
       AXIOS.get('/api/v1/user/whoami').then(response => {
             // JSON responses are automatically parsed.
@@ -26,6 +34,7 @@ export default{
   },
   data () {
     return {
+      base_url:'',
       base_service_url:'',
       isLoggedIn : false,
       available_icons:[
