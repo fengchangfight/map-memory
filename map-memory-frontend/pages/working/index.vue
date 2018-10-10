@@ -160,7 +160,7 @@
               </el-input>
             </div>
             <div class="search-input-container-row-switch">
-              <el-switch v-model="view_all"
+              <el-switch v-model="view_public"
               active-text="显示公共笔记"
               inactive-text="仅自己的"
               @change="changeView"></el-switch>
@@ -246,6 +246,9 @@ return {
   },
   data () {
     return {
+      url_longitude:'',
+      url_latitude:'',
+      url_showpublic: '',
       loading_content: false,
       locstring: '',
       inputReadCodeVisible: false,
@@ -316,7 +319,7 @@ return {
       base_service_url:'',
       physicLongitude:'',
       physicLatitude:'',
-      view_all:false
+      view_public:false
     }
   },
   methods: {
@@ -745,7 +748,7 @@ return {
         "south_west_y": this.load_scope.south_west_y,
         "north_east_x": this.load_scope.north_east_x,
         "north_east_y": this.load_scope.north_east_y,
-        "view_all":this.view_all?'1':'0'
+        "view_public":this.view_public?'1':'0'
       }).then(response=>{
         if(response.data.ok==true){
           this.my_mem_data = response.data.data
@@ -892,8 +895,18 @@ return {
             storeThis.physicLongitude = locInfo.point.x;
             storeThis.physicLatitude = locInfo.point.y;
           }
-          storeThis.center.lng = storeThis.state.longitude==null?storeThis.fallbackLongitude:storeThis.state.longitude;
-          storeThis.center.lat = storeThis.state.latitude==null?storeThis.fallbackLatitude:storeThis.state.latitude;
+
+          console.log(storeThis.url_longitude);
+          console.log(storeThis.url_latitude);
+          if(storeThis.url_latitude!=null && storeThis.url_latitude.length>0 &&
+            storeThis.url_longitude!=null && storeThis.url_longitude.length>0 &&
+            !isNaN(storeThis.url_latitude) && !isNaN(storeThis.url_longitude)){
+            storeThis.center.lng = storeThis.url_longitude
+            storeThis.center.lat = storeThis.url_latitude
+          }else{
+            storeThis.center.lng = storeThis.state.longitude==null?storeThis.fallbackLongitude:storeThis.state.longitude;
+            storeThis.center.lat = storeThis.state.latitude==null?storeThis.fallbackLatitude:storeThis.state.latitude;
+          }
           //storeThis.loadMemPoints();
         },
         error:function(data){
@@ -917,6 +930,25 @@ return {
     }
   },
   mounted(){
+
+    this.url_longitude = this.$route.query.longitude;
+    if(this.url_longitude==null || this.url_longitude.length<1 || isNaN(this.url_longitude)){
+      this.url_longitude=null
+    }
+
+    this.url_latitude = this.$route.query.latitude
+    if(this.url_latitude==null || this.url_latitude.length<1 || isNaN(this.url_latitude)){
+      this.url_latitude=null
+    }
+
+    this.url_showpublic = this.$route.query.showpublic;
+    if(this.url_showpublic!='true'){
+      this.url_showpublic=null
+    }else{
+      this.url_showpublic=true
+      this.view_public=this.url_showpublic;
+    }
+
     this.checklogin();
     this.getBaseServiceUrl();
     this.isFirstDayUser();

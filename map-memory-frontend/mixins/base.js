@@ -246,6 +246,15 @@ export default{
         },{
           id:'docker.png',
           name:'Docker'
+        },{
+          id:'tensorflow.png',
+          name:'Tensorflow'
+        },{
+          id:'mongo.png',
+          name:'Mongo'
+        },{
+          id:'redis.png',
+          name:'Redis'
         }
       ],
     }

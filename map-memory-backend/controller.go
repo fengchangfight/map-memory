@@ -365,9 +365,9 @@ func GetPersonMemoryInBound(ctx *gin.Context) {
 	north_east_y := mapResult["north_east_y"].(float64)
 
 	//0 仅查看自己的 1 查看所有人的
-	view_all, err := strconv.Atoi(mapResult["view_all"].(string))
+	view_public, err := strconv.Atoi(mapResult["view_public"].(string))
 	if err != nil {
-		view_all = 0
+		view_public = 0
 	}
 
 	// get current uid
@@ -381,7 +381,7 @@ func GetPersonMemoryInBound(ctx *gin.Context) {
 	DB = DB.Table("mp_memory").
 		Select("id, title, content, longitude, latitude, icon, locked").
 		Where("longitude > ? and longitude < ? and latitude > ? and latitude < ?", south_west_x, north_east_x, south_west_y, north_east_y)
-	if view_all == 0 {
+	if view_public == 0 {
 		DB = DB.Where("user_id = ?", current_uid)
 	} else {
 		DB = DB.Where("is_public = ? or user_id = ?", 1, current_uid)
