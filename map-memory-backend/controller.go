@@ -443,11 +443,15 @@ func GetLocationById(ctx *gin.Context) {
 		return
 	}
 
-	var memory entity.Memory
+	var memory *entity.Memory
 	result := make(map[string]float64)
 	DB := config.RDB_CONN
 	DB = DB.Table("mp_memory").Where("id = ? ", memid).First(&memory)
 
+	if memory == nil {
+		ctx.JSON(http.StatusOK, gin.H{"ok": false, "message": "该记忆已失效", "data": ""})
+		return
+	}
 	result["longitude"] = memory.Longitude
 	result["latitude"] = memory.Latitude
 
