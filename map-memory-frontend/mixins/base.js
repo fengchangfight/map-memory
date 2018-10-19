@@ -39,12 +39,66 @@ export default{
       isLoggedIn : false,
       available_icons:[
         {
-          id:'book.png',
-          name:'秘籍'
-        },
-        {
           id:'book2.png',
           name:'大金书'
+        },{
+          id:'book.png',
+          name:'秘籍'
+        },{
+          id:'medical.png',
+          name:'医药'
+        },{
+          id:'cyclopedia.png',
+          name:'百科'
+        },{
+          id:'food.png',
+          name:'食物'
+        },{
+          id:'pig.png',
+          name:'猪'
+        },{
+          id:'website.png',
+          name:'网站'
+        },{
+          id:'lock.png',
+          name:'锁'
+        },{
+          id:'cloud.png',
+          name:'云'
+        },{
+          id:'finance.png',
+          name:'金融'
+        },{
+          id:'dialog.png',
+          name:'对话'
+        },{
+          id:'geer.png',
+          name:'齿轮'
+        },{
+          id:'spring.png',
+          name:'Spring'
+        },{
+          id:'book5.png',
+          name:'书5'
+        },{
+          id:'practice.png',
+          name:'实践'
+        },{
+          id:'knowledge.png',
+          name:'知识'
+        },{
+          id:'class.png',
+          name:'课程'
+        },{
+          id:'torch.png',
+          name:'Torch'
+        },
+        {
+          id:'java.png',
+          name:'Java'
+        },{
+          id:'django.png',
+          name:'Django'
         },{
           id:'darkbook.png',
           name:'暗黑本'
@@ -190,10 +244,6 @@ export default{
           name:'三体'
         },
         {
-          id:'java.png',
-          name:'咖啡'
-        },
-        {
           id:'nansheng.png',
           name:'男生'
         },
@@ -228,9 +278,6 @@ export default{
         },{
           id:'question.png',
           name:'问题'
-        },{
-          id:'knowledge.png',
-          name:'知识'
         },{
           id:'python.png',
           name:'Python'

@@ -181,9 +181,11 @@
             </bm-context-menu>
 
 
-            <bm-marker @mouseover="infoWindowOpen(item.id)" @mouseout="infoWindowClose(item.id)" v-bind:key="item.id" :title="limitStringLength(item.title)" @dragend="moveMemoryPos($event, item.id)" v-for="item in my_mem_data" @click="showMemDetailWin(item.id, item.locked)" :position="{lng: item.longitude, lat: item.latitude}" :dragging="true" animation="BMAP_ANIMATION_DROP" :icon="{url: 'imgs/'+item.icon, size: {width: 40, height: 40}}"  >
-              <bm-info-window :show="showInfoWin[item.id]" >{{item.title}}</bm-info-window>
-            </bm-marker>
+            <bml-marker-cluster :averageCenter="true">
+               <bm-marker @mouseover="infoWindowOpen(item.id)" @mouseout="infoWindowClose(item.id)" v-bind:key="item.id" :title="limitStringLength(item.title)" @dragend="moveMemoryPos($event, item.id)" v-for="item in my_mem_data" @click="showMemDetailWin(item.id, item.locked)" :position="{lng: item.longitude, lat: item.latitude}" :dragging="true" animation="BMAP_ANIMATION_DROP" :icon="{url: 'imgs/'+item.icon, size: {width: 40, height: 40}}"  >
+                 <bm-info-window :show="showInfoWin[item.id]" >{{item.title}}</bm-info-window>
+               </bm-marker>
+            </bml-marker-cluster>
 
             <bm-marker v-if="is_newbie" @mouseover="infoWindowOpen(tutorialItem.id)" @mouseout="infoWindowClose(tutorialItem.id)" @click="showMemDetailWin(tutorialItem.id)" :position="{lng: center.lng, lat: center.lat}" :dragging="false" animation="BMAP_ANIMATION_BOUNCE" :icon="{url: 'imgs/'+tutorialItem.icon, size: {width: 60, height: 60}}"  >
               <bm-info-window :show="showInfoWin[tutorialItem.id]" >{{tutorialItem.title}}</bm-info-window>
@@ -212,7 +214,6 @@ import Qs from 'qs'
 
 export default {
   components: {
-
   },
   mixins: [base],
   computed: {
