@@ -182,7 +182,7 @@ export default {
     mixins: [base],
     computed: {
       mem_url(){
-        return this.base_url+'/working'+"?longitude="+this.memDetail.longitude+"&latitude="+this.memDetail.latitude+"&showpublic=true";
+        return this.base_url+'/working'+"?memid="+this.memDetail.id+"&showpublic=true";
       },
       option() {
         return {

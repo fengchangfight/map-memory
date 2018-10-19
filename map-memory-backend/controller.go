@@ -429,6 +429,31 @@ func GetBaseServiceUrl(ctx *gin.Context) {
 	ctx.String(http.StatusOK, baseServiceUrl)
 }
 
+func GetLocationById(ctx *gin.Context) {
+	// time.Sleep(2 * time.Second)
+	params := ctx.Request.URL.Query()
+
+	memidstr := params["id"]
+
+	var memid string
+	if memidstr != nil && len(memidstr) > 0 {
+		memid = memidstr[0]
+	} else {
+		ctx.JSON(http.StatusOK, gin.H{"ok": false, "message": "记忆id不正确", "data": ""})
+		return
+	}
+
+	var memory entity.Memory
+	result := make(map[string]float64)
+	DB := config.RDB_CONN
+	DB = DB.Table("mp_memory").Where("id = ? ", memid).First(&memory)
+
+	result["longitude"] = memory.Longitude
+	result["latitude"] = memory.Latitude
+
+	ctx.JSON(http.StatusOK, gin.H{"ok": true, "message": "成功获取记忆位置", "data": result})
+}
+
 func GetBaseUrl(ctx *gin.Context) {
 	env := getEnv()
 	var baseUrl string

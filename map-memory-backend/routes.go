@@ -19,6 +19,7 @@ func initializeRoutes() {
 	router.GET("/api/v1/base-service/url", AuthRequired(), GetBaseServiceUrl)
 	router.GET("/api/v1/base-url/url", AuthRequired(), GetBaseUrl)
 	router.GET("/api/v1/first-day-user", AuthRequired(), IsFirstDayRegUser)
+	router.GET("/api/v1/mem-location", AuthRequired(), GetLocationById)
 
 	router.DELETE("/api/v1/memory/:id", AuthRequired(), AuthIsOwnerOfMemoryById(), DeleteMemoryById)
 	router.DELETE("/api/v1/favorite-location/:id", AuthRequired(), DeleteFavoriteLocationById)

@@ -175,9 +175,9 @@
             <bm-city-list style="z-index:10;" anchor="BMAP_ANCHOR_TOP_LEFT"></bm-city-list>
             <bm-map-type :map-types="['BMAP_NORMAL_MAP', 'BMAP_PERSPECTIVE_MAP', 'BMAP_SATELLITE_MAP', 'BMAP_HYBRID_MAP']" anchor="BMAP_ANCHOR_BOTTOM_RIGHT"></bm-map-type>
             <bm-context-menu>
-                  <bm-context-menu-item :callback="logAndLat" text="拷贝此经纬度"></bm-context-menu-item>
                   <bm-context-menu-item :callback="addMemory" text="在此添加记忆"></bm-context-menu-item>
                   <bm-context-menu-item :callback="popAdd2FavoriteLocation" text="设为常用位置"></bm-context-menu-item>
+                  <bm-context-menu-item :callback="logAndLat" text="拷贝此经纬度"></bm-context-menu-item>
             </bm-context-menu>
 
 
@@ -218,7 +218,7 @@ export default {
   mixins: [base],
   computed: {
     mem_url(){
-      return this.base_url+'/working'+"?longitude="+this.memDetail.longitude+"&latitude="+this.memDetail.latitude+"&showpublic=true";
+      return this.base_url+'/working'+"?memid="+this.memDetail.id+"&showpublic=true";
     },
     fallbackLongitude(){
       return this.physicLongitude!=''?this.physicLongitude:116.404;
@@ -250,6 +250,7 @@ return {
   },
   data () {
     return {
+      map_ready: false,
       url_longitude:'',
       url_latitude:'',
       url_showpublic: '',
@@ -327,6 +328,34 @@ return {
     }
   },
   methods: {
+    getLocById(memid){
+      console.log('reach here 10')
+      AXIOS.get('/api/v1/mem-location?id='+memid).then(response=>{
+        if(response.data.ok==true){
+          this.url_latitude = response.data.data.latitude;
+          this.url_longitude = response.data.data.longitude;
+
+          console.log('reach here 11')
+          if(this.map_ready){
+            this.center.lng = Number(this.url_longitude);
+            this.center.lat = Number(this.url_latitude);
+          }
+          console.log('reach here 12')
+          console.log(this.center)
+          this.zoom = 19;
+        }else{
+          this.$notify.error({
+            title: '错误',
+            message: response.data.message
+          })
+        }
+      }).catch(e=>{
+        this.$notify.error({
+          title: '错误',
+          message: '未知错误1'
+        })
+      })
+    },
     onCopyError(){
       swal ( "提示" ,  "拷贝失败" ,  "info" );
     },
@@ -462,7 +491,7 @@ return {
       }).catch(e=>{
         this.$notify.error({
           title: '错误',
-          message: '未知错误'
+          message: '未知错误2'
         })
       })
     },
@@ -555,7 +584,7 @@ return {
       }).catch(e=>{
         this.$notify.error({
           title: '错误',
-          message: '未知错误'
+          message: '未知错误3'
         })
       })
     },
@@ -585,7 +614,7 @@ return {
       }).catch(e=>{
         this.$notify.error({
           title: '错误',
-          message: '未知错误'
+          message: '未知错误4'
         })
       })
     },
@@ -605,7 +634,7 @@ return {
 </p>
 <p>
 </p>
-<img src="http://www.fengchang.cc/imageprocessing/fit?width=700&height=600&type=jpeg&file=yJNshd6DoaW5jXKR.png">
+<img src="http://www.fengchang.cc/imageprocessing/fit?width=700&height=600&type=jpeg&file=NYVv2NiktGC4OR1e.png">
 <p>
     菜单选项
 </p>
@@ -668,7 +697,7 @@ return {
                     }).catch(e=>{
                       this.$notify.error({
                         title: '错误',
-                        message: '未知错误'
+                        message: '未知错误5'
                       })
                     })
                     done();
@@ -697,8 +726,9 @@ return {
       this.showInfoWin[id] = true;
     },
     syncCenterAndZoom(e){
-
+console.log('reach here1')
       this.zoom = e.target.getZoom();
+
       const {lng, lat} = e.target.getCenter();
       if(lng==0 && lat==0 && (e.target.getBounds().getNorthEast().lng-e.target.getBounds().getSouthWest().lng)>360){
         // skip the whole world view at first load second, it's too big, it's gonna load every memory data in the whole world
@@ -807,7 +837,7 @@ return {
       }).catch(e=>{
         this.$notify.error({
                     title: '错误',
-                    message: '未知错误'
+                    message: '未知错误6'
                   })
       })
     },
@@ -853,7 +883,7 @@ return {
       }).catch(e=>{
         this.$notify.error({
           title: '错误',
-          message: '未知错误'
+          message: '未知错误7'
         })
       })
     },
@@ -894,18 +924,16 @@ return {
         dataType:'jsonp',
         async:true,
         success:function(data){
-          console.log(data.content);
           var locInfo = data.content
           if(locInfo!=null && locInfo.point!=null){
             storeThis.physicLongitude = locInfo.point.x;
             storeThis.physicLatitude = locInfo.point.y;
           }
 
-          console.log(storeThis.url_longitude);
-          console.log(storeThis.url_latitude);
-          if(storeThis.url_latitude!=null && storeThis.url_latitude.length>0 &&
-            storeThis.url_longitude!=null && storeThis.url_longitude.length>0 &&
+          if(storeThis.url_latitude!=null && storeThis.url_latitude.toString().length>0 &&
+            storeThis.url_longitude!=null && storeThis.url_longitude.toString().length>0 &&
             !isNaN(storeThis.url_latitude) && !isNaN(storeThis.url_longitude)){
+              console.log('set center...')
             storeThis.center.lng = storeThis.url_longitude
             storeThis.center.lat = storeThis.url_latitude
           }else{
@@ -925,6 +953,8 @@ return {
     },
     mapready ({BMap, map}) {
       //console.log(BMap, map)
+      console.log('reach here2')
+      this.map_ready = true;
       this.checkCurrentLoc();
 
       //this.center.lng = this.state.longitude==null?this.fallbackLongitude:this.state.longitude;
@@ -935,15 +965,20 @@ return {
     }
   },
   mounted(){
+    console.log('reach here 3')
+    var mem_id = this.$route.query.memid;
 
-    this.url_longitude = this.$route.query.longitude;
-    if(this.url_longitude==null || this.url_longitude.length<1 || isNaN(this.url_longitude)){
-      this.url_longitude=null
-    }
-
-    this.url_latitude = this.$route.query.latitude
-    if(this.url_latitude==null || this.url_latitude.length<1 || isNaN(this.url_latitude)){
-      this.url_latitude=null
+    // this.url_longitude = this.$route.query.longitude;
+    // if(this.url_longitude==null || this.url_longitude.length<1 || isNaN(this.url_longitude)){
+    //   this.url_longitude=null
+    // }
+    //
+    // this.url_latitude = this.$route.query.latitude
+    // if(this.url_latitude==null || this.url_latitude.length<1 || isNaN(this.url_latitude)){
+    //   this.url_latitude=null
+    // }
+    if(mem_id!=null && mem_id.length>0){
+      this.getLocById(mem_id)
     }
 
     this.url_showpublic = this.$route.query.showpublic;
@@ -953,12 +988,17 @@ return {
       this.url_showpublic=true
       this.view_public=this.url_showpublic;
     }
-
+    console.log('reach here 4')
     this.checklogin();
+    console.log('reach here 5')
     this.getBaseUrl();
+    console.log('reach here 6')
     this.getBaseServiceUrl();
+    console.log('reach here 7')
     this.isFirstDayUser();
+    console.log('reach here 8')
     this.loadAllFavloc();
+    console.log('reach here 9')
   }
 }
 </script>
