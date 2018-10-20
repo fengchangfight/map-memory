@@ -87,7 +87,7 @@ export default {
 
 <style scoped>
 .login-main {
-  background-image: url('~/assets/yu.jpeg');
+  background-image: url('/imgs/yu.jpeg');
   background-size: cover;
   width: 100%;
   height: 100vh;
