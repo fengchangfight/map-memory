@@ -50,9 +50,13 @@
         <div style="display:flex;position:relative;">
           <button
             v-if="detailMode=='view'"
-            id="edit-mem-point"
+            class="edit-mem-point"
             title="编辑"
             @click="editMemPoint(memDetail.id)"/>
+          <button
+              class="delete-mem-point"
+              title="删除"
+              @click="deleteMemPoint(memDetail.id)"/>
           <button
             v-clipboard:copy="mem_url"
             v-clipboard:success="onCopy"

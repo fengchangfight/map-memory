@@ -4,8 +4,7 @@
       :visible.sync="inputReadCodeVisible"
       :fullscreen="false"
       title="输入阅读密码"
-      width="30%"
-    >
+      width="30%">
       <div @keyup.enter="submitReadCode">
         <el-form autocomplete="off">
           <el-input
@@ -19,7 +18,6 @@
           <el-button @click="submitReadCode">提交</el-button>
         </el-form>
       </div>
-
     </el-dialog>
 
     <el-dialog
@@ -87,9 +85,7 @@
             maxlength="300"/>
         </el-form-item>
         <el-form-item label="记忆详情">
-
           <wysiwyg v-model="form.memory_content" />
-
         </el-form-item>
         <el-form-item>
           <el-switch
@@ -119,7 +115,7 @@
         <div style="display:flex;position:relative;">
           <button
             v-if="detailMode=='view' && memDetail.i_am_owner && readonlydetail==false"
-            id="delete-mem-point"
+            class="delete-mem-point"
             title="删除"
             @click="deleteMemPoint(memDetail.id)"/>
           <button
@@ -131,7 +127,7 @@
             title="分享本记忆"/>
           <button
             v-if="detailMode=='view' && memDetail.i_am_owner && readonlydetail==false"
-            id="edit-mem-point"
+            class="edit-mem-point"
             title="编辑"
             @click="editMemPoint(memDetail.id)"/>
           <h3
@@ -1192,19 +1188,6 @@ return {
   margin-left: 100px;
   width: 200px;
 }
-
-#delete-mem-point{
-  position: absolute;
-  top: 5px;
-  right: 10px;
-  background:url('/imgs/delete20.png') no-repeat;
-  background-size: 100% 100%;
-  width:20px;
-  height:20px;
-  border:none;
-}
-
-
 
 .quill-editor {
       min-height: 200px;
