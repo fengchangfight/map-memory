@@ -1,7 +1,7 @@
 <template>
   <div class="confirm-page">
     <div class="confirm-content">
-       <p>{{showMessage}}</p>
+      <p>{{ showMessage }}</p>
     </div>
     <div class="bottom">
       <!-- <app-footer></app-footer> -->
@@ -23,8 +23,6 @@ export default {
         confirm_code: '',
         showMessage: '验证中...',
       }
-    },
-    methods: {
     },
     created () {
       console.log('created');
@@ -74,7 +72,9 @@ export default {
           }, 1000);
         })
       }
-    }
+    },
+    methods: {
+    },
   }
 </script>
 

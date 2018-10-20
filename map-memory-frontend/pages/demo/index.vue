@@ -4,8 +4,10 @@
       <div class="center-content">
         <div class="card">
           <div id="desc" >
-             <div style="margin-top:22px;"><p>推荐本站最佳体验浏览器:</p></div>
-             <div id="browser-rec"  v-lazy-load-bg="'/imgs/browser.png'" ></div>
+            <div style="margin-top:22px;"><p>推荐本站最佳体验浏览器:</p></div>
+            <div 
+              v-lazy-load-bg="'/imgs/browser.png'" 
+              id="browser-rec" />
           </div>
         </div>
         <div class="card">
@@ -13,9 +15,15 @@
           <p style="text-indent: 2em; margin-left: 5px;">
             在地图上任一点右键,弹出菜单选中"在此添加记忆"
           </p>
-          <div class="desc-img"  v-lazy-load-bg="'/imgs/tianjiajiyi.jpg'" ></div>
-          <div class="desc-img"  v-lazy-load-bg="'/imgs/tianjiajiyidian.jpg'" ></div>
-          <div class="desc-img"  v-lazy-load-bg="'/imgs/xianshifangshi.jpg'" ></div>
+          <div 
+            v-lazy-load-bg="'/imgs/tianjiajiyi.jpg'" 
+            class="desc-img" />
+          <div 
+            v-lazy-load-bg="'/imgs/tianjiajiyidian.jpg'" 
+            class="desc-img" />
+          <div 
+            v-lazy-load-bg="'/imgs/xianshifangshi.jpg'" 
+            class="desc-img" />
         </div>
 
         <div class="card">
@@ -23,8 +31,12 @@
           <p style="text-indent: 2em; margin-left: 5px;">
             在地图上任一点右键,弹出菜单选中"此处经纬度"
           </p>
-          <div class="desc-img"  v-lazy-load-bg="'/imgs/cichujingweidu.jpg'" ></div>
-          <div class="desc-img"  v-lazy-load-bg="'/imgs/jingweidu.jpg'" ></div>
+          <div 
+            v-lazy-load-bg="'/imgs/cichujingweidu.jpg'" 
+            class="desc-img" />
+          <div 
+            v-lazy-load-bg="'/imgs/jingweidu.jpg'" 
+            class="desc-img" />
         </div>
 
         <div class="card">
@@ -32,16 +44,22 @@
           <p style="text-indent: 2em; margin-left: 5px;">
             在地图上任一点右键,弹出菜单选中"设为常用位置"
           </p>
-          <div class="desc-img"  v-lazy-load-bg="'/imgs/sheweichangyong.jpg'" ></div>
-          <div class="desc-img"  v-lazy-load-bg="'/imgs/tianjiachangyong.jpg'" ></div>
-          <div class="desc-img"  v-lazy-load-bg="'/imgs/changyongliebiao.jpg'" ></div>
+          <div 
+            v-lazy-load-bg="'/imgs/sheweichangyong.jpg'" 
+            class="desc-img" />
+          <div 
+            v-lazy-load-bg="'/imgs/tianjiachangyong.jpg'" 
+            class="desc-img" />
+          <div 
+            v-lazy-load-bg="'/imgs/changyongliebiao.jpg'" 
+            class="desc-img" />
         </div>
 
-        <div id="place-bottom"></div>
+        <div id="place-bottom"/>
       </div>
     </div>
     <div class="bottom">
-       <app-footer></app-footer>
+      <app-footer/>
     </div>
 
   </div>
@@ -66,15 +84,15 @@ export default {
     computed: {
 
    },
+    created () {
+
+    },
     methods: {
       goPage (val) {
         this.$router.push(val)
       }
 
     },
-    created () {
-
-    }
   }
 </script>
 

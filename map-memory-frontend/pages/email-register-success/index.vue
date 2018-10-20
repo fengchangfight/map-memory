@@ -1,7 +1,7 @@
 <template>
   <div class="email-register-success-page">
     <div class="email-register-success-content">
-       <p>注册成功，请登录邮箱激活注册！</p>
+      <p>注册成功，请登录邮箱激活注册！</p>
     </div>
     <div class="bottom">
       <!-- <app-footer></app-footer> -->
@@ -23,8 +23,6 @@ export default {
 
       }
     },
-    methods: {
-    },
     created () {
 
     },
@@ -38,7 +36,9 @@ export default {
             storeThis.$router.push("/");
           }
       }, 1000);
-    }
+    },
+    methods: {
+    },
   }
 </script>
 

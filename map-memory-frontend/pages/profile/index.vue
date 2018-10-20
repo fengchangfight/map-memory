@@ -1,30 +1,56 @@
 <template>
   <div class="profile-page">
     <div class="profile-content">
-      <div v-loading="updating" class="profile-block">
+      <div 
+        v-loading="updating" 
+        class="profile-block">
         <b-tabs>
-          <b-tab title="修改个人信息" active>
+          <b-tab 
+            title="修改个人信息" 
+            active>
             <div style="display:flex;">
               <div class="basic-form-holder">
-                <el-form  size="mini" ref="form" label-width="95px">
-                <el-form-item label="昵称">
-                <el-input v-model="nickname" @change="nickNameValidate" v-verify="nickname" ></el-input>
-                <label v-if="nicknameError" class="nickname-invalid" >*{{nicknameErrorMessage}}*</label>
-                </el-form-item>
+                <el-form 
+                  ref="form" 
+                  size="mini" 
+                  label-width="95px">
+                  <el-form-item label="昵称">
+                    <el-input 
+                      v-verify="nickname" 
+                      v-model="nickname" 
+                      @change="nickNameValidate" />
+                    <label 
+                      v-if="nicknameError" 
+                      class="nickname-invalid" >*{{ nicknameErrorMessage }}*</label>
+                  </el-form-item>
 
-                <el-form-item label="手机">
-                <el-input @change="phoneValidate" v-verify="phone" v-model="phone"></el-input>
-                <label v-if="phoneError" class="phone-invalid" >*{{phoneErrorMessage}}*</label>
-                </el-form-item>
+                  <el-form-item label="手机">
+                    <el-input 
+                      v-verify="phone" 
+                      v-model="phone" 
+                      @change="phoneValidate"/>
+                    <label 
+                      v-if="phoneError" 
+                      class="phone-invalid" >*{{ phoneErrorMessage }}*</label>
+                  </el-form-item>
 
                 
 
-                <el-form-item label="邮箱">
-                <el-input v-model="email"  v-verify="email" @change="emailValidate"></el-input>
-                <label v-if="emailError" class="email-invalid" >*{{emailErrorMessage}}*</label>
-                </el-form-item>
+                  <el-form-item label="邮箱">
+                    <el-input 
+                      v-verify="email" 
+                      v-model="email" 
+                      @change="emailValidate"/>
+                    <label 
+                      v-if="emailError" 
+                      class="email-invalid" >*{{ emailErrorMessage }}*</label>
+                  </el-form-item>
 
-                <el-button type="primary" style="margin-left: 40px" size="mini" @click="updateProfile">立即更新</el-button>
+                  <el-button 
+                    type="primary" 
+                    style="margin-left: 40px" 
+                    size="mini" 
+                    @click="updateProfile">立即更新</el-button>
 
                 </el-form>
 
@@ -34,51 +60,91 @@
           </b-tab>
           <b-tab title="修改密码" >
             <div class="basic-form-holder">
-              <el-form  size="mini" ref="pass-form" label-width="88px">
+              <el-form 
+                ref="pass-form" 
+                size="mini" 
+                label-width="88px">
 
                 <el-form-item label="原密码">
-                <el-input v-model="old_password" type="password"></el-input>
+                  <el-input 
+                    v-model="old_password" 
+                    type="password"/>
                 </el-form-item>
 
                 <el-form-item label="新密码">
-                <el-input v-model="new_password" type="password"  v-verify="new_password" @change="newpasswordValidate"></el-input>
-                <label v-if="newpasswordError" class="password-invalid">*{{newpasswordErrorMessage}}*</label>
+                  <el-input 
+                    v-verify="new_password" 
+                    v-model="new_password" 
+                    type="password" 
+                    @change="newpasswordValidate"/>
+                  <label 
+                    v-if="newpasswordError" 
+                    class="password-invalid">*{{ newpasswordErrorMessage }}*</label>
                 </el-form-item>
 
                 <el-form-item label="重复新密码">
-                <el-input v-model="re_new_password" type="password" @change="checkSame"></el-input>
-                <label v-if="renewpasswordError" class="password-invalid" >*两次输入密码不一致*</label>
+                  <el-input 
+                    v-model="re_new_password" 
+                    type="password" 
+                    @change="checkSame"/>
+                  <label 
+                    v-if="renewpasswordError" 
+                    class="password-invalid" >*两次输入密码不一致*</label>
                 </el-form-item>
 
-                <el-button type="primary" style="margin-left: 40px" size="mini" @click="updatePassword">更新密码</el-button>
+                <el-button 
+                  type="primary" 
+                  style="margin-left: 40px" 
+                  size="mini" 
+                  @click="updatePassword">更新密码</el-button>
               </el-form>
             </div>
           </b-tab>
           <b-tab title="阅读密码">
             <div class="basic-form-holder">
-              <el-form  size="mini" ref="pass-form" label-width="88px">
+              <el-form 
+                ref="pass-form" 
+                size="mini" 
+                label-width="88px">
                 <el-form-item label="原阅读密码">
-                  <el-input v-model="old_read_code" type="password"></el-input>
+                  <el-input 
+                    v-model="old_read_code" 
+                    type="password"/>
                 </el-form-item>
                 <el-form-item label="新阅读密码">
-                  <el-input type="password" @change="newReadCodeValid" v-verify="new_read_code" v-model="new_read_code"></el-input>
-                  <label v-if="newreadcodeError" class="read-code-invalid" >*{{newreadcodeErrorMessage}}*</label>
+                  <el-input 
+                    v-verify="new_read_code" 
+                    v-model="new_read_code" 
+                    type="password" 
+                    @change="newReadCodeValid"/>
+                  <label 
+                    v-if="newreadcodeError" 
+                    class="read-code-invalid" >*{{ newreadcodeErrorMessage }}*</label>
                 </el-form-item>
                 <el-form-item label="新重复阅读密码">
-                  <el-input v-model="re_new_read_code" type="password" @change="checkSameReadCode"></el-input>
-                  <label v-if="renewreadcodeError" class="password-invalid" >*两次输入密码不一致*</label>
+                  <el-input 
+                    v-model="re_new_read_code" 
+                    type="password" 
+                    @change="checkSameReadCode"/>
+                  <label 
+                    v-if="renewreadcodeError" 
+                    class="password-invalid" >*两次输入密码不一致*</label>
                 </el-form-item>
-                <el-button type="primary" style="margin-left: 40px" size="mini" @click="updateReadCode">更新</el-button>
-            </el-form>
+                <el-button 
+                  type="primary" 
+                  style="margin-left: 40px" 
+                  size="mini" 
+                  @click="updateReadCode">更新</el-button>
+              </el-form>
             </div>
           </b-tab>
 
         </b-tabs>
-     </div>
+      </div>
 
     </div>
     <div class="bottom">
-      <app-footer></app-footer>
+      <app-footer/>
     </div>
 
   </div>
@@ -140,6 +206,11 @@ export default {
         email: '',
         userid: ''
       }
+    },
+    created () {
+    },
+    mounted (){
+      this.loadUserDetail();
     },
     methods: {
       cropSuccess(imgDataUrl, field){
@@ -355,11 +426,6 @@ export default {
       }
 
     },
-    created () {
-    },
-    mounted (){
-      this.loadUserDetail();
-    }
   }
 </script>
 

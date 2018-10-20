@@ -1,200 +1,333 @@
 <template>
   <div style="width:100%;position:relative;height:100%;">
     <el-dialog
-      title="输入阅读密码"
       :visible.sync="inputReadCodeVisible"
-      width="30%"
       :fullscreen="false"
-      >
+      title="输入阅读密码"
+      width="30%"
+    >
       <div @keyup.enter="submitReadCode">
         <el-form autocomplete="off">
-        <el-input placeholder="阅读密码(初始为123)" autocomplete="off" v-model="read_code" type="password"></el-input>
-        <input type="password" style="visibility:hidden" />
-        <el-button @click="submitReadCode">提交</el-button>
-      </el-form>
+          <el-input
+            v-model="read_code"
+            placeholder="阅读密码(初始为123)"
+            autocomplete="off"
+            type="password"/>
+          <input
+            type="password"
+            style="visibility:hidden" >
+          <el-button @click="submitReadCode">提交</el-button>
+        </el-form>
       </div>
 
     </el-dialog>
 
     <el-dialog
-      title="删除常用位置"
       :visible.sync="deleteFavLocVisible"
+      title="删除常用位置"
       width="200px">
       <div>
-        <p>{{selected_favname}}</p>
+        <p>{{ selected_favname }}</p>
         <el-button @click="deleteFavloc">删除收藏位置</el-button>
       </div>
 
     </el-dialog>
 
     <el-dialog
-      title="添加常用位置"
       :visible.sync="addFavlocVisible"
+      title="添加常用位置"
       width="30%">
       <div>
-        <el-input placeholder="收藏名" v-model="fav_loc_name"></el-input>
+        <el-input
+          v-model="fav_loc_name"
+          placeholder="收藏名"/>
       </div>
-      <span slot="footer" class="dialog-footer">
+      <span
+        slot="footer"
+        class="dialog-footer">
         <el-button @click="addFavlocVisible = false">取消</el-button>
-        <el-button type="primary" @click="add2Faviloc">添加</el-button>
+        <el-button
+          type="primary"
+          @click="add2Faviloc">添加</el-button>
       </span>
     </el-dialog>
 
     <el-dialog
-      title="添加记忆点"
       :visible.sync="addMemoryVisible"
-      width="100%"
       :fullscreen="true"
-      :before-close="handleClose">
-      <el-form ref="form" :model="form" label-width="80px">
+      :before-close="handleClose"
+      title="添加记忆点"
+      width="100%">
+      <el-form
+        ref="form"
+        :model="form"
+        label-width="80px">
         <el-form-item label="图标">
-          <el-select v-model="selected_icon" filterable placeholder="记忆图标" @change="setIcon()">
-                             <el-option
-                               v-for="item in available_icons"
-                               :key="item.id"
-                               :label="item.name"
-                               :value="item.id">
-                               <span style="float: left"><img width="20" height="20" :src="'imgs/'+item.id"/></span>
-                               <span style="float: right; color: #8492a6; font-size: 13px">{{ item.name }}</span>
-                             </el-option>
-                           </el-select>
+          <el-select
+            v-model="selected_icon"
+            filterable
+            placeholder="记忆图标"
+            @change="setIcon()">
+            <el-option
+              v-for="item in available_icons"
+              :key="item.id"
+              :label="item.name"
+              :value="item.id">
+              <span style="float: left"><img
+                :src="'imgs/'+item.id"
+                width="20"
+                height="20"></span>
+              <span style="float: right; color: #8492a6; font-size: 13px">{{ item.name }}</span>
+            </el-option>
+          </el-select>
         </el-form-item>
         <el-form-item label="记忆标题">
-          <el-input v-model="form.title" maxlength="300"></el-input>
+          <el-input
+            v-model="form.title"
+            maxlength="300"/>
         </el-form-item>
         <el-form-item label="记忆详情">
 
-        <wysiwyg v-model="form.memory_content" />
+          <wysiwyg v-model="form.memory_content" />
 
         </el-form-item>
         <el-form-item>
           <el-switch
             v-model="form.is_public"
             active-text="公开"
-            inactive-text="私密">
-          </el-switch>
+            inactive-text="私密"/>
         </el-form-item>
       </el-form>
 
-      <span slot="footer" class="dialog-footer">
+      <span
+        slot="footer"
+        class="dialog-footer">
         <el-button @click="addMemoryVisible = false">取消</el-button>
-        <el-button type="primary" @click="createMemoryPoint">创建</el-button>
+        <el-button
+          type="primary"
+          @click="createMemoryPoint">创建</el-button>
       </span>
     </el-dialog>
 
     <el-dialog
-      title="记忆详情"
       :visible.sync="memoryDetailBoxVisible"
-      width="100%"
       :fullscreen="true"
-      >
-      <div  style="display:flex;flex-direction:column">
-        <div  style="display:flex;position:relative;">
-            <button v-if="detailMode=='view' && memDetail.i_am_owner && readonlydetail==false" @click="deleteMemPoint(memDetail.id)" title="删除" id="delete-mem-point"></button>
-            <button v-if="memDetail.is_public" v-clipboard:copy="mem_url" v-clipboard:success="onCopy" v-clipboard:error="onCopyError" title="分享本记忆" id="copy-lng-lat"></button>
-            <button v-if="detailMode=='view' && memDetail.i_am_owner && readonlydetail==false" @click="editMemPoint(memDetail.id)" title="编辑" id="edit-mem-point"></button>
-            <h3 v-if="detailMode=='view'" style="margin: 0 auto;padding:0px 30px 0px 40px;"><span style="float: left"><img width="40" height="40" :src="'imgs/'+memDetail.icon"/></span>&nbsp;&nbsp;{{memDetail.title}}<span class="small-notes" v-if="!memDetail.is_public">(私密)</span><span class="small-notes" v-if="memDetail.is_public">(公开)</span></h3>
-            <div v-if="detailMode=='edit'" style="display:flex;width:100%;">
-              <el-select v-model="memDetail.icon" filterable placeholder="记忆图标" @change="setIcon()">
-                                 <el-option
-                                   v-for="item in available_icons"
-                                   :key="item.id"
-                                   :label="item.name"
-                                   :value="item.id">
-                                   <span style="float: left"><img width="20" height="20" :src="'imgs/'+item.id"/></span>
-                                   <span style="float: right; color: #8492a6; font-size: 13px">{{ item.name }}</span>
-                                 </el-option>
-                               </el-select>
-              <el-input  v-model="memDetail.title" style="margin: 0 auto;padding:0px 1px 0px 1px;"></el-input>
-            </div>
+      title="记忆详情"
+      width="100%"
+    >
+      <div style="display:flex;flex-direction:column">
+        <div style="display:flex;position:relative;">
+          <button
+            v-if="detailMode=='view' && memDetail.i_am_owner && readonlydetail==false"
+            id="delete-mem-point"
+            title="删除"
+            @click="deleteMemPoint(memDetail.id)"/>
+          <button
+            v-clipboard:copy="mem_url"
+            v-clipboard:success="onCopy"
+            v-clipboard:error="onCopyError"
+            v-if="memDetail.is_public"
+            id="copy-lng-lat"
+            title="分享本记忆"/>
+          <button
+            v-if="detailMode=='view' && memDetail.i_am_owner && readonlydetail==false"
+            id="edit-mem-point"
+            title="编辑"
+            @click="editMemPoint(memDetail.id)"/>
+          <h3
+            v-if="detailMode=='view'"
+            style="margin: 0 auto;padding:0px 30px 0px 40px;"><span style="float: left"><img
+              :src="'imgs/'+memDetail.icon"
+              width="40"
+              height="40"></span>&nbsp;&nbsp;{{ memDetail.title }}<span
+                v-if="!memDetail.is_public"
+                class="small-notes">(私密)</span><span
+                  v-if="memDetail.is_public"
+                  class="small-notes">(公开)</span></h3>
+          <div
+            v-if="detailMode=='edit'"
+            style="display:flex;width:100%;">
+            <el-select
+              v-model="memDetail.icon"
+              filterable
+              placeholder="记忆图标"
+              @change="setIcon()">
+              <el-option
+                v-for="item in available_icons"
+                :key="item.id"
+                :label="item.name"
+                :value="item.id">
+                <span style="float: left"><img
+                  :src="'imgs/'+item.id"
+                  width="20"
+                  height="20"></span>
+                <span style="float: right; color: #8492a6; font-size: 13px">{{ item.name }}</span>
+              </el-option>
+            </el-select>
+            <el-input
+              v-model="memDetail.title"
+              style="margin: 0 auto;padding:0px 1px 0px 1px;"/>
+          </div>
         </div>
         <div style="display:block;margin-top: 10px;">
-          <div  v-if="readonlydetail==false" style="margin-left: auto; font-size:70%;color:gray">
-            <label  style="color:#003300;">{{memDetail.nickname}}</label>&nbsp;发布于：{{memDetail.created_at}} &nbsp;<label v-if="autosaveflag">(已自动保存)</label>
+          <div
+            v-if="readonlydetail==false"
+            style="margin-left: auto; font-size:70%;color:gray">
+            <label style="color:#003300;">{{ memDetail.nickname }}</label>&nbsp;发布于：{{ memDetail.created_at }} &nbsp;<label v-if="autosaveflag">(已自动保存)</label>
           </div>
         </div>
         <div v-if="detailMode=='edit'">
-          <wysiwyg @change="autosave" v-model="memDetail.content" />
-            <el-switch
-              v-model="memDetail.is_public"
-              active-text="公开"
-              @change="changeAccessibility"
-              inactive-text="私密">
-            </el-switch>
+          <wysiwyg
+            v-model="memDetail.content"
+            @change="autosave" />
+          <el-switch
+            v-model="memDetail.is_public"
+            active-text="公开"
+            inactive-text="私密"
+            @change="changeAccessibility"/>
 
           <!-- <froala :config="option" v-model="memDetail.content"></froala> -->
           <div class="button-container">
-              <el-button style="float: right; margin-right:10px;" type="primary" size="small" @click="saveEdit">保存</el-button>
-              <el-button style="float: right; margin-right:10px;" size="small" @click="cancelEdit">取消</el-button>
-            </div>
+            <el-button
+              style="float: right; margin-right:10px;"
+              type="primary"
+              size="small"
+              @click="saveEdit">保存</el-button>
+            <el-button
+              style="float: right; margin-right:10px;"
+              size="small"
+              @click="cancelEdit">取消</el-button>
+          </div>
         </div>
-        <div v-loading="loading_content" v-if="detailMode=='view'" v-html="memDetail.content" style="background-color:#f6f8fa;min-height:300px;overflow:scroll;overflow-x: scroll;font-size:17px;" >
-        </div>
+        <div
+          v-loading="loading_content"
+          v-if="detailMode=='view'"
+          style="background-color:#f6f8fa;min-height:300px;overflow:scroll;overflow-x: scroll;font-size:17px;"
+          v-html="memDetail.content" />
       </div>
 
     </el-dialog>
 
-        <div class="search-box">
-          <div style="display: flex;margin: 0 auto;">
+    <div class="search-box">
+      <div style="display: flex;margin: 0 auto;">
 
 
-            <div class="search-input-container-row-keyword">
-              <el-input v-model="keyword" placeholder="地名关键词">
-               <template slot="append"><el-button @click="clear()">清空搜索</el-button></template>
-              </el-input>
-            </div>
-
-            <div class="search-input-container-row">
-              <el-select v-model="selected_center" filterable placeholder="常用位置" @change="changeCenter">
-                 <el-option
-                   v-for="item in fav_loc_list"
-                   :key="item.id"
-                   :label="item.name"
-                   :value="item.id">
-                 </el-option>
-               </el-select>
-            </div>
-            <div class="search-input-container-row-ll">
-              <el-input v-model="locstring" placeholder="(经,纬),例:116.328427,39.990929">
-                 <template slot="append"><el-button @click="gotoloc">定位</el-button></template>
-              </el-input>
-            </div>
-            <div class="search-input-container-row-switch">
-              <el-switch v-model="view_public"
-              active-text="显示公共笔记"
-              inactive-text="仅自己的"
-              @change="changeView"></el-switch>
-            </div>
-          </div>
+        <div class="search-input-container-row-keyword">
+          <el-input
+            v-model="keyword"
+            placeholder="地名关键词">
+            <template slot="append"><el-button @click="clear()">清空搜索</el-button></template>
+          </el-input>
         </div>
-        <div class="bm-view">
-          <baidu-map :max-zoom="20" @moveend="syncCenterAndZoom" @zoomend="syncCenterAndZoom" :scroll-wheel-zoom="true" class="bm-view" :center="center" :zoom="zoom" @ready="mapready"  ak="badBwvN3hjlfXUCFSpcGzVLuG0oqpTNR">
-            <bm-navigation anchor="BMAP_ANCHOR_TOP_RIGHT"></bm-navigation>
-            <bm-geolocation anchor="BMAP_ANCHOR_BOTTOM_LEFT" :showAddressBar="true" :autoLocation="true"></bm-geolocation>
-            <bm-local-search style="position:absolute;left:10px;top:40px;" :keyword="keyword" :auto-viewport="true" :location="location"></bm-local-search>
-            <bm-city-list style="z-index:10;" anchor="BMAP_ANCHOR_TOP_LEFT"></bm-city-list>
-            <bm-map-type :map-types="['BMAP_NORMAL_MAP', 'BMAP_PERSPECTIVE_MAP', 'BMAP_SATELLITE_MAP', 'BMAP_HYBRID_MAP']" anchor="BMAP_ANCHOR_BOTTOM_RIGHT"></bm-map-type>
-            <bm-context-menu>
-                  <bm-context-menu-item :callback="addMemory" text="在此添加记忆"></bm-context-menu-item>
-                  <bm-context-menu-item :callback="popAdd2FavoriteLocation" text="设为常用位置"></bm-context-menu-item>
-                  <bm-context-menu-item :callback="logAndLat" text="拷贝此经纬度"></bm-context-menu-item>
-            </bm-context-menu>
 
-
-            <bml-marker-cluster :averageCenter="true">
-               <bm-marker @mouseover="infoWindowOpen(item.id)" @mouseout="infoWindowClose(item.id)" v-bind:key="item.id" :title="limitStringLength(item.title)" @dragend="moveMemoryPos($event, item.id)" v-for="item in my_mem_data" @click="showMemDetailWin(item.id, item.locked)" :position="{lng: item.longitude, lat: item.latitude}" :dragging="true" animation="BMAP_ANIMATION_DROP" :icon="{url: 'imgs/'+item.icon, size: {width: 40, height: 40}}"  >
-                 <bm-info-window :show="showInfoWin[item.id]" >{{item.title}}</bm-info-window>
-               </bm-marker>
-            </bml-marker-cluster>
-
-            <bm-marker v-if="is_newbie" @mouseover="infoWindowOpen(tutorialItem.id)" @mouseout="infoWindowClose(tutorialItem.id)" @click="showMemDetailWin(tutorialItem.id)" :position="{lng: center.lng, lat: center.lat}" :dragging="false" animation="BMAP_ANIMATION_BOUNCE" :icon="{url: 'imgs/'+tutorialItem.icon, size: {width: 60, height: 60}}"  >
-              <bm-info-window :show="showInfoWin[tutorialItem.id]" >{{tutorialItem.title}}</bm-info-window>
-            </bm-marker>
-
-            <bm-marker v-bind:key="item.id" :title="limitStringLength(item.name)" v-for="item in fav_loc_list" @click="showFavlocDetail(item.id, item.name)" :position="{lng: item.longitude, lat: item.latitude}" :dragging="false"  :icon="{url: 'imgs/redstar.png', size: {width: 40, height: 40}}"  >
-            </bm-marker>
-          </baidu-map>
+        <div class="search-input-container-row">
+          <el-select
+            v-model="selected_center"
+            filterable
+            placeholder="常用位置"
+            @change="changeCenter">
+            <el-option
+              v-for="item in fav_loc_list"
+              :key="item.id"
+              :label="item.name"
+              :value="item.id"/>
+          </el-select>
         </div>
+        <div class="search-input-container-row-ll">
+          <el-input
+            v-model="locstring"
+            placeholder="(经,纬),例:116.328427,39.990929">
+            <template slot="append"><el-button @click="gotoloc">定位</el-button></template>
+          </el-input>
+        </div>
+        <div class="search-input-container-row-switch">
+          <el-switch
+            v-model="view_public"
+            active-text="显示公共笔记"
+            inactive-text="仅自己的"
+            @change="changeView"/>
+        </div>
+      </div>
+    </div>
+    <div class="bm-view">
+      <baidu-map
+        :max-zoom="20"
+        :scroll-wheel-zoom="true"
+        :center="center"
+        :zoom="zoom"
+        class="bm-view"
+        ak="badBwvN3hjlfXUCFSpcGzVLuG0oqpTNR"
+        @moveend="syncCenterAndZoom"
+        @zoomend="syncCenterAndZoom"
+        @ready="mapready">
+        <bm-navigation anchor="BMAP_ANCHOR_TOP_RIGHT"/>
+        <bm-geolocation
+          :show-address-bar="true"
+          :auto-location="true"
+          anchor="BMAP_ANCHOR_BOTTOM_LEFT"/>
+        <bm-local-search
+          :keyword="keyword"
+          :auto-viewport="true"
+          :location="location"
+          style="position:absolute;left:10px;top:40px;"/>
+        <bm-city-list
+          style="z-index:10;"
+          anchor="BMAP_ANCHOR_TOP_LEFT"/>
+        <bm-map-type
+          :map-types="['BMAP_NORMAL_MAP', 'BMAP_PERSPECTIVE_MAP', 'BMAP_SATELLITE_MAP', 'BMAP_HYBRID_MAP']"
+          anchor="BMAP_ANCHOR_BOTTOM_RIGHT"/>
+        <bm-context-menu>
+          <bm-context-menu-item
+            :callback="addMemory"
+            text="在此添加记忆"/>
+          <bm-context-menu-item
+            :callback="popAdd2FavoriteLocation"
+            text="设为常用位置"/>
+          <bm-context-menu-item
+              :callback="logAndLat"
+              text="拷贝此经纬度"/>
+          </bm-context-menu>
+        <no-ssr>
+          <bml-marker-clusterer :average-center="true">
+            <bm-marker
+              v-for="item in my_mem_data"
+              :key="item.id"
+              :title="limitStringLength(item.title)"
+              :position="{lng: item.longitude, lat: item.latitude}"
+              :dragging="true"
+              :icon="{url: 'imgs/'+item.icon, size: {width: 40, height: 40}}"
+              animation="BMAP_ANIMATION_DROP"
+              @mouseover="infoWindowOpen(item.id)"
+              @mouseout="infoWindowClose(item.id)"
+              @dragend="moveMemoryPos($event, item.id)"
+              @click="showMemDetailWin(item.id, item.locked)" >
+              <bm-info-window :show="showInfoWin[item.id]" >{{ item.title }}</bm-info-window>
+            </bm-marker>
+          </bml-marker-clusterer>
+        </no-ssr>
+
+        <bm-marker
+          v-if="is_newbie"
+          :position="{lng: center.lng, lat: center.lat}"
+          :dragging="false"
+          :icon="{url: 'imgs/'+tutorialItem.icon, size: {width: 60, height: 60}}"
+          animation="BMAP_ANIMATION_BOUNCE"
+          @mouseover="infoWindowOpen(tutorialItem.id)"
+          @mouseout="infoWindowClose(tutorialItem.id)"
+          @click="showMemDetailWin(tutorialItem.id)" >
+          <bm-info-window :show="showInfoWin[tutorialItem.id]" >{{ tutorialItem.title }}</bm-info-window>
+        </bm-marker>
+
+        <bm-marker
+          v-for="item in fav_loc_list"
+          :key="item.id"
+          :title="limitStringLength(item.name)"
+          :position="{lng: item.longitude, lat: item.latitude}"
+          :dragging="false"
+          :icon="{url: 'imgs/redstar.png', size: {width: 40, height: 40}}"
+          @click="showFavlocDetail(item.id, item.name)" />
+      </baidu-map>
+    </div>
 
 
   </div>
@@ -202,6 +335,7 @@
 </template>
 
 <script>
+
 
 import swal from 'sweetalert'
 import {AXIOS} from '~/common/http-commons'
@@ -212,42 +346,12 @@ import base from '~/mixins/base'
 import _ from 'lodash'
 import Qs from 'qs'
 
+
 export default {
   components: {
+
   },
   mixins: [base],
-  computed: {
-    mem_url(){
-      return this.base_url+'/working'+"?memid="+this.memDetail.id+"&showpublic=true";
-    },
-    fallbackLongitude(){
-      return this.physicLongitude!=''?this.physicLongitude:116.404;
-    },
-    fallbackLatitude(){
-      return this.physicLatitude!=''?this.physicLatitude:39.915;
-    },
-    optionNoAutoSave(){
-return {
-          imageUpload: false,
-          heightMin:350,
-        };
-    },
-    option() {
-        return {
-          imageUpload: false,
-          heightMin:350,
-          saveInterval: 2500,
-          saveMethod: 'POST',
-          saveParam: 'memDetail.content',
-          saveParams:{
-            'id': this.memDetail.id
-          },
-          requestWithCredentials: true,
-          requestWithCORS: true,
-          saveURL: this.base_service_url+'/api/v1/memory-content'
-        };
-    }
-  },
   data () {
     return {
       map_ready: false,
@@ -327,6 +431,69 @@ return {
       view_public:false
     }
   },
+  computed: {
+    mem_url(){
+      //return this.base_url+'/working'+"?longitude="+this.memDetail.longitude+"&latitude="+this.memDetail.latitude+"&showpublic=true";
+      return this.base_url+'/working'+"?memid="+this.memDetail.id+"&showpublic=true";
+    },
+    fallbackLongitude(){
+      return this.physicLongitude!=''?this.physicLongitude:116.404;
+    },
+    fallbackLatitude(){
+      return this.physicLatitude!=''?this.physicLatitude:39.915;
+    },
+    optionNoAutoSave(){
+return {
+          imageUpload: false,
+          heightMin:350,
+        };
+    },
+    option() {
+        return {
+          imageUpload: false,
+          heightMin:350,
+          saveInterval: 2500,
+          saveMethod: 'POST',
+          saveParam: 'memDetail.content',
+          saveParams:{
+            'id': this.memDetail.id
+          },
+          requestWithCredentials: true,
+          requestWithCORS: true,
+          saveURL: this.base_service_url+'/api/v1/memory-content'
+        };
+    }
+  },
+  mounted(){
+
+    this.url_longitude = this.$route.query.longitude;
+    if(this.url_longitude==null || this.url_longitude.length<1 || isNaN(this.url_longitude)){
+      this.url_longitude=null
+    }
+
+    this.url_latitude = this.$route.query.latitude
+    if(this.url_latitude==null || this.url_latitude.length<1 || isNaN(this.url_latitude)){
+      this.url_latitude=null
+    }
+    this.url_showpublic = this.$route.query.showpublic;
+    if(this.url_showpublic!='true'){
+      this.url_showpublic=null
+    }else{
+      this.url_showpublic=true
+      this.view_public=this.url_showpublic;
+    }
+
+    var mem_id = this.$route.query.memid;
+    if(mem_id!=null && mem_id.length>0){
+      this.getLocById(mem_id)
+    }
+
+    this.checklogin();
+    this.getBaseUrl();
+    this.getBaseServiceUrl();
+    this.isFirstDayUser();
+    this.loadAllFavloc();
+  },
   methods: {
     getLocById(memid){
       console.log('reach here 10')
@@ -334,7 +501,6 @@ return {
         if(response.data.ok==true){
           this.url_latitude = response.data.data.latitude;
           this.url_longitude = response.data.data.longitude;
-
           console.log('reach here 11')
           if(this.map_ready){
             this.center.lng = Number(this.url_longitude);
@@ -491,7 +657,7 @@ return {
       }).catch(e=>{
         this.$notify.error({
           title: '错误',
-          message: '未知错误2'
+          message: '未知错误'
         })
       })
     },
@@ -584,7 +750,7 @@ return {
       }).catch(e=>{
         this.$notify.error({
           title: '错误',
-          message: '未知错误3'
+          message: '未知错误'
         })
       })
     },
@@ -614,7 +780,7 @@ return {
       }).catch(e=>{
         this.$notify.error({
           title: '错误',
-          message: '未知错误4'
+          message: '未知错误'
         })
       })
     },
@@ -697,7 +863,7 @@ return {
                     }).catch(e=>{
                       this.$notify.error({
                         title: '错误',
-                        message: '未知错误5'
+                        message: '未知错误'
                       })
                     })
                     done();
@@ -726,9 +892,8 @@ return {
       this.showInfoWin[id] = true;
     },
     syncCenterAndZoom(e){
-console.log('reach here1')
-      this.zoom = e.target.getZoom();
 
+      this.zoom = e.target.getZoom();
       const {lng, lat} = e.target.getCenter();
       if(lng==0 && lat==0 && (e.target.getBounds().getNorthEast().lng-e.target.getBounds().getSouthWest().lng)>360){
         // skip the whole world view at first load second, it's too big, it's gonna load every memory data in the whole world
@@ -837,7 +1002,7 @@ console.log('reach here1')
       }).catch(e=>{
         this.$notify.error({
                     title: '错误',
-                    message: '未知错误6'
+                    message: '未知错误'
                   })
       })
     },
@@ -883,7 +1048,7 @@ console.log('reach here1')
       }).catch(e=>{
         this.$notify.error({
           title: '错误',
-          message: '未知错误7'
+          message: '未知错误'
         })
       })
     },
@@ -924,16 +1089,18 @@ console.log('reach here1')
         dataType:'jsonp',
         async:true,
         success:function(data){
+          console.log(data.content);
           var locInfo = data.content
           if(locInfo!=null && locInfo.point!=null){
             storeThis.physicLongitude = locInfo.point.x;
             storeThis.physicLatitude = locInfo.point.y;
           }
 
+          console.log(storeThis.url_longitude);
+          console.log(storeThis.url_latitude);
           if(storeThis.url_latitude!=null && storeThis.url_latitude.toString().length>0 &&
             storeThis.url_longitude!=null && storeThis.url_longitude.toString().length>0 &&
             !isNaN(storeThis.url_latitude) && !isNaN(storeThis.url_longitude)){
-              console.log('set center...')
             storeThis.center.lng = storeThis.url_longitude
             storeThis.center.lat = storeThis.url_latitude
           }else{
@@ -953,7 +1120,6 @@ console.log('reach here1')
     },
     mapready ({BMap, map}) {
       //console.log(BMap, map)
-      console.log('reach here2')
       this.map_ready = true;
       this.checkCurrentLoc();
 
@@ -963,43 +1129,8 @@ console.log('reach here1')
 
       //this.loadMemPoints();
     }
-  },
-  mounted(){
-    console.log('reach here 3')
-    var mem_id = this.$route.query.memid;
-
-    // this.url_longitude = this.$route.query.longitude;
-    // if(this.url_longitude==null || this.url_longitude.length<1 || isNaN(this.url_longitude)){
-    //   this.url_longitude=null
-    // }
-    //
-    // this.url_latitude = this.$route.query.latitude
-    // if(this.url_latitude==null || this.url_latitude.length<1 || isNaN(this.url_latitude)){
-    //   this.url_latitude=null
-    // }
-    if(mem_id!=null && mem_id.length>0){
-      this.getLocById(mem_id)
-    }
-
-    this.url_showpublic = this.$route.query.showpublic;
-    if(this.url_showpublic!='true'){
-      this.url_showpublic=null
-    }else{
-      this.url_showpublic=true
-      this.view_public=this.url_showpublic;
-    }
-    console.log('reach here 4')
-    this.checklogin();
-    console.log('reach here 5')
-    this.getBaseUrl();
-    console.log('reach here 6')
-    this.getBaseServiceUrl();
-    console.log('reach here 7')
-    this.isFirstDayUser();
-    console.log('reach here 8')
-    this.loadAllFavloc();
-    console.log('reach here 9')
   }
+
 }
 </script>
 
@@ -1066,7 +1197,7 @@ console.log('reach here1')
   position: absolute;
   top: 5px;
   right: 10px;
-  background:url('~/static/imgs/delete20.png') no-repeat;
+  background:url('/imgs/delete20.png') no-repeat;
   background-size: 100% 100%;
   width:20px;
   height:20px;

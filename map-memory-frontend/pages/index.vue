@@ -1,15 +1,21 @@
 <template>
   <div class="home-page">
-    <div class="main-image"  v-lazy-load-bg="'/imgs/home-back-grid-icon.jpg'">
+    <div 
+      v-lazy-load-bg="'/imgs/home-back-grid-icon.jpg'" 
+      class="main-image">
       <div id="title">
         <h1 style="color: white;">基于地图的极简记忆本</h1>
       </div>
 
       <div class="button-middle-holder">
-        <a v-on:click="goPage('/login')" class="home-btn">
+        <a 
+          class="home-btn" 
+          @click="goPage('/login')">
           <span>进入</span>
         </a>
-        <a v-on:click="goPage('/demo')" class="home-btn">
+        <a 
+          class="home-btn" 
+          @click="goPage('/demo')">
           <span>演示</span>
         </a>
         <!-- <button v-on:click="goDemo" class="demo-button button"></button>
@@ -18,22 +24,31 @@
     </div>
 
 
-    <div class="page-con" style="background: rgb(255, 255, 255); min-height: 582px;">
+    <div 
+      class="page-con" 
+      style="background: rgb(255, 255, 255); min-height: 582px;">
 
-        <el-carousel :interval="3000" arrow="always" height="582px">
-            <el-carousel-item v-for="item in intro_items" :key="item.title">
-               <div class="intro-container">
-                      <div class="h2-div">{{item.title}}</div>
-                      <div class="h3-div">{{item.description}}</div>
-                      <div class="des-item" v-lazy-load-bg="'/imgs/'+item.image" ></div>
-                </div>
-            </el-carousel-item>
-          </el-carousel>
+      <el-carousel 
+        :interval="3000" 
+        arrow="always" 
+        height="582px">
+        <el-carousel-item 
+          v-for="item in intro_items" 
+          :key="item.title">
+          <div class="intro-container">
+            <div class="h2-div">{{ item.title }}</div>
+            <div class="h3-div">{{ item.description }}</div>
+            <div 
+              v-lazy-load-bg="'/imgs/'+item.image" 
+              class="des-item" />
+          </div>
+        </el-carousel-item>
+      </el-carousel>
 
     </div>
 
     <div class="bottom">
-      <app-footer></app-footer>
+      <app-footer/>
     </div>
   </div>
 </template>
@@ -62,15 +77,15 @@ export default {
         ]
       }
     },
+    created () {
+
+    },
     methods: {
       goPage (val) {
         this.$router.push(val)
       }
 
     },
-    created () {
-
-    }
   }
 </script>
 

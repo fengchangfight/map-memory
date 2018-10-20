@@ -4,19 +4,19 @@
       <div class="center-content" >
         <table class="contact-table">
           <tr>
-             <td>站长昵称</td>
-             <td>蟹蟹</td>
+            <td>站长昵称</td>
+            <td>蟹蟹</td>
           </tr>
           <tr>
-             <td>本站邮箱</td>
-             <td><a href="mailto:ditujiyi@163.com">ditujiyi@163.com</a></td>
+            <td>本站邮箱</td>
+            <td><a href="mailto:ditujiyi@163.com">ditujiyi@163.com</a></td>
           </tr>
         </table>
 
       </div>
     </div>
     <div class="bottom">
-      <app-footer></app-footer>
+      <app-footer/>
     </div>
   </div>
 </template>
@@ -38,12 +38,12 @@ export default {
         rest_base: '.'
       }
     },
+    created () {
+      //this.getStaticBase();
+    },
     methods: {
 
     },
-    created () {
-      //this.getStaticBase();
-    }
   }
 </script>
 

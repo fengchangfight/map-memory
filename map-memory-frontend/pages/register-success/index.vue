@@ -1,7 +1,7 @@
 <template>
   <div class="register-success-page">
     <div class="register-success-content">
-       <p>注册成功，正在跳转...</p>
+      <p>注册成功，正在跳转...</p>
     </div>
     <div class="bottom">
       <!-- <app-footer></app-footer> -->
@@ -23,8 +23,6 @@ export default {
 
       }
     },
-    methods: {
-    },
     created () {
 
     },
@@ -38,7 +36,9 @@ export default {
             storeThis.$router.push("/login");
           }
       }, 1000);
-    }
+    },
+    methods: {
+    },
   }
 </script>
 

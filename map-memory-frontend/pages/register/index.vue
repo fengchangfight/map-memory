@@ -1,11 +1,13 @@
 <template>
-  <div class="register-page" v-loading="wholePageLoading">
+  <div 
+    v-loading="wholePageLoading" 
+    class="register-page">
     <div class="main-content">
-           <div class="register-form">
-             <div class="register-header">注册新帐号 加入地图记忆</div>
-             <div class="register-body">
-                 <b-tabs>
-                   <!-- <b-tab title="手机注册" active>
+      <div class="register-form">
+        <div class="register-header">注册新帐号 加入地图记忆</div>
+        <div class="register-body">
+          <b-tabs>
+            <!-- <b-tab title="手机注册" active>
                      <div class="inner-body">
                      <el-form ref="form" :model="form" label-width="87px">
                        <el-form-item label="手机号码:">
@@ -29,39 +31,66 @@
                      </el-form>
                      </div>
                    </b-tab> -->
-                   <b-tab title="邮箱注册">
-                     <div class="inner-body">
-                     <el-form ref="form" :model="form" label-width="87px">
-                       <input type="text" style="display:none">
-                       <el-form-item label="邮箱:">
-                         <el-input class="phoneIcon fl" autocomplete="off" v-verify="form.email" v-model="form.email" @change="emailValidate"></el-input>
-                         <label v-if="emailError" class="email-invalid">*{{emailErrorMessage}}*</label>
-                       </el-form-item>
-                       <el-form-item label="创建密码:">
-                         <el-input type="password" v-verify="form.password" v-model="form.password" @blur="passwordLostFocus"></el-input>
-                         <label v-if="passwordError" class="password-invalid">*{{passwordErrorMessage}}*</label>
-                       </el-form-item>
-                       <el-form-item label="重复密码:">
-                         <el-input type="password"  v-model="form.passwordre" @blur="passwordreLostFocus"></el-input>
-                         <label v-if="passwordreError" class="password-invalid">*{{passwordreErrorMessage}}*</label>
-                       </el-form-item>
+            <b-tab title="邮箱注册">
+              <div class="inner-body">
+                <el-form 
+                  ref="form" 
+                  :model="form" 
+                  label-width="87px">
+                  <input 
+                    type="text" 
+                    style="display:none">
+                  <el-form-item label="邮箱:">
+                    <el-input 
+                      v-verify="form.email" 
+                      v-model="form.email" 
+                      class="phoneIcon fl" 
+                      autocomplete="off" 
+                      @change="emailValidate"/>
+                    <label 
+                      v-if="emailError" 
+                      class="email-invalid">*{{ emailErrorMessage }}*</label>
+                  </el-form-item>
+                  <el-form-item label="创建密码:">
+                    <el-input 
+                      v-verify="form.password" 
+                      v-model="form.password" 
+                      type="password" 
+                      @blur="passwordLostFocus"/>
+                    <label 
+                      v-if="passwordError" 
+                      class="password-invalid">*{{ passwordErrorMessage }}*</label>
+                  </el-form-item>
+                  <el-form-item label="重复密码:">
+                    <el-input 
+                      v-model="form.passwordre" 
+                      type="password" 
+                      @blur="passwordreLostFocus"/>
+                    <label 
+                      v-if="passwordreError" 
+                      class="password-invalid">*{{ passwordreErrorMessage }}*</label>
+                  </el-form-item>
 
-                       <el-button v-on:click="register('email')" type="primary">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;完&nbsp;成&nbsp;注&nbsp;册&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</el-button>
-                       <div class="agreement" style="width:420px;height:30px;float:left;margin-top:10px;text-align:right;">
-                         点击完成注册表示您同意并遵守
-                         <router-link to="regulation">地图记忆服务条款</router-link>
-                       </div>
-                     </el-form>
-                     </div>
-                   </b-tab>
-                 </b-tabs>
+                  <el-button 
+                    type="primary" 
+                    @click="register('email')">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;完&nbsp;成&nbsp;注&nbsp;册&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</el-button>
+                  <div 
+                    class="agreement" 
+                    style="width:420px;height:30px;float:left;margin-top:10px;text-align:right;">
+                    点击完成注册表示您同意并遵守
+                    <router-link to="regulation">地图记忆服务条款</router-link>
+                  </div>
+                </el-form>
+              </div>
+            </b-tab>
+          </b-tabs>
 
 
-             </div>
-           </div>
         </div>
+      </div>
+    </div>
     <div class="bottom">
-      <app-footer></app-footer>
+      <app-footer/>
     </div>
 
   </div>
@@ -111,6 +140,9 @@ export default {
             authcode: ''
           }
       }
+    },
+    created () {
+
     },
     methods: {
       goPage (which) {
@@ -271,9 +303,6 @@ export default {
 
       }
     },
-    created () {
-
-    }
   }
 </script>
 

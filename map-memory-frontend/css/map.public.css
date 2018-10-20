@@ -2,7 +2,7 @@
   position: absolute;
   top: 5px;
   left: 10px;
-  background:url('~/static/imgs/editbutton.png') no-repeat;
+  background:url('/imgs/editbutton.png') no-repeat;
   background-size: 100% 100%;
   width:20px;
   height:20px;
@@ -25,7 +25,7 @@ a[href="https://froala.com/wysiwyg-editor"], a[href="https://www.froala.com/wysi
   position: absolute;
   top: 5px;
   right: 50px;
-  background:url('~/static/imgs/copyloc.png') no-repeat;
+  background:url('/imgs/copyloc.png') no-repeat;
   background-size: 100% 100%;
   width:20px;
   height:20px;

@@ -1,10 +1,11 @@
 import Vue from 'vue'
-import {BmlMarkerClusterer} from 'vue-baidu-map'
-import {BaiduMap,BmView, BmLocalSearch, BmNavigation,BmGeolocation,BmCityList,BmControl,BmMapType,
+import {
+  BmlMarkerClusterer,
+  BaiduMap,BmView, BmLocalSearch, BmNavigation,BmGeolocation,BmCityList,BmControl,BmMapType,
 BmContextMenu, BmContextMenuItem, BmOverlay, BmMarker, BmLabel, BmInfoWindow,
 BmPointCollection} from 'vue-baidu-map'
 
-Vue.component('bml-marker-cluster', BmlMarkerClusterer)
+Vue.component('bml-marker-clusterer', BmlMarkerClusterer)
 Vue.component('bm-view', BmView)
 Vue.component('bm-local-search', BmLocalSearch)
 Vue.component('baidu-map', BaiduMap)

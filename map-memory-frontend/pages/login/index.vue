@@ -1,14 +1,27 @@
 <template>
-  <div class="login-main" v-loading="wholepageloading">
-      <div class="login-form">
-          <div class="input-grouper">
-              <el-input style="" v-model="username" placeholder="用户名"></el-input>
-              <el-input style="margin-top: 17px;" v-model="password" type="password" placeholder="密码"></el-input>
-              <a class="si-login green-button" @click="login" >登录</a>
-              <a class="si-login blue-button"  @click="goPage('/register')">注册</a>
-          </div>
-
+  <div 
+    v-loading="wholepageloading" 
+    class="login-main">
+    <div class="login-form">
+      <div class="input-grouper">
+        <el-input 
+          v-model="username" 
+          style="" 
+          placeholder="用户名"/>
+        <el-input 
+          v-model="password" 
+          style="margin-top: 17px;" 
+          type="password" 
+          placeholder="密码"/>
+        <a 
+          class="si-login green-button" 
+          @click="login" >登录</a>
+        <a 
+          class="si-login blue-button" 
+          @click="goPage('/register')">注册</a>
       </div>
+
+    </div>
   </div>
 </template>
 
@@ -21,6 +34,16 @@ import swal from 'sweetalert'
 export default {
   name: 'Login',
   components: {
+  },
+  data(){
+    return {
+        wholepageloading: false,
+      username: '',
+      password: ''
+    }
+  },
+  mounted(){
+    this.whoamifoo();
   },
   methods: {
       goPage(val){
@@ -59,16 +82,6 @@ export default {
         })
       }
   },
-  mounted(){
-    this.whoamifoo();
-  },
-  data(){
-    return {
-        wholepageloading: false,
-      username: '',
-      password: ''
-    }
-  }
 }
 </script>
 

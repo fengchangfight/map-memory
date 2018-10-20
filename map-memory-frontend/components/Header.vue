@@ -1,43 +1,60 @@
 <template>
   <div class="header">
-    <b-navbar toggleable="md" type="dark" variant="dark">
-      <b-navbar-toggle target="nav_collapse"></b-navbar-toggle>
+    <b-navbar 
+      toggleable="md" 
+      type="dark" 
+      variant="dark">
+      <b-navbar-toggle target="nav_collapse"/>
       <b-navbar-brand href="#">
-        <img src="~/assets/banner_logo.png" v-on:click="goPage('/')" class="d-inline-block align-top" alt="LOGO">
-     </b-navbar-brand>
-      <b-collapse is-nav id="nav_collapse">
+        <img 
+          src="~/assets/banner_logo.png" 
+          class="d-inline-block align-top" 
+          alt="LOGO" 
+          @click="goPage('/')">
+      </b-navbar-brand>
+      <b-collapse 
+        id="nav_collapse" 
+        is-nav>
         <b-navbar-nav>
-          <b-nav-item ></b-nav-item>
-          <b-nav-item ></b-nav-item>
-          <b-nav-item v-on:click="goPage('/working')">地图视图</b-nav-item>
-          <b-nav-item ></b-nav-item>
-          <b-nav-item ></b-nav-item>
-          <b-nav-item v-on:click="goPage('/memory-list')">列表视图</b-nav-item>
-          <b-nav-item ></b-nav-item>
-          <b-nav-item ></b-nav-item>
-          <b-nav-item v-on:click="goPage('/about')">关于我们</b-nav-item>
-          <b-nav-item ></b-nav-item>
-          <b-nav-item ></b-nav-item>
-          <b-nav-item v-on:click="goPage('/contact')">联系我们</b-nav-item>
-          <b-nav-item ></b-nav-item>
-          <b-nav-item ></b-nav-item>
-          <b-nav-item v-on:click="goPage('/demo')">帮助</b-nav-item>
+          <b-nav-item />
+          <b-nav-item />
+          <b-nav-item @click="goPage('/working')">地图视图</b-nav-item>
+          <b-nav-item />
+          <b-nav-item />
+          <b-nav-item @click="goPage('/memory-list')">列表视图</b-nav-item>
+          <b-nav-item />
+          <b-nav-item />
+          <b-nav-item @click="goPage('/about')">关于我们</b-nav-item>
+          <b-nav-item />
+          <b-nav-item />
+          <b-nav-item @click="goPage('/contact')">联系我们</b-nav-item>
+          <b-nav-item />
+          <b-nav-item />
+          <b-nav-item @click="goPage('/demo')">帮助</b-nav-item>
         </b-navbar-nav>
         <!-- Right aligned nav items -->
         <b-navbar-nav class="ml-auto">
 
           <b-nav-item-dropdown right>
             <!-- Using button-content slot -->
-            <template  slot="button-content">
-              <em v-if="whoami!=null && whoami.length>0">{{whoami}}</em>
+            <template slot="button-content">
+              <em v-if="whoami!=null && whoami.length>0">{{ whoami }}</em>
               <em v-if="whoami==null || whoami.length<1">用户</em>
             </template>
 
-            <b-dropdown-item v-if="whoami.length>0" v-on:click="goPage('/profile')" >个人信息</b-dropdown-item>
-            <b-dropdown-item v-if="whoami.length>0" v-on:click="logout" >登出</b-dropdown-item>
+            <b-dropdown-item 
+              v-if="whoami.length>0" 
+              @click="goPage('/profile')" >个人信息</b-dropdown-item>
+            <b-dropdown-item 
+              v-if="whoami.length>0" 
+              @click="logout" >登出</b-dropdown-item>
 
-            <b-dropdown-item v-if="whoami==null || whoami.length<1" v-on:click="goPage('/login')">登录</b-dropdown-item>
-            <b-dropdown-item v-if="whoami==null || whoami.length<1" v-on:click="goRegister" >注册</b-dropdown-item>
+            <b-dropdown-item 
+              v-if="whoami==null || whoami.length<1" 
+              @click="goPage('/login')">登录</b-dropdown-item>
+            <b-dropdown-item 
+              v-if="whoami==null || whoami.length<1" 
+              @click="goRegister" >注册</b-dropdown-item>
           </b-nav-item-dropdown>
 
 
@@ -53,6 +70,8 @@ import {AXIOS} from '~/common/http-commons'
 
 export default {
   name: 'Header',
+  components: {
+  },
   data() {
       return {
         profile_image: '',
@@ -63,7 +82,14 @@ export default {
         '/register-success','/regulation','/forget-password',"/reset-password-success"]
       };
   },
-  components: {
+  mounted () {
+    this.whoamifoo();
+  },
+  created(){
+
+  },
+  updated() {
+    this.whoamifoo()
   },
   methods: {
     goRegister () {
@@ -104,15 +130,6 @@ export default {
           })
       }
   },
-  mounted () {
-    this.whoamifoo();
-  },
-  created(){
-
-  },
-  updated() {
-    this.whoamifoo()
-  }
 }
 </script>
 

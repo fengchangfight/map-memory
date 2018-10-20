@@ -1,7 +1,7 @@
 <template>
   <div class="whole-framework">
     <div id="whole-header">
-      <app-header></app-header>
+      <app-header/>
     </div>
     <div id="whole-body">
       <nuxt/>

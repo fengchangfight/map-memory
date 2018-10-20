@@ -2,16 +2,16 @@
   <div class="latestnews-page">
     <div class="latestnews-content">
       <div class="center-content">
-        <div class="place-taker"></div>
+        <div class="place-taker"/>
         <timeline>
-            <timeline-title>2018</timeline-title>
-            <timeline-item color="#9dd8e0">8月2日ditujiyi.com域名上线</timeline-item>
+          <timeline-title>2018</timeline-title>
+          <timeline-item color="#9dd8e0">8月2日ditujiyi.com域名上线</timeline-item>
         </timeline>
 
       </div>
     </div>
     <div class="bottom">
-      <app-footer></app-footer>
+      <app-footer/>
     </div>
   </div>
 </template>
@@ -33,12 +33,12 @@ export default {
 
       }
     },
+    created () {
+
+    },
     methods: {
 
     },
-    created () {
-
-    }
   }
 </script>
 
