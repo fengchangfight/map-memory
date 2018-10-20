@@ -546,7 +546,7 @@ export default {
                                           type: 'success',
                                           message: response.data.message
                                         });
-
+                          this.memoryDetailBoxVisible = false;
                           this.getMemoryListData();
                         }else{
                           this.$notify.error({
