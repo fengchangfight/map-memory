@@ -1,23 +1,23 @@
 <template>
-  <div 
-    v-loading="wholepageloading" 
+  <div
+    v-loading="wholepageloading"
     class="login-main">
-    <div class="login-form">
+    <div class="login-form" @keyup.enter="login">
       <div class="input-grouper">
-        <el-input 
-          v-model="username" 
-          style="" 
+        <el-input
+          v-model="username"
+          style=""
           placeholder="用户名"/>
-        <el-input 
-          v-model="password" 
-          style="margin-top: 17px;" 
-          type="password" 
+        <el-input
+          v-model="password"
+          style="margin-top: 17px;"
+          type="password"
           placeholder="密码"/>
-        <a 
-          class="si-login green-button" 
+        <a
+          class="si-login green-button"
           @click="login" >登录</a>
-        <a 
-          class="si-login blue-button" 
+        <a
+          class="si-login blue-button"
           @click="goPage('/register')">注册</a>
       </div>
 

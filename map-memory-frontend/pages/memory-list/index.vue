@@ -42,6 +42,7 @@
     <el-dialog
       :visible.sync="memoryDetailBoxVisible"
       :fullscreen="true"
+      :before-close="handleClose"
       title="记忆详情"
       width="100%"
     >
@@ -326,6 +327,10 @@ export default {
       this.getMemoryListData();
     },
     methods: {
+      handleClose(){
+        this.getMemoryListData();
+        this.memoryDetailBoxVisible = false;
+      },
       changeSortBy(){
         this.getMemoryListData();
       },
