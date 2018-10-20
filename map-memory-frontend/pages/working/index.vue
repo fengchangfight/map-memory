@@ -283,8 +283,8 @@
               :callback="logAndLat"
               text="拷贝此经纬度"/>
           </bm-context-menu>
-        <no-ssr>
-          <bml-marker-clusterer :average-center="true">
+
+          <bml-marker-clusterer :average-center="true" :maxZoom="16">
             <bm-marker
               v-for="item in my_mem_data"
               :key="item.id"
@@ -300,7 +300,7 @@
               <bm-info-window :show="showInfoWin[item.id]" >{{ item.title }}</bm-info-window>
             </bm-marker>
           </bml-marker-clusterer>
-        </no-ssr>
+
 
         <bm-marker
           v-if="is_newbie"
