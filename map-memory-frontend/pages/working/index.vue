@@ -64,8 +64,7 @@
           <el-select
             v-model="selected_icon"
             filterable
-            placeholder="记忆图标"
-            @change="setIcon()">
+            placeholder="记忆图标">
             <el-option
               v-for="item in available_icons"
               :key="item.id"
