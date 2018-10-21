@@ -80,8 +80,7 @@
             <el-select
               v-model="memDetail.icon"
               filterable
-              placeholder="记忆图标"
-              @change="setIcon()">
+              placeholder="记忆图标">
               <el-option
                 v-for="item in available_icons"
                 :key="item.id"

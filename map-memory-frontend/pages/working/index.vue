@@ -146,8 +146,7 @@
             <el-select
               v-model="memDetail.icon"
               filterable
-              placeholder="记忆图标"
-              @change="setIcon()">
+              placeholder="记忆图标">
               <el-option
                 v-for="item in available_icons"
                 :key="item.id"
@@ -958,9 +957,6 @@ return {
         console.log('载入地图记忆点点失败')
         this.goPage('/login')
       })
-    },
-    setIcon(){
-
     },
     createMemoryPoint(){
       if(!Boolean(this.selected_icon)){
