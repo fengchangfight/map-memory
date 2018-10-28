@@ -26,6 +26,7 @@
       title="解锁"
       width="30%"
     >
+    <div @keyup.enter="unlockDoStuff">
       <el-form autocomplete="off">
         <el-input
           v-model="read_code"
@@ -37,6 +38,7 @@
           style="visibility:hidden" >
         <el-button @click="unlockDoStuff">提交</el-button>
       </el-form>
+    </div>
     </el-dialog>
 
     <el-dialog
@@ -181,6 +183,7 @@
           <template slot-scope="scope">
             <div style="display:flex;">
               <img
+                @click="go2Map(scope.row.longitude, scope.row.latitude)"
                 :src="'/imgs/'+scope.row.icon"
                 width="25"
                 height="25"
@@ -191,7 +194,17 @@
         <el-table-column
           label="标题"
           prop="title"
-          width="150"/>
+          width="175">
+          <template slot-scope="scope">
+            <img
+              :src="'/imgs/'+(scope.row.locked?'locked.png':'unlocked.png')"
+              @click="lockOrUnlock(scope.row.id, scope.row.locked,scope.row.is_public)"
+              width="15"
+              height="15"
+              onError="this.src='/imgs/question.png';">
+            <label v-bind:class="{ 'private-notes': !scope.row.is_public,  'public-notes': scope.row.is_public}">{{ scope.row.title }}</label>
+          </template>
+        </el-table-column>
         <el-table-column
           label="经度"
           prop="longitude"
@@ -199,17 +212,17 @@
         <el-table-column
           label="纬度"
           prop="latitude"
-          width="90"/>
+          width="100"/>
         <el-table-column
           label="创建/最后更新时间"
-          width="140">
+          width="165">
           <template slot-scope="scope">
             {{ scope.row.created_at }}/{{ scope.row.last_update }}
           </template>
         </el-table-column>
         <el-table-column
           label="操作"
-          width="270">
+          width="220">
           <template slot-scope="scope">
             <div style="display:flex;">
               <el-button
@@ -224,16 +237,7 @@
                 size="small"
                 type="danger"
                 @click="deleteMemPoint(scope.row.id)">删除</el-button>
-              <el-button
-                v-if="scope.row.locked==false"
-                size="small"
-                type="warning"
-                @click="lockMemPoint(scope.row.id)">锁</el-button>
-              <el-button
-                v-if="scope.row.locked==true"
-                size="small"
-                type="warning"
-                @click="unlockMemPoint(scope.row.id)">解锁</el-button>
+
             </div>
           </template>
         </el-table-column>
@@ -341,7 +345,6 @@ export default {
         swal ( "提示" ,  "拷贝失败" ,  "info" );
       },
       onCopy(){
-
         swal ( "提示" ,  "已复制经度,纬度"+this.mem_url+"到剪贴板" ,  "info" );
       },
       changeAccessibility(val){
@@ -391,6 +394,17 @@ export default {
           this.memDetail={};
           this.memoryDetailBoxVisible = true;
           this.loadMemoryDetailById(this.current_id, this.read_code);
+      },
+      lockOrUnlock(id, locked, is_public){
+        if(locked){
+          this.unlockMemPoint(id);
+        }else{
+          if(is_public){
+            swal ( "提示" ,  "公开记忆点不能上锁哦(づ￣ 3￣)づ" ,  "info" );
+            return;
+          }
+          this.lockMemPoint(id);
+        }
       },
       unlockMemPoint(id){
         this.current_id = id;
@@ -452,6 +466,10 @@ export default {
         this.getMemoryListData();
       },
       saveEdit(){
+        if(this.memDetail.locked && this.memDetail.is_public){
+          swal ( "提示" ,  "请先解锁才能设置为公开" ,  "info" );
+          return
+        }
         // update with: id, title, content, that's it
         AXIOS.put('/api/v1/memory/'+this.memDetail.id,{
           title: this.memDetail.title,
@@ -600,6 +618,10 @@ export default {
 
 <!-- Add "scoped" attribute to limit CSS to this component only -->
 <style scoped>
+
+img{
+  cursor: pointer;
+}
 .memory-list-page{
   flex-flow: column;
   width: 100%;

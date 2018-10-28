@@ -19,6 +19,12 @@ a[href="https://froala.com/wysiwyg-editor"], a[href="https://www.froala.com/wysi
 .small-notes{
   font-size: 50%;
 }
+.private-notes{
+  color: #894423;
+}
+.public-notes{
+  color: #1C8435;
+}
 
 
 #copy-lng-lat{

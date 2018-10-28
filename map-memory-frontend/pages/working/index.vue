@@ -459,6 +459,7 @@ return {
     }
   },
   mounted(){
+    this.checklogin();
 
     this.url_longitude = this.$route.query.longitude;
     if(this.url_longitude==null || this.url_longitude.length<1 || isNaN(this.url_longitude)){
@@ -482,7 +483,7 @@ return {
       this.getLocById(mem_id)
     }
 
-    this.checklogin();
+
     this.getBaseUrl();
     this.getBaseServiceUrl();
     this.isFirstDayUser();
@@ -504,10 +505,12 @@ return {
           console.log(this.center)
           this.zoom = 19;
         }else{
-          this.$notify.error({
-            title: '错误',
-            message: response.data.message
-          })
+          if(this.isLoggedIn){
+            this.$notify.error({
+              title: '错误',
+              message: response.data.message
+            })
+          }
         }
       }).catch(e=>{
         this.$notify.error({
@@ -779,6 +782,7 @@ return {
       })
     },
     showMemDetailWin(id, locked){
+      this.detailMode='view';
       if(locked==true){
           this.read_code="";
           this.inputReadCodeVisible = true;
@@ -1058,8 +1062,11 @@ return {
       this.selected_icon = '';
       this.form['title']="";
       this.form['memory_content']="";
+      this.form['is_public']=false;
 
       this.addMemoryVisible = true;
+
+
 
       // step 2 handle the add memory point request(post)
     },

@@ -42,6 +42,9 @@ export default{
           id:'book2.png',
           name:'大金书'
         },{
+          id:'memo.png',
+          name:'便笺'
+        },{
           id:'book.png',
           name:'秘籍'
         },{
@@ -74,6 +77,9 @@ export default{
         },{
           id:'geer.png',
           name:'齿轮'
+        },{
+          id:'c.png',
+          name:'C'
         },{
           id:'spring.png',
           name:'Spring'
