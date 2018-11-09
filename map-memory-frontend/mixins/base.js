@@ -72,6 +72,12 @@ export default{
           id:'finance.png',
           name:'金融'
         },{
+          id:'chrome.png',
+          name:'Chrome'
+        },{
+          id:'geometry.png',
+          name:'图形'
+        },{
           id:'dialog.png',
           name:'对话'
         },{
@@ -86,6 +92,9 @@ export default{
         },{
           id:'book5.png',
           name:'书5'
+        },{
+          id:'leetcode.png',
+          name:'Leetcode'
         },{
           id:'practice.png',
           name:'实践'
@@ -172,6 +181,9 @@ export default{
         {
           id:'chuxuguan.png',
           name:'储蓄罐'
+        },{
+          id:'cpp.png',
+          name:'C++'
         },
         {
           id:'toolbox.png',

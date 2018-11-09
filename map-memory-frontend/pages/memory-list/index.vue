@@ -163,10 +163,11 @@
           </el-option>
         </el-select>
       </div>
-      <div id="pagi-container">
+      <div>
         <el-pagination
           :total="totalCount"
           :page-size="pageSize"
+          :current-page.sync="currentPage"
           style="margin: 0 auto"
           class="pagination"
           layout="prev, pager, next"
@@ -243,10 +244,11 @@
         </el-table-column>
 
       </el-table>
-      <div id="pagi-container">
+      <div>
         <el-pagination
           :total="totalCount"
           :page-size="pageSize"
+          :current-page.sync="currentPage"
           style="margin: 0 auto"
           class="pagination"
           layout="prev, pager, next"
@@ -548,10 +550,10 @@ export default {
           this.inputReadCodeVisible = true;
           this.current_id = id;
         }else{
+           this.memDetail = {};
            this.memoryDetailBoxVisible = true;
            this.loadMemoryDetailById(id);
         }
-
       },
       deleteMemPoint(id){
         this.$confirm('确认删除该记忆点？')

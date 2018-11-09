@@ -788,8 +788,8 @@ return {
           this.inputReadCodeVisible = true;
           this.current_id = id;
       }else{
+        this.memDetail={};
         this.memoryDetailBoxVisible = true;
-
         if(id=='tutorial'){
           this.readonlydetail = true;
           this.memDetail.title = "操作说明";
@@ -830,7 +830,6 @@ return {
           this.readonlydetail=false;
           this.detailMode='view';
           this.loadMemoryDetailById(id);
-
       }
       }
 
