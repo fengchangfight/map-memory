@@ -6,6 +6,8 @@ I would like to make this an useful, easy to use and fancy to use tool, just nee
 
 ![地图记忆示例](./sample.png)
 
+![地图记忆示例](./listview.png)
+
 ### 开发群：796903274
 
 here's the link: www.ditujiyi.com
