@@ -1,28 +1,31 @@
 <template>
-  <div class="demo-page">
-    <div class="demo-content">
+  <div class="demo-page" id="demoanchor">
+    <div class="demo-content" >
       <div class="center-content">
         <div class="card">
           <div id="desc" >
             <div style="margin-top:22px;"><p>推荐本站最佳体验浏览器:</p></div>
-            <div 
-              v-lazy-load-bg="'/imgs/browser.png'" 
+            <div
+              v-lazy-load-bg="'/imgs/browser.png'"
               id="browser-rec" />
           </div>
         </div>
+        <el-button @click="back2topscroll" id="back2top" title="Go to top">回顶部</el-button>
+        <el-button @click="back2bottomscroll" id="back2bottom" title="Go to top">至底部</el-button>
+
         <div class="card">
           <h3>如何在地图上添加记忆笔记?</h3>
           <p style="text-indent: 2em; margin-left: 5px;">
             在地图上任一点右键,弹出菜单选中"在此添加记忆"
           </p>
-          <div 
-            v-lazy-load-bg="'/imgs/tianjiajiyi.jpg'" 
+          <div
+            v-lazy-load-bg="'/imgs/tianjiajiyi.jpg'"
             class="desc-img" />
-          <div 
-            v-lazy-load-bg="'/imgs/tianjiajiyidian.jpg'" 
+          <div
+            v-lazy-load-bg="'/imgs/tianjiajiyidian.jpg'"
             class="desc-img" />
-          <div 
-            v-lazy-load-bg="'/imgs/xianshifangshi.jpg'" 
+          <div
+            v-lazy-load-bg="'/imgs/xianshifangshi.jpg'"
             class="desc-img" />
         </div>
 
@@ -31,11 +34,11 @@
           <p style="text-indent: 2em; margin-left: 5px;">
             在地图上任一点右键,弹出菜单选中"此处经纬度"
           </p>
-          <div 
-            v-lazy-load-bg="'/imgs/cichujingweidu.jpg'" 
+          <div
+            v-lazy-load-bg="'/imgs/cichujingweidu.jpg'"
             class="desc-img" />
-          <div 
-            v-lazy-load-bg="'/imgs/jingweidu.jpg'" 
+          <div
+            v-lazy-load-bg="'/imgs/jingweidu.jpg'"
             class="desc-img" />
         </div>
 
@@ -44,14 +47,14 @@
           <p style="text-indent: 2em; margin-left: 5px;">
             在地图上任一点右键,弹出菜单选中"设为常用位置"
           </p>
-          <div 
-            v-lazy-load-bg="'/imgs/sheweichangyong.jpg'" 
+          <div
+            v-lazy-load-bg="'/imgs/sheweichangyong.jpg'"
             class="desc-img" />
-          <div 
-            v-lazy-load-bg="'/imgs/tianjiachangyong.jpg'" 
+          <div
+            v-lazy-load-bg="'/imgs/tianjiachangyong.jpg'"
             class="desc-img" />
-          <div 
-            v-lazy-load-bg="'/imgs/changyongliebiao.jpg'" 
+          <div
+            v-lazy-load-bg="'/imgs/changyongliebiao.jpg'"
             class="desc-img" />
         </div>
 
@@ -88,6 +91,15 @@ export default {
 
     },
     methods: {
+      back2bottomscroll(){
+        var objDiv = document.getElementById("demoanchor");
+        console.log(objDiv.scrollHeight);
+        //objDiv.scrollTop = objDiv.scrollHeight;
+        window.scrollTo(0,objDiv.scrollHeight);
+      },
+      back2topscroll(){
+        window.scrollTo(0,0);
+      },
       goPage (val) {
         this.$router.push(val)
       }
@@ -191,5 +203,46 @@ h3{
   margin: 0 auto;
   margin-top: 20px;
   margin-bottom: 10px;
+}
+#back2top {
+    /*display: none; /* Hidden by default */
+    position: fixed; /* Fixed/sticky position */
+    top: 70px; /* Place the button at the bottom of the page */
+    right: 30px; /* Place the button 30px from the right */
+    z-index: 99; /* Make sure it does not overlap */
+    border: none; /* Remove borders */
+    outline: none; /* Remove outline */
+    background-color: #00FF00; /* Set a background color */
+    color: white; /* Text color */
+    cursor: pointer; /* Add a mouse pointer on hover */
+    padding: 15px; /* Some padding */
+    border-radius: 10px; /* Rounded corners */
+    font-size: 12px; /* Increase font size */
+    opacity: 0.5;
+}
+
+#back2top:hover {
+    background-color: #555; /* Add a dark-grey background on hover */
+}
+
+#back2bottom {
+    /*display: none; /* Hidden by default */
+    position: fixed; /* Fixed/sticky position */
+    top: 120px; /* Place the button at the bottom of the page */
+    right: 30px; /* Place the button 30px from the right */
+    z-index: 99; /* Make sure it does not overlap */
+    border: none; /* Remove borders */
+    outline: none; /* Remove outline */
+    background-color: red; /* Set a background color */
+    color: white; /* Text color */
+    cursor: pointer; /* Add a mouse pointer on hover */
+    padding: 15px; /* Some padding */
+    border-radius: 10px; /* Rounded corners */
+    font-size: 12px; /* Increase font size */
+    opacity: 0.5;
+}
+
+#back2bottom:hover {
+    background-color: #C0C0C0; /* Add a dark-grey background on hover */
 }
 </style>

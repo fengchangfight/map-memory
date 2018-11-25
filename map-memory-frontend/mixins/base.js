@@ -112,6 +112,13 @@ export default{
           id:'java.png',
           name:'Java'
         },{
+          id:'location.png',
+          name:'位置'
+        },
+        {
+          id:'t.png',
+          name:'T'
+        },{
           id:'django.png',
           name:'Django'
         },{
@@ -121,14 +128,44 @@ export default{
         {
           id:'book3.png',
           name:'小蓝书'
+        },{
+          id:'ppt.png',
+          name:'PPT'
+        },{
+          id:'word.png',
+          name:'Word'
+        },
+        {
+          id:'excel.png',
+          name:'Excel'
+        },{
+          id:'diary.png',
+          name:'日记'
+        },{
+          id:'dollar.png',
+          name:'美元'
+        },{
+          id:'intellij.png',
+          name:'Intellij'
         },
         {
           id:'book4.png',
           name:'宝书'
+        },{
+          id:'premiere.png',
+          name:'Premiere'
         },
         {
           id:'taiqiu.png',
           name:'台球'
+        },
+        {
+          id:'jetli.png',
+          name:'李连杰'
+        },
+        {
+          id:'torrent.png',
+          name:'种子'
         },
         {
           id:'ye.png',
@@ -153,10 +190,6 @@ export default{
         {
           id:'document.png',
           name:'文件盒'
-        },
-        {
-          id:'ppt.png',
-          name:'PPT'
         },
         {
           id:'db.png',

@@ -90,7 +90,7 @@
           <el-switch
             v-model="form.is_public"
             active-text="公开"
-            inactive-text="私密"/>
+            inactive-text="仅本人可见"/>
         </el-form-item>
       </el-form>
 
@@ -136,7 +136,7 @@
               width="40"
               height="40"></span>&nbsp;&nbsp;{{ memDetail.title }}<span
                 v-if="!memDetail.is_public"
-                class="small-notes">(私密)</span><span
+                class="small-notes">(仅本人可见)</span><span
                   v-if="memDetail.is_public"
                   class="small-notes">(公开)</span></h3>
           <div
@@ -177,7 +177,7 @@
           <el-switch
             v-model="memDetail.is_public"
             active-text="公开"
-            inactive-text="私密"
+            inactive-text="仅本人可见"
             @change="changeAccessibility"/>
 
           <!-- <froala :config="option" v-model="memDetail.content"></froala> -->
@@ -513,10 +513,8 @@ return {
           }
         }
       }).catch(e=>{
-        this.$notify.error({
-          title: '错误',
-          message: '未知错误1'
-        })
+        console.log('根据id获取坐标失败')
+        this.goPage('/login')
       })
     },
     onCopyError(){

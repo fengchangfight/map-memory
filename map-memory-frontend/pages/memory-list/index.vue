@@ -1,5 +1,8 @@
 <template>
   <div class="memory-list-page">
+    <el-button @click="back2topscroll" id="back2top" title="Go to top">回顶部</el-button>
+    <el-button @click="back2bottomscroll" id="back2bottom" title="Go to top">至底部</el-button>
+
     <el-dialog
       :visible.sync="inputReadCodeVisible"
       :fullscreen="false"
@@ -73,7 +76,7 @@
               width="40"
               height="40"></span>&nbsp;&nbsp;{{ memDetail.title }}<span
                 v-if="!memDetail.is_public"
-                class="small-notes">(私密)</span><span
+                class="small-notes">(仅本人可见)</span><span
                   v-if="memDetail.is_public"
                   class="small-notes">(公开)</span></h3>
           <div
@@ -114,7 +117,7 @@
           <el-switch
             v-model="memDetail.is_public"
             active-text="公开"
-            inactive-text="私密"
+            inactive-text="仅本人可见"
             @change="changeAccessibility"/>
           <!-- <froala v-model="memDetail.content" :config="option"></froala> -->
           <div class="button-container">
@@ -139,8 +142,10 @@
     </el-dialog>
 
     <div
+      id="list-box"
       v-loading="list_loading"
       class="center-content">
+
       <div
         style="display:flex;margin-top:5px;"
         @keyup.enter="filterMemory">
@@ -336,6 +341,13 @@ export default {
       this.getMemoryListData();
     },
     methods: {
+      back2bottomscroll(){
+        var objDiv = document.getElementById("list-box");
+        window.scrollTo(0,objDiv.scrollHeight);
+      },
+      back2topscroll(){
+        window.scrollTo(0,0);
+      },
       handleClose(){
         this.getMemoryListData();
         this.memoryDetailBoxVisible = false;
@@ -643,6 +655,49 @@ img{
   background-color: white;
   width: 800px;
   min-height: 700px;
+
 }
 
+#back2top {
+    /*display: none; /* Hidden by default */
+    position: fixed; /* Fixed/sticky position */
+    top: 70px; /* Place the button at the bottom of the page */
+    right: 30px; /* Place the button 30px from the right */
+    z-index: 99; /* Make sure it does not overlap */
+    border: none; /* Remove borders */
+    outline: none; /* Remove outline */
+    background-color: #00FF00; /* Set a background color */
+    color: white; /* Text color */
+    cursor: pointer; /* Add a mouse pointer on hover */
+    padding: 15px; /* Some padding */
+    border-radius: 10px; /* Rounded corners */
+    font-size: 12px; /* Increase font size */
+    opacity: 0.5;
+}
+
+#back2top:hover {
+    background-color: #555; /* Add a dark-grey background on hover */
+}
+
+
+#back2bottom {
+    /*display: none; /* Hidden by default */
+    position: fixed; /* Fixed/sticky position */
+    top: 120px; /* Place the button at the bottom of the page */
+    right: 30px; /* Place the button 30px from the right */
+    z-index: 99; /* Make sure it does not overlap */
+    border: none; /* Remove borders */
+    outline: none; /* Remove outline */
+    background-color: red; /* Set a background color */
+    color: white; /* Text color */
+    cursor: pointer; /* Add a mouse pointer on hover */
+    padding: 15px; /* Some padding */
+    border-radius: 10px; /* Rounded corners */
+    font-size: 12px; /* Increase font size */
+    opacity: 0.5;
+}
+
+#back2bottom:hover {
+    background-color: #C0C0C0; /* Add a dark-grey background on hover */
+}
 </style>
