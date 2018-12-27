@@ -336,6 +336,12 @@ export default{
           id:'php.png',
           name:'PHP'
         },{
+          id:'rabbit.png',
+          name:'兔子'
+        },{
+          id:'expert.png',
+          name:'专家'
+        },{
           id:'elephant.png',
           name:'大象'
         },{
