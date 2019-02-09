@@ -93,14 +93,29 @@ export default{
           id:'book5.png',
           name:'书5'
         },{
+          id:'writing.png',
+          name:'写作'
+        },{
           id:'leetcode.png',
           name:'Leetcode'
+        },{
+          id:'youtube.png',
+          name:'Youtube'
+        },{
+          id:'mail.png',
+          name:'邮件'
         },{
           id:'practice.png',
           name:'实践'
         },{
+          id:'nietzsche.png',
+          name:'尼采'
+        },{
           id:'knowledge.png',
           name:'知识'
+        },{
+          id:'redpacket.png',
+          name:'红包'
         },{
           id:'class.png',
           name:'课程'
@@ -166,10 +181,21 @@ export default{
         {
           id:'torrent.png',
           name:'种子'
+        },{
+          id:'military.png',
+          name:'军事'
         },
         {
           id:'ye.png',
           name:'绿叶'
+        },
+        {
+          id:'goal.png',
+          name:'目标'
+        },
+        {
+          id:'pen.png',
+          name:'笔'
         },
         {
           id:'taiyang.png',

@@ -181,12 +181,12 @@
       <el-table
         :border="true"
         :data="memorylistdata"
+
         style="width: 100%">
         <el-table-column
           label="图标"
-          prop="title"
           width="50">
-          <template slot-scope="scope">
+          <template slot-scope="scope" v-if="scope.row">
             <div style="display:flex;">
               <img
                 @click="go2Map(scope.row.longitude, scope.row.latitude)"
@@ -201,7 +201,7 @@
           label="标题"
           prop="title"
           width="175">
-          <template slot-scope="scope">
+          <template slot-scope="scope" v-if="scope.row">
             <img
               :src="'/imgs/'+(scope.row.locked?'locked.png':'unlocked.png')"
               @click="lockOrUnlock(scope.row.id, scope.row.locked,scope.row.is_public)"
@@ -222,14 +222,14 @@
         <el-table-column
           label="创建/最后更新时间"
           width="165">
-          <template slot-scope="scope">
+          <template slot-scope="scope" v-if="scope.row">
             {{ scope.row.created_at }}/{{ scope.row.last_update }}
           </template>
         </el-table-column>
         <el-table-column
           label="操作"
           width="220">
-          <template slot-scope="scope">
+          <template slot-scope="scope" v-if="scope.row">
             <div style="display:flex;">
               <el-button
                 size="small"
