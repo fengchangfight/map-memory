@@ -120,6 +120,9 @@ export default{
           id:'class.png',
           name:'课程'
         },{
+          id:'opensource.png',
+          name:'开源'
+        },{
           id:'torch.png',
           name:'Torch'
         },
@@ -167,8 +170,14 @@ export default{
           id:'book4.png',
           name:'宝书'
         },{
+          id:'house.png',
+          name:'房子'
+        },{
           id:'premiere.png',
           name:'Premiere'
+        },{
+          id:'mofang.png',
+          name:'魔方'
         },
         {
           id:'taiqiu.png',
@@ -259,6 +268,10 @@ export default{
         {
           id:'man.png',
           name:'男人'
+        },
+        {
+          id:'girlfriend.png',
+          name:'女友'
         },
         {
           id:'samoye.png',

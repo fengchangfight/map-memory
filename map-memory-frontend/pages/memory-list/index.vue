@@ -147,15 +147,18 @@
       class="center-content">
 
       <div
-        style="display:flex;margin-top:5px;"
+        style="display:flex;margin-top:5px;width:100%;"
         @keyup.enter="filterMemory">
         <el-input
+           style="width:60%;"
           v-model="query"
           placeholder="按标题或内容查找"/>
         <el-button
+           style="width:15%;"
           type="primary"
           @click="filterMemory">过滤</el-button>
         <el-select
+          style="width:25%;"
           v-model="sort_by"
           placeholder="排序方式"
           @change="changeSortBy()">
@@ -164,7 +167,7 @@
             :key="item.id"
             :label="item.name"
             :value="item.id">
-            <span style="float: right; color: #8492a6; font-size: 13px">{{ item.name }}</span>
+            <span style="width:350px; float: right; color: #8492a6; font-size: 13px">{{ item.name }}</span>
           </el-option>
         </el-select>
       </div>
@@ -188,12 +191,15 @@
           width="50">
           <template slot-scope="scope" v-if="scope.row">
             <div style="display:flex;">
-              <img
-                @click="go2Map(scope.row.longitude, scope.row.latitude)"
-                :src="'/imgs/'+scope.row.icon"
-                width="25"
-                height="25"
-                onError="this.src='/imgs/question.png';">
+              <button
+                title="拷贝坐标"
+                class="title-icon"
+                @click="doCopyLocation(scope.row.longitude+','+scope.row.latitude)"
+
+                v-bind:style="{'backgroundImage': 'url(/imgs/' + scope.row.icon + ')', 'background-size': '100% 100%',  'width': '25px', 'height': '25px' }"
+
+                >
+                </button>
             </div>
           </template>
         </el-table-column>
@@ -341,6 +347,15 @@ export default {
       this.getMemoryListData();
     },
     methods: {
+      doCopyLocation(val){
+        this.$copyText(val).then(function (e) {
+                  swal ( "提示" ,  "已复制坐标(经度,纬度):"+val+"到剪贴板" ,  "info" );
+                  console.log(e)
+                }, function (e) {
+                  swal ( "提示" ,  "不能复制:"+val+"到剪贴板" ,  "error" );
+                  console.log(e)
+                })
+      },
       back2bottomscroll(){
         var objDiv = document.getElementById("list-box");
         window.scrollTo(0,objDiv.scrollHeight);
@@ -359,7 +374,7 @@ export default {
         swal ( "提示" ,  "拷贝失败" ,  "info" );
       },
       onCopy(){
-        swal ( "提示" ,  "已复制经度,纬度"+this.mem_url+"到剪贴板" ,  "info" );
+        swal ( "提示" ,  "已复制共享url:"+this.mem_url+"到剪贴板" ,  "info" );
       },
       changeAccessibility(val){
           if(val==true){
@@ -699,5 +714,10 @@ img{
 
 #back2bottom:hover {
     background-color: #C0C0C0; /* Add a dark-grey background on hover */
+}
+
+.title-icon:hover{
+  cursor: pointer;
+  opacity: 0.5;
 }
 </style>
