@@ -51,7 +51,7 @@ module.exports = {
   plugins: [
 	  '~/plugins/v-lazy-img',{ src: "~/plugins/vue-verify", ssr: false },
     '~/plugins/element-ui',
-    { src: "~/plugins/vue-baidu-map.js", ssr: false },{ src: "~/plugins/wysiwyg.js", ssr: false },{ src: "~/plugins/vue-clipboard.js", ssr: false }
+    { src: "~/plugins/vue-baidu-map.js", ssr: false },{ src: "~/plugins/wysiwyg.js", ssr: false },{ src: "~/plugins/quill-editor", ssr: false },{ src: "~/plugins/vue-clipboard.js", ssr: false }
   ],
 
   /*

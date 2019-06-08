@@ -35,7 +35,8 @@
     "vue-clipboard2": "^0.2.1",
     "vue-cute-timeline": "^1.2.8",
     "vue-verify-plugin": "^2.0.3",
-    "vue-wysiwyg": "^1.7.2"
+    "vue-wysiwyg": "^1.7.2",
+    "vue2-editor": "^2.6.6"
   },
   "devDependencies": {
     "babel-eslint": "^8.2.1",

@@ -84,7 +84,7 @@
             maxlength="300"/>
         </el-form-item>
         <el-form-item label="记忆详情">
-          <wysiwyg v-model="form.memory_content" />
+          <vue-editor :editorToolbar="customToolbar" v-model="form.memory_content"></vue-editor>
         </el-form-item>
         <el-form-item>
           <el-switch
@@ -171,9 +171,7 @@
           </div>
         </div>
         <div v-if="detailMode=='edit'">
-          <wysiwyg
-            v-model="memDetail.content"
-            @change="autosave" />
+            <vue-editor @text-change="autosave" :editorToolbar="customToolbar" v-model="memDetail.content"></vue-editor>
           <el-switch
             v-model="memDetail.is_public"
             active-text="公开"
@@ -333,7 +331,6 @@
 
 import swal from 'sweetalert'
 import {AXIOS} from '~/common/http-commons'
-import "vue-wysiwyg/dist/vueWysiwyg.css"
 import '~/css/map.public.css'
 import state from '~/common/state'
 import base from '~/mixins/base'
@@ -379,9 +376,20 @@ export default {
       fav_loc_name: '',
       addFavlocVisible: false,
       customToolbar: [
-          [{ 'header': [false, 1, 2, 3, 4, 5, 6] }],
-            ['code-block', 'bold', 'italic', 'underline'],
-            [{ 'list': 'ordered'}, { 'list': 'bullet' }]
+      [{ 'font': [] }],
+[{ 'header': [false, 1, 2, 3, 4, 5, 6, ] }],
+[{ 'size': ['small', false, 'large', 'huge'] }],
+['bold', 'italic', 'underline', 'strike'],
+[{'align': ''}, {'align': 'center'}, {'align': 'right'}, {'align': 'justify'}],
+[{ 'header': 1 }, { 'header': 2 }],
+['blockquote', 'code-block'],
+[{ 'list': 'ordered'}, { 'list': 'bullet' }, { 'list': 'check' }],
+[{ 'script': 'sub'}, { 'script': 'super' }],
+[{ 'indent': '-1'}, { 'indent': '+1' }],
+[{ 'color': [] }, { 'background': [] }],
+['link', 'formula'],
+[{ 'direction': 'rtl' }],
+['clean']
       ],
       memoryDetailBoxVisible: false,
       my_mem_data:[],

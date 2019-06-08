@@ -111,9 +111,7 @@
         </div>
         <div v-if="detailMode=='edit'">
 
-          <wysiwyg
-            v-model="memDetail.content"
-            @change="autosave" />
+          <vue-editor @text-change="autosave" :editorToolbar="customToolbar" v-model="memDetail.content"></vue-editor>
           <el-switch
             v-model="memDetail.is_public"
             active-text="公开"
@@ -293,6 +291,22 @@ export default {
     mixins: [base],
     data() {
       return {
+        customToolbar: [
+        [{ 'font': [] }],
+  [{ 'header': [false, 1, 2, 3, 4, 5, 6, ] }],
+  [{ 'size': ['small', false, 'large', 'huge'] }],
+  ['bold', 'italic', 'underline', 'strike'],
+  [{'align': ''}, {'align': 'center'}, {'align': 'right'}, {'align': 'justify'}],
+  [{ 'header': 1 }, { 'header': 2 }],
+  ['blockquote', 'code-block'],
+  [{ 'list': 'ordered'}, { 'list': 'bullet' }, { 'list': 'check' }],
+  [{ 'script': 'sub'}, { 'script': 'super' }],
+  [{ 'indent': '-1'}, { 'indent': '+1' }],
+  [{ 'color': [] }, { 'background': [] }],
+  ['link', 'formula'],
+  [{ 'direction': 'rtl' }],
+  ['clean']
+        ],
         sort_by: 'last_update',
         available_sorts:[
           {id:'last_update', name:"按最后更新时间排序"},
@@ -464,7 +478,7 @@ export default {
                         });
         })
       },
-      autosave:_.debounce(function () {
+      autosave:_.debounce(function (delta, oldDelta, source) {
           var data = {'id': this.memDetail.id, 'content':this.memDetail.content};
           AXIOS.put('/api/v1/memory-content'
           ,Qs.stringify(data),
