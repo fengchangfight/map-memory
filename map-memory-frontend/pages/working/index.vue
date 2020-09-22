@@ -77,6 +77,18 @@
         <div style="display:flex;position:relative;">
           <button
             v-if="detailMode=='view' && memDetail.i_am_owner && readonlydetail==false"
+            class="backup-mem-point"
+            title="备份"
+            @click="backupMemPoint(memDetail.id)"
+          />
+          <button
+            v-if="detailMode=='view' && memDetail.i_am_owner && readonlydetail==false"
+            class="restore-mem-point"
+            title="恢复"
+            @click="restoreMemPoint(memDetail.id)"
+          />
+          <button
+            v-if="detailMode=='view' && memDetail.i_am_owner && readonlydetail==false"
             class="delete-mem-point"
             title="删除"
             @click="deleteMemPoint(memDetail.id)"
@@ -310,7 +322,7 @@ export default {
       tutorialItem: {
         id: "tutorial",
         title: "点我看说明哦(づ￣ 3￣)づ",
-        icon: "tutorial.png"
+        icon: "tutorial.png",
       },
       autosaveflag: false,
       state,
@@ -320,9 +332,9 @@ export default {
         modules: {
           toolbar: [
             ["bold", "italic", "underline", "strike"],
-            ["blockquote", "code-block"]
-          ]
-        }
+            ["blockquote", "code-block"],
+          ],
+        },
       },
       deleteFavLocVisible: false,
       selected_center: "",
@@ -337,7 +349,7 @@ export default {
           { align: "" },
           { align: "center" },
           { align: "right" },
-          { align: "justify" }
+          { align: "justify" },
         ],
         [{ header: 1 }, { header: 2 }],
         ["blockquote", "code-block"],
@@ -347,7 +359,8 @@ export default {
         [{ color: [] }, { background: [] }],
         ["link", "formula"],
         [{ direction: "rtl" }],
-        ["clean"]
+        [{ float: "center" }],
+        ["clean"],
       ],
       memoryDetailBoxVisible: false,
       my_mem_data: [],
@@ -355,19 +368,19 @@ export default {
       form: {
         title: "",
         memory_content: "",
-        is_public: false
+        is_public: false,
       },
       load_scope: {
         south_west_x: 0.0,
         south_west_y: 0.0,
         north_east_x: 0.0,
-        north_east_y: 0.0
+        north_east_y: 0.0,
       },
       current_bound: {
         south_west_x: 0.0,
         south_west_y: 0.0,
         north_east_x: 0.0,
-        north_east_y: 0.0
+        north_east_y: 0.0,
       },
       is_newbie: false,
       selected_longitude: 0.0,
@@ -388,7 +401,7 @@ export default {
       base_service_url: "",
       physicLongitude: "",
       physicLatitude: "",
-      view_public: false
+      view_public: false,
     };
   },
   computed: {
@@ -411,7 +424,7 @@ export default {
     optionNoAutoSave() {
       return {
         imageUpload: false,
-        heightMin: 350
+        heightMin: 350,
       };
     },
     option() {
@@ -422,13 +435,13 @@ export default {
         saveMethod: "POST",
         saveParam: "memDetail.content",
         saveParams: {
-          id: this.memDetail.id
+          id: this.memDetail.id,
         },
         requestWithCredentials: true,
         requestWithCORS: true,
-        saveURL: this.base_service_url + "/api/v1/memory-content"
+        saveURL: this.base_service_url + "/api/v1/memory-content",
       };
-    }
+    },
   },
   mounted() {
     this.checklogin();
@@ -472,7 +485,7 @@ export default {
     getLocById(memid) {
       console.log("reach here 10");
       AXIOS.get("/api/v1/mem-location?id=" + memid)
-        .then(response => {
+        .then((response) => {
           if (response.data.ok == true) {
             this.url_latitude = response.data.data.latitude;
             this.url_longitude = response.data.data.longitude;
@@ -488,12 +501,12 @@ export default {
             if (this.isLoggedIn) {
               this.$notify.error({
                 title: "错误",
-                message: response.data.message
+                message: response.data.message,
               });
             }
           }
         })
-        .catch(e => {
+        .catch((e) => {
           console.log("根据id获取坐标失败");
           this.goPage("/login");
         });
@@ -569,7 +582,7 @@ export default {
     },
     isFirstDayUser() {
       AXIOS.get("/api/v1/first-day-user")
-        .then(response => {
+        .then((response) => {
           if (response.data == true) {
             // first day registered user, give instructions
             this.is_newbie = true;
@@ -580,26 +593,26 @@ export default {
             console.log(false);
           }
         })
-        .catch(e => {
+        .catch((e) => {
           console.log(e);
         });
     },
-    autosave: _.debounce(function() {
+    autosave: _.debounce(function () {
       var data = { id: this.memDetail.id, content: this.memDetail.content };
       AXIOS.put("/api/v1/memory-content", Qs.stringify(data), {
-        headers: { "Content-Type": "application/x-www-form-urlencoded" }
+        headers: { "Content-Type": "application/x-www-form-urlencoded" },
       })
-        .then(response => {
+        .then((response) => {
           if (response.data.ok == true) {
             this.autosaveflag = true;
             this.$notify({
               title: "自动保存",
               type: "success",
-              message: "已自动保存"
+              message: "已自动保存",
             });
             var count = 2;
             var storeThis = this;
-            var refreshIntervalId = setInterval(function() {
+            var refreshIntervalId = setInterval(function () {
               count = count - 1;
               if (count == 0) {
                 clearInterval(refreshIntervalId);
@@ -608,7 +621,7 @@ export default {
             }, 1000);
           }
         })
-        .catch(e => {});
+        .catch((e) => {});
     }, 2500),
     onEditMemoryEditorChange({ editor, html, text }) {
       this.memDetail.content = html;
@@ -624,39 +637,39 @@ export default {
     },
     deleteFavloc() {
       AXIOS.delete("/api/v1/favorite-location/" + this.selected_id)
-        .then(response => {
+        .then((response) => {
           if (response.data.ok == true) {
             this.$notify({
               title: "成功",
               type: "success",
-              message: response.data.message
+              message: response.data.message,
             });
             this.loadAllFavloc();
             this.deleteFavLocVisible = false;
           } else {
             this.$notify.error({
               title: "错误",
-              message: response.data.message
+              message: response.data.message,
             });
           }
         })
-        .catch(e => {
+        .catch((e) => {
           this.$notify.error({
             title: "错误",
-            message: "未知错误"
+            message: "未知错误",
           });
         });
     },
 
     updateFavLocUse(id) {
       AXIOS.put("/api/v1/favorite-location/used/" + id)
-        .then(response => {
+        .then((response) => {
           if (response.data.ok == true) {
             console.log(response.data.message);
             this.loadAllFavloc();
           }
         })
-        .catch(e => {});
+        .catch((e) => {});
     },
     changeCenter() {
       for (var i in this.fav_loc_list) {
@@ -679,30 +692,30 @@ export default {
 
       AXIOS.put("/api/v1/memory-pos/" + id, {
         longitude: longitude,
-        latitude: latitude
+        latitude: latitude,
       })
-        .then(response => {
+        .then((response) => {
           if (response.data.ok == true) {
             this.$notify({
               title: "成功",
               type: "success",
-              message: response.data.message
+              message: response.data.message,
             });
             this.my_mem_data = [];
             this.loadMemPoints();
           } else {
             this.$notify.error({
               title: "错误",
-              message: response.data.message
+              message: response.data.message,
             });
             this.my_mem_data = [];
             this.loadMemPoints();
           }
         })
-        .catch(e => {
+        .catch((e) => {
           this.$notify.error({
             title: "错误",
-            message: e.response.statusText
+            message: e.response.statusText,
           });
           this.my_mem_data = [];
           this.loadMemPoints();
@@ -714,28 +727,28 @@ export default {
         title: this.memDetail.title,
         content: this.memDetail.content,
         icon: this.memDetail.icon,
-        is_public: this.memDetail.is_public
+        is_public: this.memDetail.is_public,
       })
-        .then(response => {
+        .then((response) => {
           if (response.data.ok == true) {
             this.$notify({
               title: "成功",
               type: "success",
-              message: response.data.message
+              message: response.data.message,
             });
             this.cancelEdit();
             this.loadMemPoints();
           } else {
             this.$notify.error({
               title: "错误",
-              message: response.data.message
+              message: response.data.message,
             });
           }
         })
-        .catch(e => {
+        .catch((e) => {
           this.$notify.error({
             title: "错误",
-            message: "未知错误"
+            message: "未知错误",
           });
         });
     },
@@ -750,24 +763,24 @@ export default {
         params.read_code = read_code;
       }
       AXIOS.get("/api/v1/memory/" + id, {
-        params: params
+        params: params,
       })
-        .then(response => {
+        .then((response) => {
           if (response.data.ok == true) {
             this.memDetail = response.data.data;
             this.loading_content = false;
           } else {
             this.$notify.error({
               title: "错误",
-              message: response.data.message
+              message: response.data.message,
             });
             this.memoryDetailBoxVisible = false;
           }
         })
-        .catch(e => {
+        .catch((e) => {
           this.$notify.error({
             title: "错误",
-            message: "未知错误"
+            message: "未知错误",
           });
         });
     },
@@ -827,35 +840,92 @@ export default {
       // make title and content edit mode
       this.detailMode = "edit";
     },
+    backupMemPoint(id) {
+      this.$confirm("确认备份该记忆点？")
+        .then((_) => {
+          AXIOS.put("/api/v1/memory-backup/" + id)
+            .then((response) => {
+              if (response.data.ok == true) {
+                this.$notify({
+                  title: "备份成功",
+                  type: "success",
+                  message: response.data.message,
+                });
+              } else {
+                this.$notify.error({
+                  title: "错误",
+                  message: response.data.message,
+                });
+              }
+            })
+            .catch((e) => {
+              this.$notify.error({
+                title: "错误",
+                message: "未知错误",
+              });
+            });
+          done();
+        })
+        .catch((_) => {});
+    },
+    restoreMemPoint(id) {
+      this.$confirm("确认恢复该记忆点？")
+        .then((_) => {
+          AXIOS.put("/api/v1/memory-restore/" + id)
+            .then((response) => {
+              if (response.data.ok == true) {
+                this.$notify({
+                  title: "恢复成功",
+                  type: "success",
+                  message: response.data.message,
+                });
+                this.loadMemoryDetailById(id);
+              } else {
+                this.$notify.error({
+                  title: "错误",
+                  message: response.data.message,
+                });
+              }
+            })
+            .catch((e) => {
+              this.$notify.error({
+                title: "错误",
+                message: "未知错误",
+              });
+            });
+          done();
+        })
+        .catch((_) => {});
+    },
     deleteMemPoint(id) {
       this.$confirm("确认删除该记忆点？")
-        .then(_ => {
+        .then((_) => {
           AXIOS.delete("/api/v1/memory/" + id)
-            .then(response => {
+            .then((response) => {
               if (response.data.ok == true) {
                 this.$notify({
                   title: "成功",
                   type: "success",
-                  message: response.data.message
+                  message: response.data.message,
                 });
                 this.memoryDetailBoxVisible = false;
                 this.loadMemPoints();
               } else {
                 this.$notify.error({
                   title: "错误",
-                  message: response.data.message
+                  message: response.data.message,
                 });
               }
             })
-            .catch(e => {
+            .catch((e) => {
               this.$notify.error({
                 title: "错误",
-                message: "未知错误"
+                message: "未知错误",
               });
             });
           done();
         })
-        .catch(_ => {});
+        .catch((_) => {});
     },
     limitStringLength(st) {
       if (st == null) {
@@ -935,17 +1005,17 @@ export default {
     loadAllFavloc() {
       // this is loading all fav loc list for the drop down
       AXIOS.get("/api/v1/favorite-location")
-        .then(response => {
+        .then((response) => {
           if (response.data.ok == true) {
             this.fav_loc_list = response.data.data;
           } else {
             this.$notify.error({
               title: "错误",
-              message: response.data.message
+              message: response.data.message,
             });
           }
         })
-        .catch(e => {
+        .catch((e) => {
           console.log("无法载入收藏地点列表");
         });
     },
@@ -955,19 +1025,19 @@ export default {
         south_west_y: this.load_scope.south_west_y,
         north_east_x: this.load_scope.north_east_x,
         north_east_y: this.load_scope.north_east_y,
-        view_public: this.view_public ? "1" : "0"
+        view_public: this.view_public ? "1" : "0",
       })
-        .then(response => {
+        .then((response) => {
           if (response.data.ok == true) {
             this.my_mem_data = response.data.data;
           } else {
             this.$notify.error({
               title: "错误",
-              message: response.data.message
+              message: response.data.message,
             });
           }
         })
-        .catch(e => {
+        .catch((e) => {
           console.log("载入地图记忆点点失败");
           this.goPage("/login");
         });
@@ -989,37 +1059,37 @@ export default {
         title: this.form.title,
         content: this.form.memory_content,
         icon: this.selected_icon,
-        is_public: this.form.is_public
+        is_public: this.form.is_public,
       })
-        .then(response => {
+        .then((response) => {
           if (response.data.ok == true) {
             this.$notify({
               title: "成功",
               type: "success",
-              message: response.data.message
+              message: response.data.message,
             });
             this.addMemoryVisible = false;
             this.loadMemPoints();
           } else {
             this.$notify.error({
               title: "错误",
-              message: response.data.message
+              message: response.data.message,
             });
           }
         })
-        .catch(e => {
+        .catch((e) => {
           this.$notify.error({
             title: "错误",
-            message: "未知错误"
+            message: "未知错误",
           });
         });
     },
     handleClose(done) {
       this.$confirm("确认关闭？")
-        .then(_ => {
+        .then((_) => {
           done();
         })
-        .catch(_ => {});
+        .catch((_) => {});
     },
     logAndLat(e) {
       console.log(e);
@@ -1037,28 +1107,28 @@ export default {
       AXIOS.post("/api/v1/favorite-location", {
         name: this.fav_loc_name,
         longitude: this.selected_longitude,
-        latitude: this.selected_latitude
+        latitude: this.selected_latitude,
       })
-        .then(response => {
+        .then((response) => {
           if (response.data.ok == true) {
             this.$notify({
               title: "成功",
               type: "success",
-              message: response.data.message
+              message: response.data.message,
             });
             this.addFavlocVisible = false;
             this.loadAllFavloc();
           } else {
             this.$notify.error({
               title: "错误",
-              message: response.data.message
+              message: response.data.message,
             });
           }
         })
-        .catch(e => {
+        .catch((e) => {
           this.$notify.error({
             title: "错误",
-            message: "未知错误"
+            message: "未知错误",
           });
         });
     },
@@ -1093,12 +1163,12 @@ export default {
         url: "https://api.map.baidu.com/location/ip",
         data: {
           coor: "bd09ll",
-          ak: "Er8iGG4UMfSd3Ckuc6w8C56peI4ge1Ih"
+          ak: "Er8iGG4UMfSd3Ckuc6w8C56peI4ge1Ih",
         },
         type: "get",
         dataType: "jsonp",
         async: true,
-        success: function(data) {
+        success: function (data) {
           console.log(data.content);
           var locInfo = data.content;
           if (locInfo != null && locInfo.point != null) {
@@ -1130,9 +1200,9 @@ export default {
           }
           //storeThis.loadMemPoints();
         },
-        error: function(data) {
+        error: function (data) {
           console.log("error getting my location");
-        }
+        },
       });
     },
     changeView() {
@@ -1148,8 +1218,8 @@ export default {
       this.zoom = 19;
 
       //this.loadMemPoints();
-    }
-  }
+    },
+  },
 };
 </script>
 

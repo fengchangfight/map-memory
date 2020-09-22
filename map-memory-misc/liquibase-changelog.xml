@@ -5,125 +5,102 @@
     <changeSet author="fengchang" id="add-table-mp-user">
         <createTable tableName="mp_user">
             <column autoIncrement="true" name="id" type="BIGINT">
-                <constraints primaryKey="true"  primaryKeyName="mp_userPK" nullable="false"/>
+                <constraints primaryKey="true" primaryKeyName="mp_userPK" nullable="false" />
             </column>
-            <column name="username" type="varchar(300)"/>
-            <column name="password" type="varchar(300)"/>
-            <column name="phone" type="varchar(50)"/>
-            <column name="nickname" type="varchar(50)"/>
-            <column name="email" type="varchar(50)"/>
-            <column name="reg_date" type="datetime"/>
+            <column name="username" type="varchar(300)" />
+            <column name="password" type="varchar(300)" />
+            <column name="phone" type="varchar(50)" />
+            <column name="nickname" type="varchar(50)" />
+            <column name="email" type="varchar(50)" />
+            <column name="reg_date" type="datetime" />
         </createTable>
 
     </changeSet>
 
 
-<changeSet author="fengchang" id="addUniqueConstraint-user-name">
-    <addUniqueConstraint
-            columnNames="username"
-            constraintName="uniq_username"
-            deferrable="true"
-            disabled="true"
-            initiallyDeferred="true"
-            tableName="mp_user"/>
-</changeSet>
-<changeSet author="fengchang" id="addUniqueConstraint-user-phone">
-    <addUniqueConstraint
-            columnNames="phone"
-            constraintName="mp_user_uniq_phone"
-            deferrable="true"
-            disabled="true"
-            initiallyDeferred="true"
-            tableName="mp_user"/>
-</changeSet>
-<changeSet author="fengchang" id="addUniqueConstraint-user-email">
-    <addUniqueConstraint
-            columnNames="email"
-            constraintName="mp_user_uniq_email"
-            deferrable="true"
-            disabled="true"
-            initiallyDeferred="true"
-            tableName="mp_user"/>
-</changeSet>
+    <changeSet author="fengchang" id="addUniqueConstraint-user-name">
+        <addUniqueConstraint columnNames="username" constraintName="uniq_username" deferrable="true" disabled="true" initiallyDeferred="true" tableName="mp_user" />
+    </changeSet>
+    <changeSet author="fengchang" id="addUniqueConstraint-user-phone">
+        <addUniqueConstraint columnNames="phone" constraintName="mp_user_uniq_phone" deferrable="true" disabled="true" initiallyDeferred="true" tableName="mp_user" />
+    </changeSet>
+    <changeSet author="fengchang" id="addUniqueConstraint-user-email">
+        <addUniqueConstraint columnNames="email" constraintName="mp_user_uniq_email" deferrable="true" disabled="true" initiallyDeferred="true" tableName="mp_user" />
+    </changeSet>
 
-<changeSet author="fengchang" id="add-table-mp-memory">
+    <changeSet author="fengchang" id="add-table-mp-memory">
         <createTable tableName="mp_memory">
             <column autoIncrement="true" name="id" type="BIGINT">
-                <constraints primaryKey="true"  primaryKeyName="mp_memoryPK" nullable="false"/>
+                <constraints primaryKey="true" primaryKeyName="mp_memoryPK" nullable="false" />
             </column>
-            <column name="title" type="varchar(300)"/>
-            <column name="content" type="text"/>
-            <column name="longitude" type="double"/>
-            <column name="latitude" type="double"/>
-            <column name="icon" type="varchar(100)"/>
+            <column name="title" type="varchar(300)" />
+            <column name="content" type="text" />
+            <column name="longitude" type="double" />
+            <column name="latitude" type="double" />
+            <column name="icon" type="varchar(100)" />
             <column name="user_id" type="BIGINT(20)">
-              <constraints nullable="true" foreignKeyName="fk_memory2user_uid" references="mp_user(id)"/>
+                <constraints nullable="true" foreignKeyName="fk_memory2user_uid" references="mp_user(id)" />
             </column>
-            <column name="created_at" type="datetime"/>
+            <column name="created_at" type="datetime" />
         </createTable>
 
     </changeSet>
 
     <changeSet author="fengchang" id="add-table-mp-favorite-location">
-            <createTable tableName="mp_favorite_location">
-                <column autoIncrement="true" name="id" type="BIGINT">
-                    <constraints primaryKey="true"  primaryKeyName="mp_favoritelocationPK" nullable="false"/>
-                </column>
-                <column name="name" type="varchar(300)"/>
-                <column name="longitude" type="double"/>
-                <column name="latitude" type="double"/>
-                <column name="user_id" type="BIGINT(20)">
-                  <constraints nullable="true" foreignKeyName="fk_faviloc2user_uid" references="mp_user(id)"/>
-                </column>
-            </createTable>
-        </changeSet>
+        <createTable tableName="mp_favorite_location">
+            <column autoIncrement="true" name="id" type="BIGINT">
+                <constraints primaryKey="true" primaryKeyName="mp_favoritelocationPK" nullable="false" />
+            </column>
+            <column name="name" type="varchar(300)" />
+            <column name="longitude" type="double" />
+            <column name="latitude" type="double" />
+            <column name="user_id" type="BIGINT(20)">
+                <constraints nullable="true" foreignKeyName="fk_faviloc2user_uid" references="mp_user(id)" />
+            </column>
+        </createTable>
+    </changeSet>
 
-        <changeSet author="fengchang" id="addUniqueConstraint-for-favi-loc-name-userid">
-        <addUniqueConstraint
-                             columnNames="name, user_id"
-                             constraintName="uniqui_favi_loc_name_uid"
-                             tableName="mp_favorite_location"/>
+    <changeSet author="fengchang" id="addUniqueConstraint-for-favi-loc-name-userid">
+        <addUniqueConstraint columnNames="name, user_id" constraintName="uniqui_favi_loc_name_uid" tableName="mp_favorite_location" />
     </changeSet>
 
     <changeSet author="fengchang" id="addColumn-lastaccessdate4-favoritelcation">
-           <addColumn
-                   tableName="mp_favorite_location">
-               <column name="last_used" type="timestamp"/>
-           </addColumn>
+        <addColumn tableName="mp_favorite_location">
+            <column name="last_used" type="timestamp" />
+        </addColumn>
     </changeSet>
 
     <changeSet author="fengchang" id="modifyDataType-text2mediumtext">
-    <modifyDataType
-            columnName="content"
-            newDataType="mediumtext"
-            tableName="mp_memory"/>
+        <modifyDataType columnName="content" newDataType="mediumtext" tableName="mp_memory" />
     </changeSet>
 
     <changeSet author="fengchang" id="addColumn-user-readcode">
-           <addColumn
-                   tableName="mp_user">
-               <column name="read_code" type="varchar(50)"/>
-           </addColumn>
+        <addColumn tableName="mp_user">
+            <column name="read_code" type="varchar(50)" />
+        </addColumn>
     </changeSet>
 
     <changeSet author="fengchang" id="addColumn-memory-locked">
-           <addColumn
-                   tableName="mp_memory">
-               <column name="locked" type="tinyint"/>
-           </addColumn>
+        <addColumn tableName="mp_memory">
+            <column name="locked" type="tinyint" />
+        </addColumn>
     </changeSet>
     <!-- 添加表字段 记录记忆状态 -->
     <changeSet author="fanchenggang" id="addColumn-memory-is-public">
-         <addColumn
-                 tableName="mp_memory">
-             <column name="is_public" type="tinyint"/>
-         </addColumn>
+        <addColumn tableName="mp_memory">
+            <column name="is_public" type="tinyint" />
+        </addColumn>
     </changeSet>
 
     <changeSet author="fengchang" id="addColumn-lastupdate-memory">
-           <addColumn
-                   tableName="mp_memory">
-               <column name="last_update" type="timestamp"/>
-           </addColumn>
+        <addColumn tableName="mp_memory">
+            <column name="last_update" type="timestamp" />
+        </addColumn>
+    </changeSet>
+
+    <changeSet author="fengchang" id="addColumn-backup-column">
+        <addColumn tableName="mp_memory">
+            <column afterColumn="content" name="backup_content" type="mediumtext" />
+        </addColumn>
     </changeSet>
 </databaseChangeLog>

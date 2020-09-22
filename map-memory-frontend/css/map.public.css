@@ -47,7 +47,27 @@ a[href="https://froala.com/wysiwyg-editor"], a[href="https://www.froala.com/wysi
   height:20px;
   border:none;
 }
-.delete-mem-point:hover,.edit-mem-point:hover,#copy-lng-lat:hover{
+.backup-mem-point{
+  position: absolute;
+  top: 5px;
+  right: 70px;
+  background:url('/imgs/backup20.png') no-repeat;
+  background-size: 100% 100%;
+  width:20px;
+  height:20px;
+  border:none;
+}
+.restore-mem-point{
+  position: absolute;
+  top: 5px;
+  right: 40px;
+  background:url('/imgs/restore20.png') no-repeat;
+  background-size: 100% 100%;
+  width:20px;
+  height:20px;
+  border:none;
+}
+.delete-mem-point:hover,.backup-mem-point:hover, .restore-mem-point:hover,.edit-mem-point:hover,#copy-lng-lat:hover{
   opacity: 0.6;
   cursor: pointer;
 }

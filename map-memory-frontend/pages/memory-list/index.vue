@@ -47,6 +47,8 @@
             title="编辑"
             @click="editMemPoint(memDetail.id)"
           />
+          <button class="backup-mem-point" title="备份" @click="backupMemPoint(memDetail.id)" />
+          <button class="restore-mem-point" title="恢复" @click="restoreMemPoint(memDetail.id)" />
           <button class="delete-mem-point" title="删除" @click="deleteMemPoint(memDetail.id)" />
           <button
             v-clipboard:copy="mem_url"
@@ -173,7 +175,7 @@
               @click="lockOrUnlock(scope.row.id, scope.row.locked,scope.row.is_public)"
               width="15"
               height="15"
-              onError="this.src='/imgs/question.png';"
+              onerror="this.src='/imgs/question.png';"
             />
             <label
               v-bind:class="{ 'private-notes': !scope.row.is_public,  'public-notes': scope.row.is_public}"
@@ -238,7 +240,7 @@ import swal from "sweetalert";
 export default {
   name: "MemoryList",
   components: {
-    "app-footer": Footer
+    "app-footer": Footer,
   },
   mixins: [base],
   data() {
@@ -252,7 +254,7 @@ export default {
           { align: "" },
           { align: "center" },
           { align: "right" },
-          { align: "justify" }
+          { align: "justify" },
         ],
         [{ header: 1 }, { header: 2 }],
         ["blockquote", "code-block"],
@@ -262,12 +264,12 @@ export default {
         [{ color: [] }, { background: [] }],
         ["link", "formula"],
         [{ direction: "rtl" }],
-        ["clean"]
+        ["clean"],
       ],
       sort_by: "last_update",
       available_sorts: [
         { id: "last_update", name: "按最后更新时间排序" },
-        { id: "created_at", name: "按创建时间排序" }
+        { id: "created_at", name: "按创建时间排序" },
       ],
       loading_content: false,
       unlockReadCodeVisible: false,
@@ -287,7 +289,7 @@ export default {
       admin_request_id: "",
       memDetail: {},
       list_loading: false,
-      autosaveflag: false
+      autosaveflag: false,
     };
   },
   computed: {
@@ -309,13 +311,13 @@ export default {
         saveMethod: "POST",
         saveParam: "memDetail.content",
         saveParams: {
-          id: this.memDetail.id
+          id: this.memDetail.id,
         },
         requestWithCredentials: true,
         requestWithCORS: true,
-        saveURL: this.base_service_url + "/api/v1/memory-content"
+        saveURL: this.base_service_url + "/api/v1/memory-content",
       };
-    }
+    },
   },
   mounted() {
     this.checklogin();
@@ -326,11 +328,11 @@ export default {
   methods: {
     doCopyLocation(val) {
       this.$copyText(val).then(
-        function(e) {
+        function (e) {
           swal("提示", "已复制坐标(经度,纬度):" + val + "到剪贴板", "info");
           console.log(e);
         },
-        function(e) {
+        function (e) {
           swal("提示", "不能复制:" + val + "到剪贴板", "error");
           console.log(e);
         }
@@ -371,27 +373,27 @@ export default {
 
       AXIOS.put("/api/v1/memory-lock/" + this.current_id, {
         locked: false,
-        read_code: this.read_code
+        read_code: this.read_code,
       })
-        .then(response => {
+        .then((response) => {
           if (response.data.ok == true) {
             this.$notify({
               title: "成功",
               type: "success",
-              message: response.data.message
+              message: response.data.message,
             });
             this.getMemoryListData();
           } else {
             this.$notify.error({
               title: "错误",
-              message: response.data.message
+              message: response.data.message,
             });
           }
         })
-        .catch(e => {
+        .catch((e) => {
           this.$notify.error({
             title: "错误",
-            message: "未知错误"
+            message: "未知错误",
           });
         });
       this.unlockReadCodeVisible = false;
@@ -424,46 +426,46 @@ export default {
     },
     lockMemPoint(id) {
       AXIOS.put("/api/v1/memory-lock/" + id, {
-        locked: true
+        locked: true,
       })
-        .then(response => {
+        .then((response) => {
           if (response.data.ok == true) {
             this.$notify({
               title: "成功",
               type: "success",
-              message: response.data.message
+              message: response.data.message,
             });
             this.getMemoryListData();
           } else {
             this.$notify.error({
               title: "错误",
-              message: response.data.message
+              message: response.data.message,
             });
           }
         })
-        .catch(e => {
+        .catch((e) => {
           this.$notify.error({
             title: "错误",
-            message: "未知错误"
+            message: "未知错误",
           });
         });
     },
-    autosave: _.debounce(function(delta, oldDelta, source) {
+    autosave: _.debounce(function (delta, oldDelta, source) {
       var data = { id: this.memDetail.id, content: this.memDetail.content };
       AXIOS.put("/api/v1/memory-content", Qs.stringify(data), {
-        headers: { "Content-Type": "application/x-www-form-urlencoded" }
+        headers: { "Content-Type": "application/x-www-form-urlencoded" },
       })
-        .then(response => {
+        .then((response) => {
           if (response.data.ok == true) {
             this.autosaveflag = true;
             this.$notify({
               title: "自动保存",
               type: "success",
-              message: "已自动保存"
+              message: "已自动保存",
             });
             var count = 2;
             var storeThis = this;
-            var refreshIntervalId = setInterval(function() {
+            var refreshIntervalId = setInterval(function () {
               count = count - 1;
               if (count == 0) {
                 clearInterval(refreshIntervalId);
@@ -472,7 +474,7 @@ export default {
             }, 1000);
           }
         })
-        .catch(e => {});
+        .catch((e) => {});
     }, 2500),
     filterMemory() {
       this.currentPage = 1;
@@ -488,27 +490,27 @@ export default {
         title: this.memDetail.title,
         content: this.memDetail.content,
         icon: this.memDetail.icon,
-        is_public: this.memDetail.is_public
+        is_public: this.memDetail.is_public,
       })
-        .then(response => {
+        .then((response) => {
           if (response.data.ok == true) {
             this.$notify({
               title: "成功",
               type: "success",
-              message: response.data.message
+              message: response.data.message,
             });
             this.cancelEdit();
           } else {
             this.$notify.error({
               title: "错误",
-              message: response.data.message
+              message: response.data.message,
             });
           }
         })
-        .catch(e => {
+        .catch((e) => {
           this.$notify.error({
             title: "错误",
-            message: "未知错误"
+            message: "未知错误",
           });
         });
     },
@@ -527,28 +529,28 @@ export default {
         params.read_code = read_code;
       }
       AXIOS.get("/api/v1/memory/" + id, {
-        params: params
+        params: params,
       })
-        .then(response => {
+        .then((response) => {
           if (response.data.ok == true) {
             this.memDetail = response.data.data;
             this.loading_content = false;
           } else {
             this.$notify.error({
               title: "错误",
-              message: response.data.message
+              message: response.data.message,
             });
             this.memoryDetailBoxVisible = false;
           }
         })
-        .catch(e => {
+        .catch((e) => {
           this.$notify.error({
             title: "错误",
-            message: "未知错误"
+            message: "未知错误",
           });
         });
     },
-    changePage: function(currentPage) {
+    changePage: function (currentPage) {
       this.currentPage = currentPage;
       this.getMemoryListData();
     },
@@ -569,35 +571,92 @@ export default {
         this.loadMemoryDetailById(id);
       }
     },
+    backupMemPoint(id) {
+      this.$confirm("确认备份该记忆点？")
+        .then((_) => {
+          AXIOS.put("/api/v1/memory-backup/" + id)
+            .then((response) => {
+              if (response.data.ok == true) {
+                this.$notify({
+                  title: "备份成功",
+                  type: "success",
+                  message: response.data.message,
+                });
+              } else {
+                this.$notify.error({
+                  title: "错误",
+                  message: response.data.message,
+                });
+              }
+            })
+            .catch((e) => {
+              this.$notify.error({
+                title: "错误",
+                message: "未知错误",
+              });
+            });
+          done();
+        })
+        .catch((_) => {});
+    },
+    restoreMemPoint(id) {
+      this.$confirm("确认恢复该记忆点？")
+        .then((_) => {
+          AXIOS.put("/api/v1/memory-restore/" + id)
+            .then((response) => {
+              if (response.data.ok == true) {
+                this.$notify({
+                  title: "恢复成功",
+                  type: "success",
+                  message: response.data.message,
+                });
+                this.loadMemoryDetailById(id);
+              } else {
+                this.$notify.error({
+                  title: "错误",
+                  message: response.data.message,
+                });
+              }
+            })
+            .catch((e) => {
+              this.$notify.error({
+                title: "错误",
+                message: "未知错误",
+              });
+            });
+          done();
+        })
+        .catch((_) => {});
+    },
     deleteMemPoint(id) {
       this.$confirm("确认删除该记忆点？")
-        .then(_ => {
+        .then((_) => {
           AXIOS.delete("/api/v1/memory/" + id)
-            .then(response => {
+            .then((response) => {
               if (response.data.ok == true) {
                 this.$notify({
                   title: "成功",
                   type: "success",
-                  message: response.data.message
+                  message: response.data.message,
                 });
                 this.memoryDetailBoxVisible = false;
                 this.getMemoryListData();
               } else {
                 this.$notify.error({
                   title: "错误",
-                  message: response.data.message
+                  message: response.data.message,
                 });
               }
             })
-            .catch(e => {
+            .catch((e) => {
               this.$notify.error({
                 title: "错误",
-                message: "未知错误"
+                message: "未知错误",
               });
             });
           done();
         })
-        .catch(_ => {});
+        .catch((_) => {});
     },
     getMemoryListData() {
       var params = {};
@@ -606,9 +665,9 @@ export default {
       params.sort_by = this.sort_by;
       this.list_loading = true;
       AXIOS.get("/api/v1/memory-my", {
-        params: params
+        params: params,
       })
-        .then(response => {
+        .then((response) => {
           if (response.data.ok == true) {
             this.memorylistdata = response.data.data.data;
             this.totalCount = Number(response.data.data.totalCount);
@@ -617,18 +676,18 @@ export default {
           } else {
             this.$notify.error({
               title: "错误",
-              message: response.data.message
+              message: response.data.message,
             });
           }
           this.list_loading = false;
         })
-        .catch(e => {
+        .catch((e) => {
           console.log("获取列表视图错误");
           this.list_loading = false;
           this.goPage("/login");
         });
-    }
-  }
+    },
+  },
 };
 </script>
 

@@ -39,6 +39,185 @@ export default {
       isLoggedIn: false,
       available_icons: [
         {
+          id: 'bridge.png',
+          name: '桥'
+        },
+        {
+          id: 'csharp.png',
+          name: 'C#'
+        },
+        {
+          id: 'ipad.png',
+          name: 'Ipad'
+        },
+        {
+          id: 'iphone.png',
+          name: 'Iphone'
+        },
+        {
+          id: 'javascript.png',
+          name: 'Javascript'
+        },
+        {
+          id: 'notepadpp.png',
+          name: 'Notepad++'
+        },
+        {
+          id: 'sharepoint.png',
+          name: 'Sharepoint'
+        },
+        {
+          id: 'sublime.png',
+          name: 'Sublime'
+        },
+        {
+          id: 'xunlei.png',
+          name: '迅雷'
+        },
+        {
+          id: 'powershell.png',
+          name: 'Powershell'
+        },
+        {
+          id: 'paypal.png',
+          name: 'Paypal'
+        },
+        {
+          id: 'zhifubao.png',
+          name: '支付宝'
+        },
+        {
+          id: 'guitar.png',
+          name: '吉他'
+        },
+        {
+          id: 'calendar.png',
+          name: '日历'
+        }, {
+          id: 'music.png',
+          name: '音符'
+        }, {
+          id: 'cake.png',
+          name: '蛋糕'
+        }, {
+          id: 'shujia.png',
+          name: '书架'
+        }, {
+          id: 'yewen.png',
+          name: '叶问'
+        }, {
+          id: 'kafka.png',
+          name: 'Kafka'
+        }, {
+          id: 'bag.png',
+          name: '背包'
+        }, {
+          id: 'dadou.png',
+          name: '大豆'
+        }, {
+          id: 'gpu.png',
+          name: 'GPU'
+        },
+        {
+          id: 'fire.png',
+          name: '火焰'
+        },
+        {
+          id: 'template.png',
+          name: '模板'
+        },
+        {
+          id: 'taiquan.png',
+          name: '泰拳'
+        },
+        {
+          id: 'ecnu.png',
+          name: '华师大校徽'
+        },
+        {
+          id: 'nietzsche.png',
+          name: '尼采'
+        },
+        {
+          id: 'beef.png',
+          name: '牛肉'
+        },
+        {
+          id: 'kubernetes.png',
+          name: 'Kubernetes'
+        },
+        {
+          id: 'fudan.png',
+          name: '复旦'
+        },
+        {
+          id: 'caozhijing.png',
+          name: '草薙京'
+        },
+        {
+          id: 'windows.png',
+          name: 'Windows'
+        },
+        {
+          id: 'engesi.png',
+          name: '恩格斯'
+        },
+        {
+          id: 'zhoudongyu.png',
+          name: '周冬雨'
+        },
+        {
+          id: 'mayun.png',
+          name: '马云'
+        },
+        {
+          id: 'guoqi.png',
+          name: '国旗'
+        },
+        {
+          id: 'dangqi.png',
+          name: '党旗'
+        },
+        {
+          id: 'junqi.png',
+          name: '军旗'
+        },
+        {
+          id: 'marks.png',
+          name: '马克思'
+        },
+        {
+          id: 'weiqi.png',
+          name: '围棋'
+        },
+        {
+          id: 'taiji.png',
+          name: '太极'
+        },
+        {
+          id: 'gopro.png',
+          name: 'GoPro'
+        },
+        {
+          id: 'netty.png',
+          name: 'Netty'
+        },
+        {
+          id: 'guanyin.png',
+          name: '观音'
+        },
+        {
+          id: 'liyongle.png',
+          name: '李永乐'
+        },
+        {
+          id: 'pork.png',
+          name: '猪肉'
+        }, {
+          id: 'rulai.png',
+          name: '如来'
+        },
+        {
           id: 'chrome.png',
           name: 'Chrome'
         }, {
@@ -114,10 +293,6 @@ export default {
         {
           id: 'jetli.png',
           name: '李连杰'
-        },
-        {
-          id: 'nietzsche.png',
-          name: '尼采'
         },
         {
           id: 'lixiaolong.png',

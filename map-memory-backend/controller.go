@@ -96,6 +96,51 @@ func GetMyFavLoc(ctx *gin.Context) {
 	ctx.JSON(http.StatusOK, gin.H{"ok": true, "message": "成功获取常用位置列表", "data": result})
 
 }
+
+func RestoreMemoryContent(ctx *gin.Context) {
+	// get memory entity, fetch its backup column
+
+	id := ctx.Param("id")
+	var result model.MemoryDetailVO
+	config.RDB_CONN.Table("mp_memory").Select("mp_memory.id, title, content, backup_content, longitude, latitude, icon, mp_user.username, mp_user.nickname, created_at, last_update, locked, is_public").Joins("inner join mp_user on mp_user.id = mp_memory.user_id").Where("mp_memory.id = ?", id).Scan(&result)
+
+	backupContent := result.BackupContent
+
+	var memory entity.Memory
+	idint, err := strconv.ParseInt(id, 10, 64)
+	if err != nil {
+		ctx.JSON(http.StatusOK, gin.H{"ok": false, "message": "不合法的ID", "data": err})
+	}
+	memory.ID = idint
+
+	current_time := time.Now()
+	config.RDB_CONN.Model(&memory).UpdateColumns(entity.Memory{Content: backupContent, LastUpdate: current_time})
+
+	ctx.JSON(http.StatusOK, gin.H{"ok": true, "message": "成功恢复记忆点", "data": memory.ID})
+}
+
+func BackupMemoryContent(ctx *gin.Context) {
+	// get memory entity, fetch its content column
+
+	id := ctx.Param("id")
+	var result model.MemoryDetailVO
+	config.RDB_CONN.Table("mp_memory").Select("mp_memory.id, title, content, backup_content, longitude, latitude, icon, mp_user.username, mp_user.nickname, created_at, last_update, locked, is_public").Joins("inner join mp_user on mp_user.id = mp_memory.user_id").Where("mp_memory.id = ?", id).Scan(&result)
+
+	content := result.Content
+
+	var memory entity.Memory
+	idint, err := strconv.ParseInt(id, 10, 64)
+	if err != nil {
+		ctx.JSON(http.StatusOK, gin.H{"ok": false, "message": "不合法的ID", "data": err})
+	}
+	memory.ID = idint
+
+	current_time := time.Now()
+	config.RDB_CONN.Model(&memory).UpdateColumns(entity.Memory{BackupContent: content, LastUpdate: current_time})
+
+	ctx.JSON(http.StatusOK, gin.H{"ok": true, "message": "成功备份记忆点", "data": memory.ID})
+}
+
 func UpdateMemoryContent(ctx *gin.Context) {
 
 	id := ctx.PostForm("id")
@@ -175,16 +220,17 @@ func CreateMemoryPoint(ctx *gin.Context) {
 
 	// use the 7 parameter all together to create a new record or memory point
 	memory_record := entity.Memory{
-		Title:      title,
-		Content:    content,
-		Longitude:  longitude,
-		Latitude:   latitude,
-		Icon:       icon,
-		UserID:     current_uid,
-		CreatedAt:  current_time,
-		LastUpdate: current_time,
-		Locked:     false,
-		IsPublic:   is_public,
+		Title:         title,
+		Content:       content,
+		BackupContent: content,
+		Longitude:     longitude,
+		Latitude:      latitude,
+		Icon:          icon,
+		UserID:        current_uid,
+		CreatedAt:     current_time,
+		LastUpdate:    current_time,
+		Locked:        false,
+		IsPublic:      is_public,
 	}
 
 	createResult := config.RDB_CONN.Create(&memory_record)
@@ -232,7 +278,7 @@ func QueryMemoryById(ctx *gin.Context) {
 	mid := ctx.Param("id")
 
 	var result model.MemoryDetailVO
-	config.RDB_CONN.Table("mp_memory").Select("mp_memory.id, title, content, longitude, latitude, icon, mp_user.username, mp_user.nickname, created_at, last_update, locked, is_public").Joins("inner join mp_user on mp_user.id = mp_memory.user_id").Where("mp_memory.id = ?", mid).Scan(&result)
+	config.RDB_CONN.Table("mp_memory").Select("mp_memory.id, title, content, backup_content, longitude, latitude, icon, mp_user.username, mp_user.nickname, created_at, last_update, locked, is_public").Joins("inner join mp_user on mp_user.id = mp_memory.user_id").Where("mp_memory.id = ?", mid).Scan(&result)
 
 	session := sessions.Default(ctx)
 	username := session.Get("user").(string)
