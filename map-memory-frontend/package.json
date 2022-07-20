@@ -44,6 +44,6 @@
     "eslint-loader": "^2.0.0",
     "eslint-plugin-vue": "^4.0.0",
     "nodemon": "^1.11.0",
-    "terser": "^3.16.1"
+    "terser": "^4.8.1"
   }
 }
